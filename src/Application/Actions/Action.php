@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Actions;
 
 use App\Domain\DomainException\DomainRecordNotFoundException;
+use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -83,5 +84,19 @@ abstract class Action
         return $this->response
             ->withHeader("Content-Type", "application/json")
             ->withStatus($actionPayload->getStatusCode());
+    }
+
+    /**
+     * @param array|object|null $data
+     */
+    protected function respondWithJson($data = null, int $statusCode = StatusCodeInterface::STATUS_OK): Response
+    {
+        if ($data !== null) {
+            $this->response->getBody()->write((string)json_encode($data));
+        }
+
+        return $this->response
+            ->withHeader("Content-Type", "application/json")
+            ->withStatus($statusCode);
     }
 }

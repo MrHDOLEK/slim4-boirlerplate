@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Domain\User;
 
-use App\Domain\User\User;
+use App\Domain\Entity\User\User;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -12,36 +12,34 @@ class UserTest extends TestCase
     public function userProvider(): array
     {
         return [
-            [1, "bill.gates", "Bill", "Gates"],
-            [2, "steve.jobs", "Steve", "Jobs"],
-            [3, "mark.zuckerberg", "Mark", "Zuckerberg"],
-            [4, "evan.spiegel", "Evan", "Spiegel"],
-            [5, "jack.dorsey", "Jack", "Dorsey"],
+            ["bill.gates", "Bill", "Gates"],
+            ["steve.jobs", "Steve", "Jobs"],
+            ["mark.zuckerberg", "Mark", "Zuckerberg"],
+            ["evan.spiegel", "Evan", "Spiegel"],
+            ["jack.dorsey", "Jack", "Dorsey"],
         ];
     }
 
     /**
      * @dataProvider userProvider
      */
-    public function testGetters(int $id, string $username, string $firstName, string $lastName): void
+    public function testGetters(string $username, string $firstName, string $lastName): void
     {
-        $user = new User($id, $username, $firstName, $lastName);
+        $user = new User($username, $firstName, $lastName);
 
-        $this->assertEquals($id, $user->getId());
-        $this->assertEquals($username, $user->getUsername());
-        $this->assertEquals($firstName, $user->getFirstName());
-        $this->assertEquals($lastName, $user->getLastName());
+        $this->assertEquals($username, $user->username());
+        $this->assertEquals($firstName, $user->firstName());
+        $this->assertEquals($lastName, $user->lastName());
     }
 
     /**
      * @dataProvider userProvider
      */
-    public function testJsonSerialize(int $id, string $username, string $firstName, string $lastName): void
+    public function testJsonSerialize(string $username, string $firstName, string $lastName): void
     {
-        $user = new User($id, $username, $firstName, $lastName);
+        $user = new User($username, $firstName, $lastName);
 
         $expectedPayload = json_encode([
-            "id" => $id,
             "username" => $username,
             "firstName" => $firstName,
             "lastName" => $lastName,

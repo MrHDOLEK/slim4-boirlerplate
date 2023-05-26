@@ -2,56 +2,44 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\User;
+namespace App\Domain\Entity\User;
 
-use JsonSerializable;
-
-class User implements JsonSerializable
+class User
 {
+    /** @phpstan-ignore-next-line */
+    private int $id;
+
     private string $username;
     private string $firstName;
     private string $lastName;
 
     public function __construct(
-        private ?int $id,
         string $username,
         string $firstName,
         string $lastName,
-    )
-    {
+    ) {
         $this->username = strtolower($username);
         $this->firstName = ucfirst($firstName);
         $this->lastName = ucfirst($lastName);
     }
 
-    public function getId(): ?int
+    public function id(): ?int
     {
         return $this->id;
     }
 
-    public function getUsername(): string
+    public function username(): string
     {
         return $this->username;
     }
 
-    public function getFirstName(): string
+    public function firstName(): string
     {
         return $this->firstName;
     }
 
-    public function getLastName(): string
+    public function lastName(): string
     {
         return $this->lastName;
-    }
-
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize(): array
-    {
-        return [
-            "id" => $this->id,
-            "username" => $this->username,
-            "firstName" => $this->firstName,
-            "lastName" => $this->lastName,
-        ];
     }
 }
