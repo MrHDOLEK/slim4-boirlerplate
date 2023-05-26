@@ -33,8 +33,8 @@ abstract class Action
 
         try {
             return $this->action();
-        } catch (DomainRecordNotFoundException $e) {
-            throw new HttpNotFoundException($this->request, $e->getMessage());
+        } catch (DomainRecordNotFoundException $domainRecordNotFoundException) {
+            throw new HttpNotFoundException($this->request, $domainRecordNotFoundException->getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ abstract class Action
     protected function resolveArg(string $name)
     {
         if (!isset($this->args[$name])) {
-            throw new HttpBadRequestException($this->request, "Could not resolve argument `{$name}`.");
+            throw new HttpBadRequestException($this->request, sprintf("Could not resolve argument `%s`.", $name));
         }
 
         return $this->args[$name];
@@ -70,18 +70,18 @@ abstract class Action
      */
     protected function respondWithData($data = null, int $statusCode = 200): Response
     {
-        $payload = new ActionPayload($statusCode, $data);
+        $actionPayload = new ActionPayload($statusCode, $data);
 
-        return $this->respond($payload);
+        return $this->respond($actionPayload);
     }
 
-    protected function respond(ActionPayload $payload): Response
+    protected function respond(ActionPayload $actionPayload): Response
     {
-        $json = json_encode($payload, JSON_PRETTY_PRINT);
+        $json = json_encode($actionPayload, JSON_PRETTY_PRINT);
         $this->response->getBody()->write($json);
 
         return $this->response
             ->withHeader("Content-Type", "application/json")
-            ->withStatus($payload->getStatusCode());
+            ->withStatus($actionPayload->getStatusCode());
     }
 }
