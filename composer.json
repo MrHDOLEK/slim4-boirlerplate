@@ -22,15 +22,17 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.2",
         "ext-json": "*",
-        "blumilksoftware/codestyle": "^2.2",
         "monolog/monolog": "^2.8",
         "php-di/php-di": "^6.4",
         "slim/psr7": "^1.5",
-        "slim/slim": "^4.10"
+        "slim/slim": "^4.10",
+        "slim/twig-view": "^3.3",
+        "zircote/swagger-php": "^4.7"
     },
     "require-dev": {
+        "blumilksoftware/codestyle": "*",
         "jangregor/phpstan-prophecy": "^1.0.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/extension-installer": "^1.2.0",
