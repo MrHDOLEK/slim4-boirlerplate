@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Specification - Swagger UI</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.26.1/swagger-ui.css">
+</head>
+<body>
+<div id="swagger-ui"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.26.1/swagger-ui-bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.26.1/swagger-ui-standalone-preset.js"></script>
+<link href="https://static1.smartbear.co/swagger/media/assets/swagger_fav.png" type="image/png" rel="shortcut icon">
+<link href="https://static1.smartbear.co/swagger/media/assets/swagger_fav.png" type="image/png" rel="icon">
+<script>
+    window.onload = function () {
+        const ui = SwaggerUIBundle({
+            spec: {{ spec|raw }},
+            dom_id: '#swagger-ui',
+            deepLinking: true,
+            supportedSubmitMethods: ["get", "put", "post"],
+            presets: [
+                SwaggerUIBundle.presets.apis,
+            ],
+            plugins: [
+                SwaggerUIBundle.plugins.DownloadUrl
+            ],
+        })
+        window.ui = ui
+    }
+</script>
+</body>
+</html>

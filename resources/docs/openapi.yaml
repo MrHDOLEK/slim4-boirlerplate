@@ -1,0 +1,53 @@
+openapi: 3.0.0
+info:
+  title: API
+  version: '0.1'
+servers:
+  -
+    url: /
+    description: 'Local server'
+paths:
+  /docs/v1/json:
+    get:
+      tags:
+        - documentation
+      summary: 'JSON docs'
+      operationId: 46f4d5f536c57c8003fbe3b231b638e9
+      responses:
+        '200':
+          description: success
+  /docs/v1:
+    get:
+      tags:
+        - documentation
+      summary: 'Swagger UI'
+      operationId: 2499ff88cc1cc439a83e3b68fe44805c
+      responses:
+        '200':
+          description: success
+  /health-check:
+    get:
+      tags:
+        - status
+      summary: 'Lists API status'
+      operationId: fdb0b167a05afbac00a01f102b8c8dce
+      responses:
+        '200':
+          description: success
+        '503':
+          description: 'some services are not responding'
+  '/api/v1/user/{id}':
+    get:
+      tags:
+        - user
+      summary: 'Get select user by id'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '404':
+          description: 'Not Found'
