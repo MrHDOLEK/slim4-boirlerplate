@@ -6,6 +6,19 @@ use DI\ContainerBuilder;
 
 require __DIR__ . "/../vendor/autoload.php";
 
+if (file_exists(__DIR__ . "/../.env")) {
+    $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . "/../");
+    $dotenv->safeLoad();
+    $dotenv->required([
+        "APP_ENV",
+        "APP_DEBUG",
+        "DB_HOST",
+        "DB_NAME",
+        "DB_USER",
+        "DB_PASSWORD",
+    ]);
+}
+
 $containerBuilder = new ContainerBuilder();
 
 if (getenv("APP_ENV") === "prod") {

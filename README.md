@@ -1,5 +1,6 @@
 ### Slim boilerplate
 
+
 ### Development
 If you have problems with permissions please add sudo before make example:
 - `sudo make install`
@@ -9,14 +10,12 @@ If you have problems with permissions please add sudo before make example:
 - `make install`
 - `make start`
 - `make db-create`
-- `make db-seed`
 
 ### Run env for Windows
 Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/packages/make.htm)
 - `make install`
 - `make start`
 - `make db-create`
-- `make db-seed`
 
 ### Address where the environment is available
 - `http://localhost`

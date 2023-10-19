@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
+use Doctrine\Common\Cache\Psr6\DoctrineProvider;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Setup;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 return function (ContainerBuilder $containerBuilder): void {
     $containerBuilder->addDefinitions([
@@ -35,6 +40,22 @@ return function (ContainerBuilder $containerBuilder): void {
             $options["cache"] = $options["cache_enabled"] ? $options["cache_path"] : false;
 
             return Twig::create($twigSettings["paths"], $options);
+        },
+        EntityManager::class => function (ContainerInterface $container) {
+            $doctrineSettings = $container->get(SettingsInterface::class)->get("doctrine");
+
+            $cache = $doctrineSettings["dev_mode"] ?
+                DoctrineProvider::wrap(new ArrayAdapter()) :
+                DoctrineProvider::wrap(new FilesystemAdapter(directory: $doctrineSettings["cache_dir"]));
+
+            $config = Setup::createXMLMetadataConfiguration(
+                [(string)$doctrineSettings["metadata_dirs"][0]],
+                (bool)$doctrineSettings["dev_mode"],
+                (string)$doctrineSettings["proxy_dir"],
+                $cache,
+            );
+
+            return EntityManager::create($doctrineSettings["connection"], $config);
         },
     ]);
 };

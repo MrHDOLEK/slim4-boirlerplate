@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Repository;
 
 use App\Domain\Entity\User\User;
-use App\Domain\User\UserNotFoundException;
-use App\Domain\User\UserRepositoryInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Domain\Entity\User\UserNotFoundException;
+use App\Domain\Entity\User\UserRepositoryInterface;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 
-final class UserRepository extends EntityRepository implements UserRepositoryInterface
+class UserRepository extends EntityRepository implements UserRepositoryInterface
 {
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManager $entityManager)
     {
         parent::__construct(
             $entityManager,
@@ -25,9 +25,11 @@ final class UserRepository extends EntityRepository implements UserRepositoryInt
     public function findUserOfId(int $id): User
     {
         $user = $this->findOneBy(["id" => $id]);
+
         if (!$user instanceof User) {
             throw new UserNotFoundException();
         }
+
         return $user;
     }
 

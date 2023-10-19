@@ -19,6 +19,7 @@ class ShutdownHandler
     public function __invoke(): void
     {
         $error = error_get_last();
+
         if ($error) {
             $errorFile = $error["file"];
             $errorLine = $error["line"];
@@ -31,16 +32,20 @@ class ShutdownHandler
                     case E_USER_ERROR:
                         $message = sprintf("FATAL ERROR: %s. ", $errorMessage);
                         $message .= sprintf(" on line %d in file %s.", $errorLine, $errorFile);
+
                         break;
                     case E_USER_WARNING:
                         $message = sprintf("WARNING: %s", $errorMessage);
+
                         break;
                     case E_USER_NOTICE:
                         $message = sprintf("NOTICE: %s", $errorMessage);
+
                         break;
                     default:
                         $message = sprintf("ERROR: %s", $errorMessage);
                         $message .= sprintf(" on line %d in file %s.", $errorLine, $errorFile);
+
                         break;
                 }
             }

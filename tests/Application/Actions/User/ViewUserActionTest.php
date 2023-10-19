@@ -8,15 +8,15 @@ use App\Application\Actions\ActionError;
 use App\Application\Actions\ActionPayload;
 use App\Application\Handlers\HttpErrorHandler;
 use App\Domain\Entity\User\User;
-use App\Domain\User\UserNotFoundException;
-use App\Domain\User\UserRepositoryInterface;
+use App\Domain\Entity\User\UserNotFoundException;
+use App\Domain\Entity\User\UserRepositoryInterface;
 use DI\Container;
 use Slim\Middleware\ErrorMiddleware;
 use Tests\TestCase;
 
 class ViewUserActionTest extends TestCase
 {
-    public function testAction(): void
+    public function testActionSuccess(): void
     {
         $app = $this->getAppInstance();
 
@@ -33,14 +33,12 @@ class ViewUserActionTest extends TestCase
 
         $container->set(UserRepositoryInterface::class, $userRepositoryProphecy->reveal());
 
-        $request = $this->createRequest("GET", "/users/1");
+        $request = $this->createRequest("GET", "/api/v1/user/1");
         $response = $app->handle($request);
 
         $payload = (string)$response->getBody();
-        $expectedPayload = new ActionPayload(200, $user);
-        $serializedPayload = json_encode($expectedPayload, JSON_PRETTY_PRINT);
 
-        $this->assertEquals($serializedPayload, $payload);
+        $this->assertEquals('{"username":"bill.gates","firstName":"Bill","lastName":"Gates"}', $payload);
     }
 
     public function testActionThrowsUserNotFoundException(): void
@@ -67,7 +65,7 @@ class ViewUserActionTest extends TestCase
 
         $container->set(UserRepositoryInterface::class, $userRepositoryProphecy->reveal());
 
-        $request = $this->createRequest("GET", "/users/1");
+        $request = $this->createRequest("GET", "/api/v1/user/1");
         $response = $app->handle($request);
 
         $payload = (string)$response->getBody();

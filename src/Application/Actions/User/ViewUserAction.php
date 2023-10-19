@@ -30,6 +30,7 @@ class ViewUserAction extends UserAction
     {
         $userId = (int)$this->resolveArg("id");
         $user = $this->userRepository->findUserOfId($userId);
+
         return $this->respondWithJson(new UserResponseDto($user));
     }
 }

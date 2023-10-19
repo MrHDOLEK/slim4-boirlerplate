@@ -19,6 +19,7 @@ return function (App $app): void {
 
     $app->get("/", function (Request $request, Response $response) {
         $response->getBody()->write("Hello world!");
+
         return $response;
     });
 
@@ -27,7 +28,9 @@ return function (App $app): void {
     $app->get("/docs/v1", SwaggerUiAction::class);
     $app->get("/docs/v1/json", OpenApiDocsAction::class);
 
-    $app->group("/users", function (Group $group): void {
-        $group->get("/{id}", ViewUserAction::class);
+    $app->group("/api/v1", function (Group $group): void {
+        $group->group("/user", function (Group $group): void {
+            $group->get("/{id}", ViewUserAction::class);
+        });
     });
 };

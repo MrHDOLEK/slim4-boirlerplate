@@ -5,29 +5,27 @@ declare(strict_types=1);
 use App\Application\Settings\Settings;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
+use Monolog\Logger;
 
 return function (ContainerBuilder $containerBuilder): void {
     // Global Settings Object
     $containerBuilder->addDefinitions([
         SettingsInterface::class => function () {
             return new Settings([
-                "slim" => [
-                    // Returns a detailed HTML page with error details and
-                    // a stack trace. Should be disabled in production.
-                    "displayErrorDetails" => (string)getenv("APP_ENV") === "production",
-
-                    // Whether to display errors on the internal PHP log or not.
-                    "logErrors" => (bool)getenv("APP_DEBUG") === true,
-
-                    // If true, display full errors with message and stack trace on the PHP log.
-                    // If false, display only "Slim Application Error" on the PHP log.
-                    // Doesn't do anything when 'logErrors' is false.
-                    "logErrorDetails" => (bool)getenv("APP_DEBUG") === true,
+                "environment" => getenv("APP_ENV"),
+                "displayErrorDetails" => true,
+                "logError" => true,
+                "logErrorDetails" => true,
+                "logger" => [
+                    "name" => (string)getenv("APP_NAME"),
+                    "path" => "php://stdout",
+                    "level" => ((bool)getenv("APP_DEBUG") === true ? Logger::DEBUG : Logger::ERROR),
                 ],
                 "doctrine" => [
-                    "dev_mode" => true,
-                    "cache_dir" => __DIR__ . "/../var/cache/doctrine",
-                    "metadata_dirs" => [__DIR__ . "/../src/Infrastructure/Persistence/Doctrine/Mapping/"],
+                    "dev_mode" => (bool)getenv("APP_DEBUG"),
+                    "cache_dir" => dirname(__DIR__) . "/var/cache/doctrine",
+                    "proxy_dir" => dirname(__DIR__) . "/var/doctrine_proxy",
+                    "metadata_dirs" => [dirname(__DIR__) . "/src/Infrastructure/Persistence/Doctrine/Mapping"],
                     "connection" => [
                         "driver" => "pdo_pgsql",
                         "host" => getenv("DB_HOST"),

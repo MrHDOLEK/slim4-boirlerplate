@@ -72,6 +72,7 @@ class TestCase extends PHPUnit_TestCase
         $stream = (new StreamFactory())->createStreamFromResource($handle);
 
         $h = new Headers();
+
         foreach ($headers as $name => $value) {
             $h->addHeader($name, $value);
         }

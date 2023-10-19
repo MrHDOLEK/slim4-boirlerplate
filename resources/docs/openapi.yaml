@@ -36,3 +36,18 @@ paths:
           description: success
         '503':
           description: 'some services are not responding'
+  '/api/v1/user/{id}':
+    get:
+      tags:
+        - user
+      summary: 'Get select user by id'
+      parameters:
+        -
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '404':
+          description: 'Not Found'

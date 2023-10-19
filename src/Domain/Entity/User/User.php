@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity\User;
 
-class User
+use JsonSerializable;
+
+class User implements JsonSerializable
 {
     /** @phpstan-ignore-next-line */
     private int $id;
@@ -41,5 +43,15 @@ class User
     public function lastName(): string
     {
         return $this->lastName;
+    }
+
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize(): array
+    {
+        return [
+            "username" => $this->username,
+            "firstName" => $this->firstName,
+            "lastName" => $this->lastName,
+        ];
     }
 }

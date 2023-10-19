@@ -31,8 +31,9 @@
         "slim/psr7": "^1.5",
         "slim/slim": "^4.10",
         "slim/twig-view": "^3.3",
-        "symfony/cache": "^6.2",
+        "symfony/cache": "^6.3",
         "symfony/yaml": "^6.2",
+        "vlucas/phpdotenv": "^5.5",
         "zircote/swagger-php": "^4.7"
     },
     "require-dev": {
