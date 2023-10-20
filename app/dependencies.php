@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use Doctrine\Common\Cache\Psr6\DoctrineProvider;
+use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
+use Doctrine\Migrations\Configuration\Migration\ConfigurationLoader;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Monolog\Handler\StreamHandler;
@@ -15,6 +17,7 @@ use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Console\Application;
 
 return function (ContainerBuilder $containerBuilder): void {
     $containerBuilder->addDefinitions([
@@ -31,6 +34,15 @@ return function (ContainerBuilder $containerBuilder): void {
             $logger->pushHandler($handler);
 
             return $logger;
+        },
+        Application::class => function (ContainerInterface $container): Application {
+            $application = new Application();
+
+            foreach ($container->get(SettingsInterface::class)->get("commands") as $class) {
+                $application->add($container->get($class));
+            }
+
+            return $application;
         },
         Twig::class => function (ContainerInterface $container) {
             $settings = $container->get(SettingsInterface::class);
@@ -56,6 +68,12 @@ return function (ContainerBuilder $containerBuilder): void {
             );
 
             return EntityManager::create($doctrineSettings["connection"], $config);
+        },
+
+        ConfigurationLoader::class => static function (ContainerInterface $container) {
+            $settings = $container->get(SettingsInterface::class)->get("doctrine")["migrations"];
+
+            return new ConfigurationArray($settings);
         },
     ]);
 };

@@ -25,6 +25,7 @@
         "php": "^8.2",
         "ext-json": "*",
         "doctrine/data-fixtures": "^1.6",
+        "doctrine/migrations": "^3.6",
         "doctrine/orm": "^2.15",
         "monolog/monolog": "^2.8",
         "php-di/php-di": "^6.4",
@@ -43,6 +44,7 @@
         "phpstan/extension-installer": "^1.2.0",
         "phpstan/phpstan": "^1.8",
         "phpunit/phpunit": "^9.5.26",
+        "qossmic/deptrac-shim": "^1.0",
         "squizlabs/php_codesniffer": "^3.7"
     },
     "config": {
@@ -72,6 +74,7 @@
         "phpstan": [
             "php -d memory_limit=600M vendor/bin/phpstan analyse -l 5 -c phpstan.neon"
         ],
-        "test": "phpunit"
+        "test": "phpunit",
+        "test:architecture": "./vendor/bin/deptrac"
     }
 }

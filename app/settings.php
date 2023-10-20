@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Console\DataFixturesCommand;
 use App\Application\Settings\Settings;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
@@ -51,6 +52,9 @@ return function (ContainerBuilder $containerBuilder): void {
                         "cache_enabled" => false,
                         "cache_path" => __DIR__ . "/../var/cache/twig",
                     ],
+                ],
+                "commands" => [
+                    DataFixturesCommand::class,
                 ],
             ]);
         },
