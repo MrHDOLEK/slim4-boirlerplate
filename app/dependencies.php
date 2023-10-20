@@ -17,6 +17,7 @@ use Psr\Log\LoggerInterface;
 use Slim\Views\Twig;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Console\Application;
 
 return function (ContainerBuilder $containerBuilder): void {
     $containerBuilder->addDefinitions([
@@ -33,6 +34,15 @@ return function (ContainerBuilder $containerBuilder): void {
             $logger->pushHandler($handler);
 
             return $logger;
+        },
+        Application::class => function (ContainerInterface $container): Application {
+            $application = new Application();
+
+            foreach ($container->get(SettingsInterface::class)->get("commands") as $class) {
+                $application->add($container->get($class));
+            }
+
+            return $application;
         },
         Twig::class => function (ContainerInterface $container) {
             $settings = $container->get(SettingsInterface::class);

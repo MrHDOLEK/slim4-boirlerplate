@@ -47,6 +47,9 @@ db-create: ## Create db from doctrine schema
 migrate: ## Run migrations
 	docker-compose exec php php vendor/bin/doctrine  migrations:migrate
 
+db-seed: ## Run Seeders to DB
+	docker-compose exec php php bin/console.php db:seed
+
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
