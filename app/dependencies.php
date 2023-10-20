@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use Doctrine\Common\Cache\Psr6\DoctrineProvider;
+use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
+use Doctrine\Migrations\Configuration\Migration\ConfigurationLoader;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Monolog\Handler\StreamHandler;
@@ -56,6 +58,12 @@ return function (ContainerBuilder $containerBuilder): void {
             );
 
             return EntityManager::create($doctrineSettings["connection"], $config);
+        },
+
+        ConfigurationLoader::class => static function (ContainerInterface $container) {
+            $settings = $container->get(SettingsInterface::class)->get("doctrine")["migrations"];
+
+            return new ConfigurationArray($settings);
         },
     ]);
 };

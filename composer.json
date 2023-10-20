@@ -25,6 +25,7 @@
         "php": "^8.2",
         "ext-json": "*",
         "doctrine/data-fixtures": "^1.6",
+        "doctrine/migrations": "^3.6",
         "doctrine/orm": "^2.15",
         "monolog/monolog": "^2.8",
         "php-di/php-di": "^6.4",
