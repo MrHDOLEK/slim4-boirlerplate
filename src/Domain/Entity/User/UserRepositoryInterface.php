@@ -7,9 +7,9 @@ namespace App\Domain\Entity\User;
 interface UserRepositoryInterface
 {
     /**
-     * @return array<User>
+     * @throws UserNotFoundException
      */
-    public function findAll(): array;
+    public function findAll(): UsersCollection;
 
     /**
      * @throws UserNotFoundException

@@ -27,6 +27,7 @@
         "doctrine/data-fixtures": "^1.6",
         "doctrine/migrations": "^3.6",
         "doctrine/orm": "^2.15",
+        "fakerphp/faker": "^1.23",
         "monolog/monolog": "^2.8",
         "php-di/php-di": "^7.0",
         "slim/psr7": "^1.5",

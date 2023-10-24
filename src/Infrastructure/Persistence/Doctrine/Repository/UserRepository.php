@@ -7,10 +7,9 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository;
 use App\Domain\Entity\User\User;
 use App\Domain\Entity\User\UserNotFoundException;
 use App\Domain\Entity\User\UserRepositoryInterface;
+use App\Domain\Entity\User\UsersCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 
 class UserRepository extends EntityRepository implements UserRepositoryInterface
 {
@@ -33,16 +32,24 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
         return $user;
     }
 
-    public function findAll(): array
+    /**
+     * @throws UserNotFoundException
+     * @phpstan-ignore-next-line
+     */
+    public function findAll(): UsersCollection
     {
-        // TODO: Implement findAll() method.
-        return [];
+        $users = $this->createQueryBuilder("o")
+            ->select("o")
+            ->getQuery()
+            ->getResult();
+
+        if ($users === null) {
+            throw new UserNotFoundException();
+        }
+
+        return new UsersCollection(...$users);
     }
 
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
     public function save(User $user): void
     {
         $this->_em->persist($user);

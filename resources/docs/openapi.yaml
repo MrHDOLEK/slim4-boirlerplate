@@ -36,6 +36,24 @@ paths:
           description: success
         '503':
           description: 'some services are not responding'
+  /api/v1/users:
+    get:
+      tags:
+        - user
+      summary: 'Get all users'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponseDto'
+        '404':
+          description: 'Not Found'
+        '500':
+          description: 'Internal servel error'
   '/api/v1/user/{id}':
     get:
       tags:
@@ -49,5 +67,28 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDto'
         '404':
           description: 'Not Found'
+        '500':
+          description: 'Internal servel error'
+components:
+  schemas:
+    UserResponseDto:
+      title: UserResponseDto
+      properties:
+        username:
+          type: string
+          example: username
+        firstName:
+          type: string
+          example: firstName
+        lastName:
+          type: string
+          example: lastName
+      type: object

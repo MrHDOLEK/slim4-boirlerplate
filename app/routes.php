@@ -5,7 +5,8 @@ declare(strict_types=1);
 use App\Application\Actions\Docs\OpenApiDocsAction;
 use App\Application\Actions\Docs\SwaggerUiAction;
 use App\Application\Actions\HealthCheck\HealthCheckAction;
-use App\Application\Actions\User\ViewUserAction;
+use App\Application\Actions\User\GetAllUsersAction;
+use App\Application\Actions\User\GetUserByIdAction;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -30,7 +31,8 @@ return function (App $app): void {
 
     $app->group("/api/v1", function (Group $group): void {
         $group->group("/user", function (Group $group): void {
-            $group->get("/{id}", ViewUserAction::class);
+            $group->get("/{id}", GetUserByIdAction::class);
         });
+        $group->get("/users", GetAllUsersAction::class);
     });
 };
