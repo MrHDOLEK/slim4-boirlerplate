@@ -1,5 +1,4 @@
 ### Slim boilerplate
-![Code Coverage Image](resources/code-coverage.png)
 
 ### Development
 If you have problems with permissions please add sudo before make example:
