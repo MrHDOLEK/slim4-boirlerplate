@@ -46,3 +46,13 @@ jobs:
       - name: Execute Architecture tests
         run: |
           composer test:architecture
+          
+      - name: Commit Code Coverage Image to Repo
+        uses: EndBug/add-and-commit@v5
+        with:
+          author_name: Aleksander Kowalski
+          author_email: mrhdolek14@gmail.com
+          message: "#3 - Add code coverage image"
+          add: "resources/code-coverage.png"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
