@@ -1,6 +1,5 @@
 ### Slim boilerplate
 
-
 ### Development
 If you have problems with permissions please add sudo before make example:
 - `sudo make install`

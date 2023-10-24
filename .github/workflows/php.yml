@@ -10,14 +10,24 @@ jobs:
   test-and-lint-php:
     name: Test&lint PHP codebase
     runs-on: ubuntu-20.04
+    services:
+      pgsql:
+        image: postgres:15
+        env:
+          POSTGRES_DB: slim
+          POSTGRES_USER: slim
+          POSTGRES_PASSWORD: password
+          PGPASSWORD: password
+        ports:
+          - 5432:5432
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Validate composer.json and composer.lock
         run: composer validate
 
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: vendor
           key: ${{ runner.os }}-composer-dependencies-${{ hashFiles('composer.lock') }}
@@ -41,7 +51,14 @@ jobs:
 
       - name: Execute tests
         run: |
+          php vendor/bin/doctrine  migrations:migrate
           composer test
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: slim
+          DB_USER: slim
+          DB_PASSWORD: password
 
       - name: Execute Architecture tests
         run: |
