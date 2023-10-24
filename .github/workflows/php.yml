@@ -64,12 +64,19 @@ jobs:
         run: |
           composer test:architecture
           
-      - name: Commit Code Coverage Image to Repo
-        uses: EndBug/add-and-commit@v5
+      - name: Make code coverage badge
+        if: ${{ github.event_name == 'push' && github.ref != 'refs/heads/main' }}
+        uses: timkrase/phpunit-coverage-badge@v1.2.1
         with:
-          author_name: Aleksander Kowalski
-          author_email: mrhdolek14@gmail.com
-          message: "#3 - Add code coverage image"
-          add: "resources/code-coverage.png"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          coverage_badge_path: resources/coverage.svg
+          push_badge: false
+
+      - name: Git push to image-data branch
+        if: ${{ github.event_name == 'push' && github.ref != 'refs/heads/main' }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./resources
+          publish_branch: ${GITHUB_REF##*/}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
