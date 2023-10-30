@@ -1,6 +1,7 @@
 <?php
 
-use App\Application\Settings\SettingsInterface;
+declare(strict_types=1);
+
 use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
 use App\Infrastructure\Console\ConsoleCommandContainer;
@@ -11,7 +12,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\Setup;
 use Dotenv\Dotenv;
 use Lcobucci\Clock\Clock;
@@ -25,7 +25,6 @@ use Psr\Log\LoggerInterface;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Views\Twig;
 use Symfony\Component\Console\Application;
-use Twig\Environment as TwigEnvironment;
 use Twig\Loader\FilesystemLoader;
 
 $appRoot = Settings::getAppRoot();
@@ -49,27 +48,26 @@ return [
         return $logger;
     },
     // Clock.
-    Clock::class => DI\factory([SystemClock::class, 'fromSystemTimezone']),
+    Clock::class => DI\factory([SystemClock::class, "fromSystemTimezone"]),
     // Twig Environment.
-    FilesystemLoader::class => DI\create(FilesystemLoader::class)->constructor($appRoot . '/templates'),
+    FilesystemLoader::class => DI\create(FilesystemLoader::class)->constructor($appRoot . "/templates"),
     Twig::class => DI\create(Twig::class)->constructor(DI\get(FilesystemLoader::class)),
     // Doctrine Dbal.
-    Connection::class => function (Settings $settings): Connection {
-        return DriverManager::getConnection($settings->get('doctrine.connection'));
-    },
+    Connection::class => fn(Settings $settings): Connection => DriverManager::getConnection($settings->get("doctrine.connection")),
     // Doctrine EntityManager.
     EntityManager::class => function (Settings $settings): EntityManager {
         $config = Setup::createXMLMetadataConfiguration(
-            $settings->get('doctrine.metadata_dirs'),
-            $settings->get('doctrine.dev_mode'),
+            $settings->get("doctrine.metadata_dirs"),
+            $settings->get("doctrine.dev_mode"),
         );
 
-        return EntityManager::create($settings->get('doctrine.connection'), $config);
+        return EntityManager::create($settings->get("doctrine.connection"), $config);
     },
     EntityManagerInterface::class => DI\get(EntityManager::class),
     // Console command application.
     Application::class => function (ConsoleCommandContainer $consoleCommandContainer) {
         $application = new Application();
+
         foreach ($consoleCommandContainer->getCommands() as $command) {
             $application->add($command);
         }
@@ -77,21 +75,19 @@ return [
         return $application;
     },
     // Environment.
-    Environment::class => function () {
-        return Environment::from($_ENV['ENVIRONMENT']);
-    },
+    Environment::class => fn() => Environment::from($_ENV["ENVIRONMENT"]),
     // Settings.
-    Settings::class => DI\factory([Settings::class, 'load']),
+    Settings::class => DI\factory([Settings::class, "load"]),
     // AMQP.
     AMQPStreamConnectionFactory::class => function (Settings $settings) {
-        $rabbitMqConfig = $settings->get('amqp.rabbitmq');
+        $rabbitMqConfig = $settings->get("amqp.rabbitmq");
 
         return new AMQPStreamConnectionFactory(
-            $rabbitMqConfig['host'],
-            $rabbitMqConfig['port'],
-            $rabbitMqConfig['username'],
-            $rabbitMqConfig['password'],
-            $rabbitMqConfig['vhost']
+            $rabbitMqConfig["host"],
+            $rabbitMqConfig["port"],
+            $rabbitMqConfig["username"],
+            $rabbitMqConfig["password"],
+            $rabbitMqConfig["vhost"],
         );
     },
     ServerRequestFactoryInterface::class => \DI\get(ServerRequestFactory::class),

@@ -36,18 +36,16 @@ class GetAllUsersAction
 {
     public function __construct(
         private readonly UserService $userService,
-        protected LoggerInterface    $logger,
-        private readonly JsonRenderer $renderer
-)
-    {
-    }
+        protected LoggerInterface $logger,
+        private readonly JsonRenderer $renderer,
+    ) {}
 
     public function __invoke(
         ServerRequestInterface $request,
-        ResponseInterface      $response
-    ): ResponseInterface
-    {
+        ResponseInterface $response,
+    ): ResponseInterface {
         $user = $this->userService->getAllUsers();
-        return $this->renderer->json($response,new UsersResponseDto($user));
+
+        return $this->renderer->json($response, new UsersResponseDto($user));
     }
 }

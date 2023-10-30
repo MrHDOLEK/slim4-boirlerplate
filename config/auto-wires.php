@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // PHP-DI will take all the definitions it can find and compile them.
 // That means that definitions like autowired classes that are not listed in the configuration
 // cannot be compiled since PHP-DI doesn't know about them.

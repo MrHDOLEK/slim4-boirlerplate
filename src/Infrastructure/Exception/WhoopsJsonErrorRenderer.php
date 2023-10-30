@@ -10,6 +10,8 @@ class WhoopsJsonErrorRenderer implements ErrorRendererInterface
 {
     public function __invoke(\Throwable $exception, bool $displayErrorDetails): string
     {
-        return WhoopsBuilder::fromJsonDefaults()->build()->handleException($exception);
+        return WhoopsBuilder::fromJsonDefaults()
+            ->build()
+            ->handleException($exception);
     }
 }

@@ -1,7 +1,7 @@
-<h1 align="center">Event-driven Slim 4 Framework skeleton</h1>
+<h1 align="center">Slim 4 Framework skeleton</h1>
 
 <p align="center">
-	<img src="https://github.com/robiningelbrecht/slim-skeleton-ddd-amqp/raw/master/readme/slim-new.webp" alt="Slim">
+	<img src="https://devopedia.org/images/article/430/9705.1664448578.png" alt="Slim">
 </p>
 
 <p align="center">

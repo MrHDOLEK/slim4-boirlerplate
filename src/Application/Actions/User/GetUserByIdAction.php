@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\User;
 
-use App\Application\Actions\HttpResources;
 use App\Application\Actions\JsonRenderer;
 use App\Application\DTO\Response\UserResponseDto;
 use App\Domain\Service\UserService;
@@ -40,19 +39,18 @@ class GetUserByIdAction
 {
     public function __construct(
         private readonly UserService $userService,
-        protected LoggerInterface    $logger,
-        private readonly JsonRenderer $renderer
-    )
-    {
-    }
+        protected LoggerInterface $logger,
+        private readonly JsonRenderer $renderer,
+    ) {}
+
     public function __invoke(
         ServerRequestInterface $request,
-        ResponseInterface      $response,
-        string $userId
-    ): ResponseInterface
-    {
+        ResponseInterface $response,
+        string $userId,
+    ): ResponseInterface {
         $userId = (int)$userId;
         $user = $this->userService->getUserById($userId);
-        return $this->renderer->json($response,new UserResponseDto($user));
+
+        return $this->renderer->json($response, new UserResponseDto($user));
     }
 }
