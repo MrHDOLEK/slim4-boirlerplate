@@ -18,6 +18,7 @@
     An event-driven Slim 4 Framework skeleton using AMQP and DDD
 </p>
 
+
 ### Development
 If you have problems with permissions please add sudo before make example:
 - `sudo make install`
@@ -41,3 +42,17 @@ Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/p
 ## All commands
 
 -  `make help`
+
+[Full documentation](https://php-slim-skeleton.robiningelbrecht.be/development-guide/templating)
+
+## Documentation
+
+Learn more at these links:
+
+- [Skeleton Documentation](https://php-slim-skeleton.robiningelbrecht.be/)
+- [Slim framework](https://www.slimframework.com)
+- [PHP-DI](https://php-di.org/)
+- [Symfony Console Commands](https://symfony.com/doc/current/console.html)
+- [Doctrine migrations](https://www.doctrine-project.org/projects/doctrine-migrations/en/3.6/)
+- [Twig](https://twig.symfony.com/)
+- [Original source](https://github.com/robiningelbrecht/php-slim-skeleton)
