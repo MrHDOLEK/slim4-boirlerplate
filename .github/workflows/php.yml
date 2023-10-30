@@ -52,7 +52,7 @@ jobs:
       - name: Execute tests
         run: |
           php vendor/bin/doctrine  migrations:migrate
-          composer test
+          vendor/bin/phpunit --no-output --testsuite unit --fail-on-incomplete  --log-junit junit.xml --coverage-clover clover.xml
         env:
           DB_HOST: localhost
           DB_PORT: 5432
@@ -63,3 +63,10 @@ jobs:
       - name: Execute Architecture tests
         run: |
           composer test:architecture
+
+      - name: Send test coverage to codecov.io
+        uses: codecov/codecov-action@v3
+        with:
+          files: clover.xml
+          fail_ci_if_error: true
+          verbose: true

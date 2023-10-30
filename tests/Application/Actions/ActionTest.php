@@ -26,7 +26,7 @@ class ActionTest extends TestCase
                 parent::__construct($loggerInterface);
             }
 
-            public function action(): Response
+            public function handle(): Response
             {
                 return $this->respond(
                     new ActionPayload(
@@ -59,7 +59,7 @@ class ActionTest extends TestCase
                 parent::__construct($loggerInterface);
             }
 
-            public function action(): Response
+            public function handle(): Response
             {
                 return $this->respondWithData(
                     [

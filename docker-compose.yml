@@ -23,7 +23,7 @@ services:
             - PHP_IDE_CONFIG=serverName=slim.local
         volumes:
             - .docker/php/conf/php.ini:/usr/local/etc/php/conf.d/php.ini
- #           - .docker/php/conf/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+            - .docker/php/conf/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
             - .:/var/www:delegated
         ports:
             - ${EXTERNAL_PHP_PORT:-9000}:9000
@@ -42,6 +42,18 @@ services:
             POSTGRES_PASSWORD: ${DB_PASSWORD}
         volumes:
             - /var/lib/postgresql/data
+        networks:
+            - slim
+    rabbitmq:
+        container_name: rabbitmq
+        image: rabbitmq:3.8-management
+        ports:
+            - 5672:5672
+            - 15672:15672
+        environment:
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+            RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
         networks:
             - slim
 # Networks

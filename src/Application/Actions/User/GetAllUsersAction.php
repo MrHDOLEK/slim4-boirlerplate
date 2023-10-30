@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\User;
 
+use App\Application\Actions\JsonRenderer;
 use App\Application\DTO\Response\UsersResponseDto;
 use App\Domain\Service\UserService;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpBadRequestException;
 
@@ -29,19 +32,22 @@ use Slim\Exception\HttpBadRequestException;
  *
  * @throws HttpBadRequestException
  */
-class GetAllUsersAction extends UserAction
+class GetAllUsersAction
 {
     public function __construct(
         private readonly UserService $userService,
-        protected LoggerInterface $logger,
-    ) {
-        parent::__construct($logger);
+        protected LoggerInterface    $logger,
+        private readonly JsonRenderer $renderer
+)
+    {
     }
 
-    protected function action(): Response
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface      $response
+    ): ResponseInterface
     {
         $user = $this->userService->getAllUsers();
-
-        return $this->respondWithJson(new UsersResponseDto($user));
+        return $this->renderer->json($response,new UsersResponseDto($user));
     }
 }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity\User;
 
+use Doctrine\ORM\Mapping\Entity;
 use JsonSerializable;
 
+#[Entity]
 class User implements JsonSerializable
 {
     /** @phpstan-ignore-next-line */
