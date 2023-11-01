@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\AMQP\Queue\FailedQueue;
+
+use App\Infrastructure\AMQP\AMQPChannelFactory;
+use App\Infrastructure\AMQP\Queue\Queue;
+
+class FailedQueueFactory
+{
+    public function __construct(
+        private readonly AMQPChannelFactory $AMQPChannelFactory,
+    ) {}
+
+    public function buildFor(Queue $queue): Queue
+    {
+        return new FailedQueue(
+            $queue,
+            $this->AMQPChannelFactory,
+        );
+    }
+}

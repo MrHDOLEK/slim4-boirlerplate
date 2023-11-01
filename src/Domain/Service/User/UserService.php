@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Service;
+namespace App\Domain\Service\User;
 
 use App\Domain\Entity\User\Exception\UserNotFoundException;
 use App\Domain\Entity\User\User;
@@ -13,6 +13,7 @@ final readonly class UserService
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
+        private UserEventsService $userEventsService,
     ) {}
 
     /**
@@ -29,5 +30,11 @@ final readonly class UserService
     public function getAllUsers(): UsersCollection
     {
         return $this->userRepository->findAll();
+    }
+
+    public function createUser(User $user): void
+    {
+        $this->userRepository->save($user);
+        $this->userEventsService->userWasCreated($user);
     }
 }

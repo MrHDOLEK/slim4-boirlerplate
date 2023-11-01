@@ -8,7 +8,7 @@ use App\Domain\Entity\User\Exception\UserNotFoundException;
 use App\Domain\Entity\User\User;
 use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Domain\Entity\User\UsersCollection;
-use App\Domain\Service\UserService;
+use App\Domain\Service\User\UserService;
 use Tests\TestCase;
 
 class UserServiceTest extends TestCase

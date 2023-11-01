@@ -36,6 +36,31 @@ paths:
           description: success
         '503':
           description: 'some services are not responding'
+  /api/v1/user:
+    post:
+      tags:
+        - user
+      summary: 'Create a new user'
+      requestBody:
+        request: User
+        description: 'User data in JSON format'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: 'User created'
+          content:
+            application/json:
+              schema:
+                type: object
+              example: []
+        '400':
+          description: 'User data validation error'
+        '401':
+          description: Unauthorized
   /api/v1/users:
     get:
       tags:
@@ -91,4 +116,21 @@ components:
         lastName:
           type: string
           example: lastName
+      type: object
+    User:
+      title: User
+      required:
+        - username
+        - firstName
+        - lastName
+      properties:
+        username:
+          type: string
+          example: Janusz123
+        firstName:
+          type: string
+          example: Janusz
+        lastName:
+          type: string
+          example: Borowy
       type: object

@@ -7,14 +7,25 @@ namespace App\Domain\Entity\User;
 use Doctrine\ORM\Mapping\Entity;
 use JsonSerializable;
 
+/**
+ * @OA\Schema(
+ *   title="User",
+ *   required={"username","firstName","lastName"}
+ * )
+ */
 #[Entity]
 class User implements JsonSerializable
 {
     /** @phpstan-ignore-next-line */
     private int $id;
 
+    /** @OA\Property(type="string", example="Janusz123") */
     private string $username;
+
+    /** @OA\Property(type="string", example="Janusz") */
     private string $firstName;
+
+    /** @OA\Property(type="string", example="Borowy") */
     private string $lastName;
 
     public function __construct(
