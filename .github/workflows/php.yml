@@ -53,7 +53,7 @@ jobs:
         run: |
           cp .env.test .env
           composer migrate
-          vendor/bin/phpunit --no-output --testsuite unit --fail-on-incomplete  --log-junit junit.xml --coverage-clover clover.xml
+          vendor/bin/phpunit --testsuite unit --fail-on-incomplete --log-junit junit.xml --coverage-clover clover.xml
 
       - name: Execute Architecture tests
         run: |
