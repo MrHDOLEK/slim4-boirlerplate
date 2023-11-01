@@ -10,7 +10,7 @@ class SwaggerUiActionTest extends TestCase
 {
     public function testSwaggerUiAction(): void
     {
-        $app = $this->getAppInstance();
+        $app = $this->getApp();
 
         $request = $this->createRequest("GET", "/docs/v1");
         $response = $app->handle($request);

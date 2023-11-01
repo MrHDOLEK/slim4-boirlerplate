@@ -11,6 +11,7 @@ $config = new Config(
         "src",
         "tests",
         "codestyle.php",
+        "public",
     ),
 );
 

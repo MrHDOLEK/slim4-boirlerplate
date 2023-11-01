@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Domain\Entity\User\UserRepositoryInterface;
-use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
 use App\Infrastructure\Console\ConsoleCommandContainer;
 use App\Infrastructure\Environment\Environment;
 use App\Infrastructure\Environment\Settings;
@@ -20,9 +19,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Log\LoggerInterface;
-use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Views\Twig;
 use Symfony\Component\Console\Application;
 use Twig\Loader\FilesystemLoader;
@@ -78,18 +75,6 @@ return [
     Environment::class => fn() => Environment::from($_ENV["ENVIRONMENT"]),
     // Settings.
     Settings::class => DI\factory([Settings::class, "load"]),
-    // AMQP.
-    AMQPStreamConnectionFactory::class => function (Settings $settings) {
-        $rabbitMqConfig = $settings->get("amqp.rabbitmq");
-
-        return new AMQPStreamConnectionFactory(
-            $rabbitMqConfig["host"],
-            $rabbitMqConfig["port"],
-            $rabbitMqConfig["username"],
-            $rabbitMqConfig["password"],
-            $rabbitMqConfig["vhost"],
-        );
-    },
-    ServerRequestFactoryInterface::class => \DI\get(ServerRequestFactory::class),
+    // Repositories
     UserRepositoryInterface::class => DI\get(UserRepository::class),
 ];

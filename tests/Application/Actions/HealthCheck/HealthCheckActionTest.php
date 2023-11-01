@@ -12,7 +12,7 @@ class HealthCheckActionTest extends TestCase
 {
     public function testHealthCheckActionSuccess(): void
     {
-        $app = $this->getAppInstance();
+        $app = $this->getApp();
 
         /** @var Container $container */
         $container = $app->getContainer();
@@ -45,7 +45,7 @@ class HealthCheckActionTest extends TestCase
 
     public function testHealthCheckActionError(): void
     {
-        $app = $this->getAppInstance();
+        $app = $this->getApp();
 
         /** @var Container $container */
         $container = $app->getContainer();

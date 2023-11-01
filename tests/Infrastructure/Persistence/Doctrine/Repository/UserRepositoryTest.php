@@ -24,7 +24,7 @@ class UserRepositoryTest extends TestCase
         /**
          * @var UserRepositoryInterface $userRepository
          */
-        $userRepository = $this->container->get(UserRepositoryInterface::class);
+        $userRepository = $this->getContainer()->get(UserRepositoryInterface::class);
 
         $users = $userRepository->findAll();
 
@@ -37,7 +37,7 @@ class UserRepositoryTest extends TestCase
         /**
          * @var UserRepositoryInterface $userRepository
          */
-        $userRepository = $this->container->get(UserRepositoryInterface::class);
+        $userRepository = $this->getContainer()->get(UserRepositoryInterface::class);
 
         $this->expectException(UserNotFoundException::class);
         $userRepository->findUserOfId(0);

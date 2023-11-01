@@ -14,7 +14,7 @@ class GetAllUsersActionTest extends TestCase
 {
     public function testActionSuccess(): void
     {
-        $app = $this->getAppInstance();
+        $app = $this->getApp();
 
         /** @var Container $container */
         $container = $app->getContainer();

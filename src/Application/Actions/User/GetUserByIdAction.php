@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\User;
 
-use App\Application\Actions\JsonRenderer;
 use App\Application\DTO\Response\UserResponseDto;
 use App\Domain\Service\UserService;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpBadRequestException;
 
@@ -35,22 +32,20 @@ use Slim\Exception\HttpBadRequestException;
  *
  * @throws HttpBadRequestException
  */
-class GetUserByIdAction
+class GetUserByIdAction extends UserAction
 {
     public function __construct(
         private readonly UserService $userService,
         protected LoggerInterface $logger,
-        private readonly JsonRenderer $renderer,
-    ) {}
+    ) {
+        parent::__construct($logger);
+    }
 
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        string $userId,
-    ): ResponseInterface {
-        $userId = (int)$userId;
+    protected function action(): Response
+    {
+        $userId = (int)$this->resolveArg("id");
         $user = $this->userService->getUserById($userId);
 
-        return $this->renderer->json($response, new UserResponseDto($user));
+        return $this->respondWithJson(new UserResponseDto($user));
     }
 }
