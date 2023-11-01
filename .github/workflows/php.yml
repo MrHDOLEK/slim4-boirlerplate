@@ -54,6 +54,7 @@ jobs:
           composer migrate
           vendor/bin/phpunit --no-output --testsuite unit --fail-on-incomplete  --log-junit junit.xml --coverage-clover clover.xml
         env:
+          ENVIRONMENT: dev
           DB_HOST: localhost
           DB_PORT: 5432
           DB_NAME: slim

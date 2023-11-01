@@ -86,6 +86,7 @@
         "test:architecture": "./vendor/bin/deptrac",
         "snapshots:cleanup": "find . -name __snapshots__ -type d -prune -exec rm -rf {} \\; ",
         "migrate": "php vendor/bin/doctrine-migrations migrate",
-        "db:seed": "php bin/console.php db:seed"
+        "db:seed": "php bin/console.php db:seed",
+        "openapi": "php vendor/bin/openapi /var/www/src --output resources/docs/openapi.yaml"
     }
 }
