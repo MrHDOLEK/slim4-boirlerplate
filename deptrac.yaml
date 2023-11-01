@@ -25,5 +25,5 @@ deptrac:
       - Entity
       - Domain
   skip_violations:
-    - from: '.*'
-      to: 'App\Infrastructure\Environment\Setting'
+    App\Application\Console\CacheClearConsoleCommand:
+      - App\Infrastructure\Environment\Settings
