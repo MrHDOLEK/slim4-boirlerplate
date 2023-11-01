@@ -4,7 +4,7 @@
 ![Slim](slim.webp)
 
 [![CI](https://github.com/robiningelbrecht/slim-skeleton-ddd-amqp/actions/workflows/ci.yml/badge.svg)](https://github.com/MrHDOLEK/slim4-boirlerplate/actions/workflows/ci.yml)
-[![Codecov.io](https://codecov.io/gh/robiningelbrecht/php-slim-skeleton/branch/master/graph/badge.svg?token=hgnlFWvWvw)](https://codecov.io/gh/MrHDOLEK/slim4-boirlerplate)
+[![Codecov.io](https://codecov.io/gh/MrHDOLEK/slim4-boirlerplate/graph/badge.svg?token=KKBMW5HJVM)](https://codecov.io/gh/MrHDOLEK/slim4-boirlerplate)
 [![License](https://img.shields.io/github/license/robiningelbrecht/slim-skeleton-ddd-amqp?color=428f7e&logo=open%20source%20initiative&logoColor=white)](https://github.com/MrHDOLEK/slim4-boirlerplate/blob/master/LICENSE)
 [![PHPStan Enabled](https://img.shields.io/badge/PHPStan-level%205-succes.svg?logo=php&logoColor=white&color=31C652)](https://phpstan.org/)
 [![PHP](https://img.shields.io/packagist/php-v/robiningelbrecht/php-slim-skeleton/dev-master?color=%23777bb3&logo=php&logoColor=white)](https://php.net/)
