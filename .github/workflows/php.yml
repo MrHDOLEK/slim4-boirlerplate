@@ -51,7 +51,7 @@ jobs:
 
       - name: Execute tests
         run: |
-          php vendor/bin/doctrine  migrations:migrate
+          composer migrate
           vendor/bin/phpunit --no-output --testsuite unit --fail-on-incomplete  --log-junit junit.xml --coverage-clover clover.xml
         env:
           DB_HOST: localhost
