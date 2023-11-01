@@ -24,3 +24,6 @@ deptrac:
     Infrastructure:
       - Entity
       - Domain
+  skip_violations:
+    App\Application\Console\CacheClearConsoleCommand:
+      - App\Infrastructure\Environment\Settings

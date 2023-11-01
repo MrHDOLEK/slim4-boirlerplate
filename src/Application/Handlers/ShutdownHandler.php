@@ -30,34 +30,28 @@ class ShutdownHandler
             if ($this->displayErrorDetails) {
                 switch ($errorType) {
                     case E_USER_ERROR:
-                        $message = sprintf("FATAL ERROR: %s. ", $errorMessage);
-                        $message .= sprintf(" on line %d in file %s.", $errorLine, $errorFile);
+                        $message = "FATAL ERROR: {$errorMessage}. ";
+                        $message .= " on line {$errorLine} in file {$errorFile}.";
 
                         break;
                     case E_USER_WARNING:
-                        $message = sprintf("WARNING: %s", $errorMessage);
+                        $message = "WARNING: {$errorMessage}";
 
                         break;
                     case E_USER_NOTICE:
-                        $message = sprintf("NOTICE: %s", $errorMessage);
+                        $message = "NOTICE: {$errorMessage}";
 
                         break;
                     default:
-                        $message = sprintf("ERROR: %s", $errorMessage);
-                        $message .= sprintf(" on line %d in file %s.", $errorLine, $errorFile);
+                        $message = "ERROR: {$errorMessage}";
+                        $message .= " on line {$errorLine} in file {$errorFile}.";
 
                         break;
                 }
             }
 
-            $httpInternalServerErrorException = new HttpInternalServerErrorException($this->request, $message);
-            $response = $this->errorHandler->__invoke(
-                $this->request,
-                $httpInternalServerErrorException,
-                $this->displayErrorDetails,
-                false,
-                false,
-            );
+            $exception = new HttpInternalServerErrorException($this->request, $message);
+            $response = $this->errorHandler->__invoke($this->request, $exception, $this->displayErrorDetails, false, false);
 
             $responseEmitter = new ResponseEmitter();
             $responseEmitter->emit($response);

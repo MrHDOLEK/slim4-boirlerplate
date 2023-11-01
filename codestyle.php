@@ -7,10 +7,11 @@ use Blumilk\Codestyle\Configuration\Defaults\Paths;
 
 $config = new Config(
     paths: new Paths(
-        "app",
+        "config",
         "src",
         "tests",
         "codestyle.php",
+        "public",
     ),
 );
 

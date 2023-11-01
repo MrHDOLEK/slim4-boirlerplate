@@ -18,3 +18,5 @@
 /docker/postgresql-data
 /logs/
 .deptrac.cache
+junit.xml
+clover.xml

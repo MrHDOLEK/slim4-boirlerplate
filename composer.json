@@ -1,40 +1,48 @@
 {
-    "name": "slim/slim-skeleton",
-    "description": "A Slim Framework skeleton application for rapid development",
+    "name": "mrhdolek/slim4-boirlerplate",
+    "description": "An Slim 4 Framework skeleton using AMQP,DDD,Doctrine",
     "keywords": [
         "microframework",
         "rest",
         "router",
-        "psr7"
+        "psr7",
+        "ddd",
+        "amqp",
+        "doctrine"
     ],
-    "homepage": "http://github.com/slimphp/Slim-Skeleton",
+    "homepage": "https://github.com/MrHDOLEK/slim4-boirlerplat",
     "license": "MIT",
     "authors": [
         {
-            "name": "Josh Lockhart",
-            "email": "info@joshlockhart.com",
-            "homepage": "http://www.joshlockhart.com/"
-        },
-        {
-            "name": "Pierre Berube",
-            "email": "pierre@lgse.com",
-            "homepage": "http://www.lgse.com/"
+            "name": "Aleksander Kowalski",
+            "email": "mrhdolek14@gmail.com",
+            "homepage": "https://github.com/MrHDOLEK"
         }
     ],
     "require": {
         "php": "^8.2",
         "ext-json": "*",
+        "ext-pcntl": "*",
+        "ext-sockets": "*",
+        "awurth/slim-validation": "^5.0",
         "doctrine/data-fixtures": "^1.6",
         "doctrine/migrations": "^3.6",
         "doctrine/orm": "^2.15",
         "fakerphp/faker": "^1.23",
+        "lcobucci/clock": "^3.1",
         "monolog/monolog": "^2.8",
+        "php-amqplib/php-amqplib": "^2.8",
         "php-di/php-di": "^7.0",
+        "php-di/slim-bridge": "^3.4",
+        "ramsey/uuid": "^4.7",
         "slim/psr7": "^1.5",
         "slim/slim": "^4.10",
         "slim/twig-view": "^3.3",
         "symfony/cache": "^6.3",
+        "symfony/console": "^6.3",
+        "symfony/finder": "^6.3",
         "symfony/yaml": "^6.2",
+        "thecodingmachine/safe": "^2.5",
         "vlucas/phpdotenv": "^5.5",
         "zircote/swagger-php": "^4.7"
     },
@@ -45,8 +53,7 @@
         "phpstan/extension-installer": "^1.2.0",
         "phpstan/phpstan": "^1.8",
         "phpunit/phpunit": "^9.5.26",
-        "qossmic/deptrac-shim": "^1.0",
-        "squizlabs/php_codesniffer": "^3.7"
+        "qossmic/deptrac-shim": "^1.0"
     },
     "config": {
         "allow-plugins": {
@@ -76,6 +83,13 @@
             "php -d memory_limit=600M vendor/bin/phpstan analyse -l 5 -c phpstan.neon"
         ],
         "test": "phpunit",
-        "test:architecture": "./vendor/bin/deptrac"
+        "test:architecture": "./vendor/bin/deptrac",
+        "snapshots:cleanup": "find . -name __snapshots__ -type d -prune -exec rm -rf {} \\; ",
+        "migrate": "php vendor/bin/doctrine-migrations migrate",
+        "db:seed": "php bin/console.php db:seed",
+        "openapi": "php vendor/bin/openapi /var/www/src --output resources/docs/openapi.yaml",
+        "post-create-project-cmd": [
+            "cp ./.env.dist ./.env"
+        ]
     }
 }

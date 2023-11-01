@@ -3,6 +3,8 @@ ARG PHP_VERSION=8.2
 FROM php:${PHP_VERSION}-fpm-buster
 
 ARG COMPOSER_VERSION=2.5.7
+ARG XDEBUG_VERSION=3.2.1
+ARG INSTALL_XDEBUG=false
 
 ENV COMPOSER_MEMORY_LIMIT=-1
 
@@ -12,7 +14,7 @@ RUN apt-get update && apt-get install -y \
      libpq-dev libxpm-dev libvpx-dev libbz2-dev zlib1g-dev libzip-dev gnumeric \
     && curl -sS https://getcomposer.org/installer | php -- --version="${COMPOSER_VERSION}" --install-dir=/usr/local/bin --filename=composer
 
-RUN docker-php-ext-install intl bcmath mbstring bz2 gd zip pgsql pdo_pgsql opcache pcntl
+RUN docker-php-ext-install intl bcmath mbstring bz2 gd zip pgsql pdo_pgsql opcache pcntl sockets
 
 RUN docker-php-ext-enable intl pcntl
 

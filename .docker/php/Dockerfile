@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y nginx \
      vim libjpeg62-turbo-dev libfreetype6-dev libonig-dev \
      libpq-dev libxpm-dev libvpx-dev libbz2-dev zlib1g-dev libzip-dev gnumeric \
     && curl -sS https://getcomposer.org/installer | php -- --version="${COMPOSER_VERSION}" --install-dir=/usr/local/bin --filename=composer \
-    && docker-php-ext-install intl bcmath mbstring bz2 gd zip opcache pcntl \
+    && docker-php-ext-install intl bcmath mbstring bz2 gd zip opcache pcntl sockets \
     && docker-php-ext-enable intl pcntl \
     && apt-get autoclean \
     && apt-get autoremove

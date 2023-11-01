@@ -7,27 +7,19 @@ namespace App\Application\Console;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: "db:seed", description: "Command to run seeds for a databases.")]
 class DataFixturesCommand extends Command
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+    ) {
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        parent::configure();
-        $this->setName("db:seed");
-        $this->setDescription("Command to run seeds for a databases.");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

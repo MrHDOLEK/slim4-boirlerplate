@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Service;
 
+use App\Domain\Entity\User\Exception\UserNotFoundException;
 use App\Domain\Entity\User\User;
-use App\Domain\Entity\User\UserNotFoundException;
 use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Domain\Entity\User\UsersCollection;
 

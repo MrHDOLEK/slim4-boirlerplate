@@ -23,9 +23,9 @@ class UsersFixtures implements FixtureInterface
     {
         for ($i = 0; $i < 10; $i++) {
             $user = new User(
-                $this->faker->userName,
-                $this->faker->firstName,
-                $this->faker->lastName,
+                $this->faker->userName(),
+                $this->faker->firstName(),
+                $this->faker->lastName(),
             );
             $manager->persist($user);
         }

@@ -45,7 +45,7 @@ db-create: ## Create db from doctrine schema
 	docker-compose exec php php vendor/bin/doctrine orm:schema-tool:create
 
 migrate: ## Run migrations
-	docker-compose exec php php vendor/bin/doctrine  migrations:migrate
+	docker-compose exec php php vendor/bin/doctrine-migrations migrate
 
 db-seed: ## Run Seeders to DB
 	docker-compose exec php php bin/console.php db:seed

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Infrastructure\Persistence\Doctrine\Repository;
 
+use App\Domain\Entity\User\Exception\UserNotFoundException;
 use App\Domain\Entity\User\User;
-use App\Domain\Entity\User\UserNotFoundException;
 use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Domain\Entity\User\UsersCollection;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UsersFixtures;
@@ -24,7 +24,7 @@ class UserRepositoryTest extends TestCase
         /**
          * @var UserRepositoryInterface $userRepository
          */
-        $userRepository = $this->container->get(UserRepositoryInterface::class);
+        $userRepository = $this->getContainer()->get(UserRepositoryInterface::class);
 
         $users = $userRepository->findAll();
 
@@ -37,7 +37,7 @@ class UserRepositoryTest extends TestCase
         /**
          * @var UserRepositoryInterface $userRepository
          */
-        $userRepository = $this->container->get(UserRepositoryInterface::class);
+        $userRepository = $this->getContainer()->get(UserRepositoryInterface::class);
 
         $this->expectException(UserNotFoundException::class);
         $userRepository->findUserOfId(0);

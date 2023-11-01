@@ -4,4 +4,4 @@ parameters:
 	paths:
 		- src
 		- tests
-		- app
+		- config

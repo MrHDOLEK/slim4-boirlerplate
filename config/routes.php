@@ -31,8 +31,11 @@ return function (App $app): void {
 
     $app->group("/api/v1", function (Group $group): void {
         $group->group("/user", function (Group $group): void {
-            $group->get("/{id}", GetUserByIdAction::class);
+            $group->get("/{id}", GetUserByIdAction::class)
+                ->setName("getUserById");
         });
-        $group->get("/users", GetAllUsersAction::class);
+
+        $group->get("/users", GetAllUsersAction::class)
+            ->setName("getAllUsers");
     });
 };
