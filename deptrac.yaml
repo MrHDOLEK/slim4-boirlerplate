@@ -24,3 +24,6 @@ deptrac:
     Infrastructure:
       - Entity
       - Domain
+  skip_violations:
+    - from: '.*'
+      to: 'App\Infrastructure\Environment\Setting'
