@@ -34,8 +34,8 @@ abstract class Action
 
         try {
             return $this->action();
-        } catch (DomainRecordNotFoundException $domainRecordNotFoundException) {
-            throw new HttpNotFoundException($this->request, $domainRecordNotFoundException->getMessage());
+        } catch (DomainRecordNotFoundException $e) {
+            throw new HttpNotFoundException($this->request, $e->getMessage(), $e->getPrevious());
         }
     }
 
@@ -46,44 +46,34 @@ abstract class Action
     abstract protected function action(): Response;
 
     /**
-     * @return array|object
+     * @throws HttpBadRequestException
      */
-    protected function getFormData()
+    protected function getFormData(bool $associativeArray = true): object|array
     {
-        return $this->request->getParsedBody();
+        $input = json_decode((string)$this->request->getBody(), $associativeArray);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new HttpBadRequestException($this->request, "Malformed JSON input.");
+        }
+
+        return $input;
     }
 
     /**
-     * @return mixed
      * @throws HttpBadRequestException
      */
     protected function resolveArg(string $name)
     {
         if (!isset($this->args[$name])) {
-            throw new HttpBadRequestException($this->request, sprintf("Could not resolve argument `%s`.", $name));
+            throw new HttpBadRequestException($this->request, "Could not resolve argument `{$name}`.");
         }
 
         return $this->args[$name];
     }
 
-    /**
-     * @param array|object|null $data
-     */
-    protected function respondWithData($data = null, int $statusCode = 200): Response
+    protected function getQueryParams(): array
     {
-        $actionPayload = new ActionPayload($statusCode, $data);
-
-        return $this->respond($actionPayload);
-    }
-
-    protected function respond(ActionPayload $actionPayload): Response
-    {
-        $json = json_encode($actionPayload, JSON_PRETTY_PRINT);
-        $this->response->getBody()->write($json);
-
-        return $this->response
-            ->withHeader("Content-Type", "application/json")
-            ->withStatus($actionPayload->getStatusCode());
+        return $this->request->getQueryParams();
     }
 
     /**
@@ -98,5 +88,10 @@ abstract class Action
         return $this->response
             ->withHeader("Content-Type", "application/json")
             ->withStatus($statusCode);
+    }
+
+    protected function getHeaderByKey(string $headerKey): ?string
+    {
+        return isset($this->request->getHeader($headerKey)[0]) ? $this->request->getHeader($headerKey)[0] : null;
     }
 }
