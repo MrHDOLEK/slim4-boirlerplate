@@ -8,6 +8,7 @@ use App\Infrastructure\AMQP\AMQPChannelFactory;
 use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\AMQP\Queue\AmqpQueue;
 use App\Infrastructure\AMQP\Worker\Worker;
+use RuntimeException;
 
 abstract class EventQueue extends AmqpQueue
 {
@@ -39,7 +40,7 @@ abstract class EventQueue extends AmqpQueue
                 continue;
             }
 
-            throw new \RuntimeException(sprintf('Queue "%s" requires a event to be queued, %s given', $this->getName(), $envelope::class));
+            throw new RuntimeException(sprintf('Queue "%s" requires a event to be queued, %s given', $this->getName(), $envelope::class));
         }
 
         parent::queueBatch($envelopes);

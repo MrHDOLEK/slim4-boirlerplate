@@ -31,6 +31,9 @@ class AmqpConsumeConsoleCommand extends Command implements SignalableCommandInte
         return [SIGTERM, SIGINT];
     }
 
+    /**
+     * @phpstan-ignore-next-line
+     */
     public function handleSignal(int $signal): void
     {
         $this->consumer->shutdown();

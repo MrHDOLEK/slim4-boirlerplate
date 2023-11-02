@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\AMQP;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use RuntimeException;
 
 class AMQPStreamConnectionFactory
 {
@@ -18,7 +19,7 @@ class AMQPStreamConnectionFactory
         private readonly string $vhost,
     ) {
         if (!class_exists('\PhpAmqpLib\Connection\AMQPStreamConnection')) {
-            throw new \RuntimeException("Could not find php-amqplib. Install it with composer.");
+            throw new RuntimeException("Could not find php-amqplib. Install it with composer.");
         }
     }
 

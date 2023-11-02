@@ -9,6 +9,7 @@ use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\Attribute\AsAmqpQueue;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use RuntimeException;
 
 abstract class AmqpQueue implements Queue
 {
@@ -53,8 +54,9 @@ abstract class AmqpQueue implements Queue
             return;
         }
 
+        /** @phpstan-ignore-next-line  */
         if (!empty(array_filter($envelopes, fn($envelope) => !$envelope instanceof Envelope))) {
-            throw new \RuntimeException(sprintf("All envelopes need to implement %s", Envelope::class));
+            throw new RuntimeException(sprintf("All envelopes need to implement %s", Envelope::class));
         }
 
         $channel = $this->getChannel();

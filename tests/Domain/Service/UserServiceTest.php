@@ -8,6 +8,7 @@ use App\Domain\Entity\User\Exception\UserNotFoundException;
 use App\Domain\Entity\User\User;
 use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Domain\Entity\User\UsersCollection;
+use App\Domain\Service\User\UserEventsService;
 use App\Domain\Service\User\UserService;
 use Tests\TestCase;
 
@@ -39,12 +40,18 @@ class UserServiceTest extends TestCase
             UserRepositoryInterface::class,
         );
 
+        $userEventServiceMock = $this->createMock(UserEventsService::class);
+        $userEventServiceMock
+            ->expects($this->never())
+            ->method("userWasCreated");
+
         $userRepositoryProphecy->findAll()
             ->willReturn($usersCollection)
             ->shouldBeCalledOnce();
 
         $userService = new UserService(
             $userRepositoryProphecy->reveal(),
+            $userEventServiceMock,
         );
 
         $users = $userService->getAllUsers();
@@ -61,12 +68,18 @@ class UserServiceTest extends TestCase
             UserRepositoryInterface::class,
         );
 
+        $userEventServiceMock = $this->createMock(UserEventsService::class);
+        $userEventServiceMock
+            ->expects($this->never())
+            ->method("userWasCreated");
+
         $userRepositoryProphecy->findUserOfId(1)
             ->willReturn($user)
             ->shouldBeCalledOnce();
 
         $userService = new UserService(
             $userRepositoryProphecy->reveal(),
+            $userEventServiceMock,
         );
 
         $user = $userService->getUserById(1);
@@ -82,12 +95,18 @@ class UserServiceTest extends TestCase
             UserRepositoryInterface::class,
         );
 
+        $userEventServiceMock = $this->createMock(UserEventsService::class);
+        $userEventServiceMock
+            ->expects($this->never())
+            ->method("userWasCreated");
+
         $userRepositoryProphecy->findAll()
             ->willThrow(UserNotFoundException::class)
             ->shouldBeCalledOnce();
 
         $userService = new UserService(
             $userRepositoryProphecy->reveal(),
+            $userEventServiceMock,
         );
 
         $this->expectException(UserNotFoundException::class);
@@ -100,12 +119,18 @@ class UserServiceTest extends TestCase
             UserRepositoryInterface::class,
         );
 
+        $userEventServiceMock = $this->createMock(UserEventsService::class);
+        $userEventServiceMock
+            ->expects($this->never())
+            ->method("userWasCreated");
+
         $userRepositoryProphecy->findUserOfId(1)
             ->willThrow(UserNotFoundException::class)
             ->shouldBeCalledOnce();
 
         $userService = new UserService(
             $userRepositoryProphecy->reveal(),
+            $userEventServiceMock,
         );
 
         $this->expectException(UserNotFoundException::class);

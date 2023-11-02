@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Attribute;
 
+use InvalidArgumentException;
+use ReflectionClass;
+use RuntimeException;
+
 class ClassAttributeCache
 {
     private string $cacheFileName;
@@ -12,13 +16,13 @@ class ClassAttributeCache
         private readonly string $attributeClassName,
         private readonly string $cacheDir,
     ) {
-        $this->cacheFileName = rtrim($this->cacheDir, "/") . "/" . (new \ReflectionClass($attributeClassName))->getShortName() . ".php";
+        $this->cacheFileName = rtrim($this->cacheDir, "/") . "/" . (new ReflectionClass($attributeClassName))->getShortName() . ".php";
     }
 
     public function get(): string
     {
         if (!$this->exists()) {
-            throw new \RuntimeException(sprintf("Cache not set for %s", (new \ReflectionClass($this->attributeClassName))->getShortName()));
+            throw new RuntimeException(sprintf("Cache not set for %s", (new ReflectionClass($this->attributeClassName))->getShortName()));
         }
 
         return $this->cacheFileName;
@@ -62,11 +66,11 @@ class ClassAttributeCache
     private function createCacheDirectory(string $directory): void
     {
         if (!is_dir($directory) && !@mkdir($directory, 0777, true) && !is_dir($directory)) {
-            throw new \InvalidArgumentException(sprintf("Cache directory does not exist and cannot be created: %s.", $directory));
+            throw new InvalidArgumentException(sprintf("Cache directory does not exist and cannot be created: %s.", $directory));
         }
 
         if (!is_writable($directory)) {
-            throw new \InvalidArgumentException(sprintf("Cache directory is not writable: %s.", $directory));
+            throw new InvalidArgumentException(sprintf("Cache directory is not writable: %s.", $directory));
         }
     }
 }

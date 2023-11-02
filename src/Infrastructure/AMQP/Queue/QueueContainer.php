@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\AMQP\Queue;
 
+use RuntimeException;
+
 class QueueContainer
 {
     /** @var array<Queue> */
@@ -17,14 +19,14 @@ class QueueContainer
     public function getQueue(string $name): Queue
     {
         if (!array_key_exists($name, $this->queues)) {
-            throw new \RuntimeException(sprintf('Queue "%s" not registered in container', $name));
+            throw new RuntimeException(sprintf('Queue "%s" not registered in container', $name));
         }
 
         return $this->queues[$name];
     }
 
     /**
-     * @return array<\App\Infrastructure\AMQP\Queue\Queue>
+     * @return array<Queue>
      */
     public function getQueues(): array
     {

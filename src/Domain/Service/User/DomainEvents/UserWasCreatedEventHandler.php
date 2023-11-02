@@ -20,6 +20,6 @@ readonly class UserWasCreatedEventHandler implements EventHandler
     {
         assert($event instanceof UserWasCreated);
 
-        $this->logger->info(sprintf("User named %s has been created", $event->getUser()->firstName()));
+        $this->logger->info(sprintf("User named %s has been created", $event->user()->firstName()));
     }
 }

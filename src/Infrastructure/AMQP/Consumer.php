@@ -9,6 +9,7 @@ use App\Infrastructure\AMQP\Worker\WorkerMaxLifeTimeOrIterationsExceeded;
 use Doctrine\DBAL\Exception\ConnectionLost;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
 
 class Consumer
 {
@@ -77,7 +78,7 @@ class Consumer
             $message->getChannel()?->basic_nack($message->getDeliveryTag(), false, true);
 
             throw $exception;
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $worker->processFailure($envelope, $message, $exception, $queue);
             // Ack the message to unblock queue. Worker should handle failed messages.
             $message->getChannel()?->basic_ack($message->getDeliveryTag());

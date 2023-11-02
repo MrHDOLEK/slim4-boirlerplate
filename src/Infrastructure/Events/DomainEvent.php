@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Events;
 
 use App\Infrastructure\AMQP\Envelope;
+use ReflectionClass;
 
 abstract class DomainEvent implements Envelope, \JsonSerializable
 {
@@ -37,7 +38,7 @@ abstract class DomainEvent implements Envelope, \JsonSerializable
     {
         $serializedPayload = [];
 
-        foreach ((new \ReflectionClass($this))->getProperties() as $property) {
+        foreach ((new ReflectionClass($this))->getProperties() as $property) {
             $serializedPayload[$property->getName()] = $property->getValue($this);
         }
 

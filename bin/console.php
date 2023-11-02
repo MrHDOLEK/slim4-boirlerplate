@@ -14,7 +14,6 @@ if ($env) {
     $_ENV['APP_ENV'] = $env;
 }
 
-/** @var ContainerInterface $container */
 $container = ContainerFactory::create();
 
 try {

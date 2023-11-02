@@ -8,6 +8,7 @@ use App\Application\Actions\ActionError;
 use App\Application\Exception\HttpUnprocessableEntityException;
 use App\Domain\DomainException\DomainException;
 use App\Domain\DomainException\DomainRecordNotFoundException;
+use App\Domain\DomainException\ValidationException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpException;
@@ -45,6 +46,9 @@ class HttpErrorHandler extends SlimErrorHandler
                 $error->setDescription(ActionError::NOT_IMPLEMENTED);
             } elseif ($exception instanceof HttpUnprocessableEntityException) {
                 $error->setDescription($exception->getMessage());
+            } elseif ($exception instanceof ValidationException) {
+                $error->setDescription($exception->getMessage());
+                $error->setErrors($exception->errors());
             }
         }
 

@@ -6,6 +6,8 @@ namespace App\Infrastructure\AMQP\Worker;
 
 use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\AMQP\Queue\Queue;
+use DateInterval;
+use DateTimeImmutable;
 use PhpAmqpLib\Message\AMQPMessage;
 
 interface Worker
@@ -22,7 +24,7 @@ interface Worker
 
     public function getMaxIterations(): int;
 
-    public function getMaxLifeTime(): \DateTimeImmutable;
+    public function getMaxLifeTime(): DateTimeImmutable;
 
-    public function getMaxLifeTimeInterval(): \DateInterval;
+    public function getMaxLifeTimeInterval(): DateInterval;
 }

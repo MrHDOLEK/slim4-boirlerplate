@@ -13,7 +13,7 @@ class UserWasCreated extends DomainEvent
         private readonly User $user,
     ) {}
 
-    public function getUser(): User
+    public function user(): User
     {
         return $this->user;
     }

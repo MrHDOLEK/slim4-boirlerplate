@@ -10,6 +10,7 @@ use App\Infrastructure\AMQP\Queue\Queue;
 use App\Infrastructure\AMQP\Worker\BaseWorker;
 use Lcobucci\Clock\Clock;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
 
 class EventQueueWorker extends BaseWorker
 {
@@ -33,7 +34,7 @@ class EventQueueWorker extends BaseWorker
         $this->eventBus->dispatch($event);
     }
 
-    public function processFailure(Envelope $envelope, AMQPMessage $message, \Throwable $exception, Queue $queue): void
+    public function processFailure(Envelope $envelope, AMQPMessage $message, Throwable $exception, Queue $queue): void
     {
         /** @var DomainEvent $event */
         $event = $envelope;

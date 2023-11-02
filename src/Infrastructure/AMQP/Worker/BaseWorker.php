@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\AMQP\Worker;
 
+use DateInterval;
+use DateTimeImmutable;
 use Lcobucci\Clock\Clock;
 
 abstract class BaseWorker implements Worker
@@ -11,7 +13,7 @@ abstract class BaseWorker implements Worker
     private const MAX_LIFE_TIME_INTERVAL = "PT1H";
 
     private int $counter = 0;
-    private \DateTimeImmutable $maxLifeTimeDateTime;
+    private DateTimeImmutable $maxLifeTimeDateTime;
 
     public function __construct(
         private readonly Clock $clock,
@@ -29,14 +31,14 @@ abstract class BaseWorker implements Worker
         return $this->counter++ >= $this->getMaxIterations();
     }
 
-    public function getMaxLifeTime(): \DateTimeImmutable
+    public function getMaxLifeTime(): DateTimeImmutable
     {
         return $this->maxLifeTimeDateTime;
     }
 
-    public function getMaxLifeTimeInterval(): \DateInterval
+    public function getMaxLifeTimeInterval(): DateInterval
     {
-        return new \DateInterval(self::MAX_LIFE_TIME_INTERVAL);
+        return new DateInterval(self::MAX_LIFE_TIME_INTERVAL);
     }
 
     public function maxLifeTimeReached(): bool

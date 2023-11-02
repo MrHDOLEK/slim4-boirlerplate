@@ -8,14 +8,14 @@ use App\Domain\Entity\User\User;
 use App\Domain\Service\User\DomainEvents\UserWasCreated;
 use App\Infrastructure\Persistence\Queues\UserEventQueue;
 
-final readonly class UserEventsService
+class UserEventsService
 {
     public function __construct(
-        private UserEventQueue $userCommandQueue,
+        private UserEventQueue $userEventQueue,
     ) {}
 
     public function userWasCreated(User $user): void
     {
-        $this->userCommandQueue->queue(new UserWasCreated($user));
+        $this->userEventQueue->queue(new UserWasCreated($user));
     }
 }
