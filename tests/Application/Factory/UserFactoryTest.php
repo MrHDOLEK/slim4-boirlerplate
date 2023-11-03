@@ -11,11 +11,11 @@ class UserFactoryTest extends TestCase
 {
     public function userData(): array
     {
-        return [
+        return [[[
             "username" => "Janusz123",
             "firstName" => "Janusz",
             "lastName" => "Borowy",
-        ];
+        ]]];
     }
 
     /**
@@ -27,6 +27,6 @@ class UserFactoryTest extends TestCase
 
         $this->assertEquals("Janusz", $user->firstName());
         $this->assertEquals("Borowy", $user->lastName());
-        $this->assertEquals("Janusz123", $user->username());
+        $this->assertEquals("janusz123", $user->username());
     }
 }
