@@ -1,0 +1,9 @@
+{
+    "eventName": "Tests.Infrastructure.Events.TestEvent",
+    "payload": {
+        "metadata": {
+            "key": "value override",
+            "key2": "value"
+        }
+    }
+}

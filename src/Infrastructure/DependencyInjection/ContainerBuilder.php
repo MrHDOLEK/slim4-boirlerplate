@@ -10,6 +10,7 @@ use DI\CompiledContainer;
 use DI\Container;
 use DI\Definition\Helper\AutowireDefinitionHelper;
 use DI\Definition\Source\DefinitionSource;
+use RuntimeException;
 
 class ContainerBuilder
 {
@@ -66,7 +67,7 @@ class ContainerBuilder
     public function addCompilerPass(CompilerPass $pass): self
     {
         if (array_key_exists($pass::class, $this->passes)) {
-            throw new \RuntimeException(sprintf("CompilerPass %s already added. Cannot add the same pass twice", $pass::class));
+            throw new RuntimeException(sprintf("CompilerPass %s already added. Cannot add the same pass twice", $pass::class));
         }
         $this->passes[$pass::class] = $pass;
 

@@ -1,0 +1,5 @@
+[
+    "app:amqp:consume",
+    "app:cache:clear",
+    "db:seed"
+]

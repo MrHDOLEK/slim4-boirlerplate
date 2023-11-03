@@ -1,0 +1,5 @@
+[
+  "App\\Application\\Console\\AmqpConsumeConsoleCommand",
+  "App\\Application\\Console\\CacheClearConsoleCommand",
+  "App\\Application\\Console\\DataFixturesCommand"
+]

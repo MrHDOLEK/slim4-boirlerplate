@@ -27,3 +27,7 @@ deptrac:
   skip_violations:
     App\Application\Console\CacheClearConsoleCommand:
       - App\Infrastructure\Environment\Settings
+    App\Application\Console\AmqpConsumeConsoleCommand:
+      - App\Infrastructure\AMQP\Queue\QueueContainer
+      - App\Infrastructure\AMQP\Consumer
+      - App\Infrastructure\AMQP\Queue\QueueContainer

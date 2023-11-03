@@ -7,7 +7,7 @@
 [![Codecov.io](https://codecov.io/gh/MrHDOLEK/slim4-boirlerplate/graph/badge.svg?token=KKBMW5HJVM)](https://codecov.io/gh/MrHDOLEK/slim4-boirlerplate)
 [![License](https://img.shields.io/github/license/robiningelbrecht/slim-skeleton-ddd-amqp?color=428f7e&logo=open%20source%20initiative&logoColor=white)](https://github.com/MrHDOLEK/slim4-boirlerplate/blob/master/LICENSE)
 [![PHPStan Enabled](https://img.shields.io/badge/PHPStan-level%205-succes.svg?logo=php&logoColor=white&color=31C652)](https://phpstan.org/)
-[![PHP](https://img.shields.io/packagist/php-v/robiningelbrecht/php-slim-skeleton/dev-master?color=%23777bb3&logo=php&logoColor=white)](https://php.net/)
+[![PHP](https://img.shields.io/packagist/php-v/mrhdolek/slim4-boirlerplate/dev-main?color=%23777bb3&logo=php&logoColor=white)](https://php.net/)
 
 
 ---
@@ -35,6 +35,8 @@ Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/p
 - `http://localhost`
 ## Documentation for a Rest Api
 - `http://localhost/docs/v1`
+## RabbitMq dashboard
+- `http://localhost:15672`
 ## All commands
 
 -  `make help`
@@ -59,12 +61,15 @@ Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/p
         - Console <- Related to loading console commands into the application's dependency container.
         - DependencyInjection <- Manages the dependencies and their relationships in the application. It ensures that objects get the right services they depend upon.
         - Environment <- Might handle environment-specific configurations or utilities.
+        - Events <- Here are the things that make it possible to throw and handle events
+        - AMQP <- Here you will find the implementation of the protocol together with its full support
         - Persistence <- Deals with data storage and retrieval.
             - Doctrine
                 - Fixtures <- Contains sample data that can be loaded into the database for testing or initial setup.
                 - Mapping <- Manages how objects are mapped to database tables.
                 - Migrations <- Helps in versioning and migrating database schemas.
                 - Repository <- Repositories are used to retrieve and store data in the database.
+                - Queues <- Here are all registered queues with configuration
         - Serialization
 
 
@@ -106,6 +111,7 @@ return function (App $app) {
 
 The console application uses the Symfony console component to leverage CLI functionality.
 
+
 ```php
 #[AsCommand(name: 'app:user:create')]
 class CreateUserConsoleCommand extends Command
@@ -117,6 +123,96 @@ class CreateUserConsoleCommand extends Command
     }
 }
 ```
+
+### Domain event and event handlers
+
+The framework implements the amqp protocol with handlers that allow events to be easily pushed onto the queue.
+Each event must have a handler implemented that consumes the event.
+
+#### Creating a new event
+
+```php
+class UserWasCreated extends DomainEvent
+{
+ 
+}
+```
+
+#### Creating the corresponding event handler
+
+```php
+namespace App\Domain\Entity\User\DomainEvents;
+
+#[AsEventHandler]
+class UserWasCreatedEventHandler implements EventHandler
+{
+    public function __construct(
+    ) {
+    }
+
+    public function handle(DomainEvent $event): void
+    {
+        assert($event instanceof UserWasCreated);
+
+        // Do stuff.
+    }
+}
+```
+
+### Eventing
+
+#### Create a new event
+
+```php
+class UserWasCreated extends DomainEvent
+{
+    public function __construct(
+        private UserId $userId,
+    ) {
+    }
+
+    public function getUserId(): UserId
+    {
+        return $this->userId;
+    }
+}
+```
+
+### Async processing of commands with RabbitMQ
+
+The chosen AMQP implementation for this project is RabbitMQ, but it can be easily switched to for example Amazon's AMQP solution.
+
+#### Registering new queues
+
+```php
+#[AsAmqpQueue(name: "user-command-queue", numberOfWorkers: 1)]
+class UserEventQueue extends EventQueue
+{
+}
+```
+
+#### Queueing events
+
+```php
+final readonly class UserEventsService
+{
+    public function __construct(
+        private UserEventQueue $userEventQueue,
+    ) {}
+
+    public function userWasCreated(User $user): void
+    {
+        $this->userEventQueue->queue(new UserWasCreated($user));
+    }
+}
+```
+
+#### Consuming your queue
+
+```bash
+> docker-compose run --rm php bin/console.php app:amqp:consume user-command-queue
+```
+
 ### Create new entity
 
 If you have created a new entity and want to map it to a database you must create a xml in src/Infrastructure/Persistence/Doctrine/Mapping . 

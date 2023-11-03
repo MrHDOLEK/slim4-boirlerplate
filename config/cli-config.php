@@ -6,12 +6,13 @@ require __DIR__ . "/../vendor/autoload.php";
 
 use App\Infrastructure\DependencyInjection\ContainerFactory;
 use App\Infrastructure\Environment\Settings;
+use DI\Container;
 use Doctrine\Migrations\Configuration\EntityManager\ExistingEntityManager;
 use Doctrine\Migrations\Configuration\Migration\ConfigurationArray;
 use Doctrine\Migrations\DependencyFactory;
 use Doctrine\ORM\EntityManager;
 
-/** @var \DI\Container $container */
+/** @var Container $container */
 $container = ContainerFactory::create();
 
 return DependencyFactory::fromEntityManager(

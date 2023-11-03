@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Attribute;
 
 use App\Infrastructure\Environment\Settings;
+use ReflectionClass;
 use Symfony\Component\Finder\Finder;
 
 class ClassAttributeResolver
@@ -64,7 +65,7 @@ class ClassAttributeResolver
                 $class,
             );
 
-            if (!(new \ReflectionClass($class))->getAttributes($attributeClassName)) {
+            if (!(new ReflectionClass($class))->getAttributes($attributeClassName)) {
                 // Class is not tagged with attribute.
                 continue;
             }

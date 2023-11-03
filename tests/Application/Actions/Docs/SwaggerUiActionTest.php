@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class SwaggerUiActionTest extends TestCase
 {
-    public function testSwaggerUiAction(): void
+    public function testSwaggerUiActionSuccess(): void
     {
         $app = $this->getApp();
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Actions\User;
 
 use App\Application\DTO\Response\UserResponseDto;
-use App\Domain\Service\UserService;
+use App\Domain\Service\User\UserService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpBadRequestException;

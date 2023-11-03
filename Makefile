@@ -41,8 +41,8 @@ kill-all: ## Kill all running containers
 openapi: ## Generate documentation for api
 	docker-compose exec php vendor/bin/openapi /var/www/src --output resources/docs/openapi.yaml
 
-db-create: ## Create db from doctrine schema
-	docker-compose exec php php vendor/bin/doctrine orm:schema-tool:create
+db-create: ## Create db from migrations
+	$(MAKE) migrate
 
 migrate: ## Run migrations
 	docker-compose exec php php vendor/bin/doctrine-migrations migrate
