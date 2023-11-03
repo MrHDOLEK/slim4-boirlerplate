@@ -20,6 +20,14 @@ jobs:
           PGPASSWORD: password
         ports:
           - 5432:5432
+      rabbitmq:
+        image: rabbitmq:3-management
+        env:
+          RABBITMQ_DEFAULT_USER: rabbitmq
+          RABBITMQ_DEFAULT_PASS: rabbitmq
+          RABBITMQ_DEFAULT_VHOST: app
+        ports:
+          - 5672:5672
     steps:
       - uses: actions/checkout@v3
 
