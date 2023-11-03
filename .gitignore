@@ -20,3 +20,4 @@
 .deptrac.cache
 junit.xml
 clover.xml
+tests/*.txt

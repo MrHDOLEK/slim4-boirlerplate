@@ -53,7 +53,8 @@
         "phpstan/extension-installer": "^1.2.0",
         "phpstan/phpstan": "^1.8",
         "phpunit/phpunit": "^9.5.26",
-        "qossmic/deptrac-shim": "^1.0"
+        "qossmic/deptrac-shim": "^1.0",
+        "spatie/phpunit-snapshot-assertions": "^4.2"
     },
     "config": {
         "allow-plugins": {

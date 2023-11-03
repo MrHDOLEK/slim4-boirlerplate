@@ -45,7 +45,7 @@ db-create: ## Create db from migrations
 	$(MAKE) migrate
 
 migrate: ## Run migrations
-	docker-compose exec php php vendor/bin/doctrine-migrations migrate --dry-run
+	docker-compose exec php php vendor/bin/doctrine-migrations migrate
 
 db-seed: ## Run Seeders to DB
 	docker-compose exec php php bin/console.php db:seed
