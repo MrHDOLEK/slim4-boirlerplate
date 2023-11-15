@@ -8,6 +8,7 @@ use Monolog\Logger;
 
 return [
     "slim" => [
+        "appName" => $_ENV["APP_NAME"],
         // Returns a detailed HTML page with error details and
         // a stack trace. Should be disabled in production.
         "displayErrorDetails" => $_ENV["DISPLAY_ERROR_DETAILS"],
@@ -75,5 +76,13 @@ return [
             "connection" => null,
             "em" => null,
         ],
+    ],
+    "redis" => [
+        "enabled" => $_ENV["REDIS_ENABLED"],
+        "url" => $_ENV["REDIS_URL"],
+        "host" => $_ENV["REDIS_HOST"],
+        "password" => $_ENV["REDIS_PASSWORD"],
+        "port" => $_ENV["REDIS_PORT"],
+        "database" => $_ENV["REDIS_CACHE_DB"],
     ],
 ];

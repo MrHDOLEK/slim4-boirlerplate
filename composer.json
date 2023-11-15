@@ -34,6 +34,7 @@
         "php-amqplib/php-amqplib": "^3.2",
         "php-di/php-di": "^7.0",
         "php-di/slim-bridge": "^3.4",
+        "predis/predis": "^2.2",
         "ramsey/uuid": "^4.7",
         "slim/psr7": "^1.5",
         "slim/slim": "^4.10",

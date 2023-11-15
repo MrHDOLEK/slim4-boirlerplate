@@ -8,6 +8,8 @@ use App\Infrastructure\Console\ConsoleCommandContainer;
 use App\Infrastructure\Environment\Environment;
 use App\Infrastructure\Environment\Settings;
 use App\Infrastructure\Persistence\Doctrine\Repository\UserRepository;
+use App\Infrastructure\Persistence\Redis\Repository\RedisRepository;
+use App\Infrastructure\Persistence\Redis\Repository\RedisRepositoryInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
@@ -19,6 +21,7 @@ use Lcobucci\Clock\SystemClock;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
+use Predis\Client as RedisClient;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -91,6 +94,27 @@ return [
         );
     },
     ServerRequestFactoryInterface::class => \DI\get(ServerRequestFactory::class),
+    // Redis
+    RedisRepository::class => function (Settings $settings) {
+        $redisConfig = $settings->get("redis");
+        $appConfig = $settings->get("slim");
+
+        $redisConfig = [
+            "scheme" => "tcp",
+            "host" => $redisConfig["host"] ?? "127.0.0.1",
+            "password" => $redisConfig["password"] ?? null,
+            "port" => $redisConfig["port"] ?? 6379,
+            "database" => $redisConfig["database"] ?? 0,
+        ];
+
+        $redisClient = new RedisClient($redisConfig);
+
+        return new RedisRepository(
+            $redisClient,
+            (string)$appConfig["appName"],
+        );
+    },
     // Repositories
     UserRepositoryInterface::class => DI\get(UserRepository::class),
+    RedisRepositoryInterface::class => DI\get(RedisRepository::class),
 ];
