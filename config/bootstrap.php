@@ -6,10 +6,12 @@ use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
 use App\Infrastructure\DependencyInjection\ContainerFactory;
 use App\Infrastructure\Environment\Settings;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
 
+/** @var ContainerInterface $container */
 $container = ContainerFactory::create();
 $app = AppFactory::createFromContainer($container);
 
@@ -20,7 +22,9 @@ $app = AppFactory::createFromContainer($container);
 
 // Init
 $callableResolver = $app->getCallableResolver();
+/** @var Settings $settings */
 $settings = $container->get(Settings::class);
+/** @var LoggerInterface $logger */
 $logger = $container->get(LoggerInterface::class);
 
 $displayErrorDetails = (bool)$settings->get("slim.displayErrorDetails");

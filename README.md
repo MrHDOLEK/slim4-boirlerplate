@@ -3,7 +3,7 @@
 
 ![Slim](slim.webp)
 
-[![CI](https://github.com/robiningelbrecht/slim-skeleton-ddd-amqp/actions/workflows/ci.yml/badge.svg)](https://github.com/MrHDOLEK/slim4-boirlerplate/actions/workflows/ci.yml)
+[![CI](https://github.com/MrHDOLEK/slim4-boirlerplate/actions/workflows/php.yml/badge.svg?branch=main)](https://github.com/MrHDOLEK/slim4-boirlerplate/actions/workflows/php.yml)
 [![Codecov.io](https://codecov.io/gh/MrHDOLEK/slim4-boirlerplate/graph/badge.svg?token=KKBMW5HJVM)](https://codecov.io/gh/MrHDOLEK/slim4-boirlerplate)
 [![License](https://img.shields.io/github/license/robiningelbrecht/slim-skeleton-ddd-amqp?color=428f7e&logo=open%20source%20initiative&logoColor=white)](https://github.com/MrHDOLEK/slim4-boirlerplate/blob/master/LICENSE)
 [![PHPStan Enabled](https://img.shields.io/badge/PHPStan-level%205-succes.svg?logo=php&logoColor=white&color=31C652)](https://phpstan.org/)
