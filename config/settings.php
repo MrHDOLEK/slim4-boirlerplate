@@ -78,8 +78,6 @@ return [
         ],
     ],
     "redis" => [
-        "enabled" => $_ENV["REDIS_ENABLED"],
-        "url" => $_ENV["REDIS_URL"],
         "host" => $_ENV["REDIS_HOST"],
         "password" => $_ENV["REDIS_PASSWORD"],
         "port" => $_ENV["REDIS_PORT"],
