@@ -8,8 +8,7 @@ use App\Infrastructure\Console\ConsoleCommandContainer;
 use App\Infrastructure\Environment\Environment;
 use App\Infrastructure\Environment\Settings;
 use App\Infrastructure\Persistence\Doctrine\Repository\UserRepository;
-use App\Infrastructure\Persistence\Redis\Repository\RedisRepository;
-use App\Infrastructure\Persistence\Redis\Repository\RedisRepositoryInterface;
+use App\Infrastructure\Persistence\Redis\RedisDoctrineCacheAdapter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
@@ -27,6 +26,7 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Views\Twig;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\Console\Application;
 use Twig\Loader\FilesystemLoader;
 
@@ -58,11 +58,18 @@ return [
     // Doctrine Dbal.
     Connection::class => fn(Settings $settings): Connection => DriverManager::getConnection($settings->get("doctrine.connection")),
     // Doctrine EntityManager.
-    EntityManager::class => function (Settings $settings): EntityManager {
+    EntityManager::class => function (Settings $settings, ContainerInterface $container): EntityManager {
         $config = Setup::createXMLMetadataConfiguration(
             $settings->get("doctrine.metadata_dirs"),
             $settings->get("doctrine.dev_mode"),
         );
+
+        if (Environment::PRODUCTION->value === $settings->get("slim.logger.name")) {
+            /** @var RedisAdapter $redisAdapter */
+            $redisAdapter = $container->get(RedisAdapter::class);
+            $cache = new RedisDoctrineCacheAdapter($redisAdapter);
+            $config->setResultCache($cache);
+        }
 
         return EntityManager::create($settings->get("doctrine.connection"), $config);
     },
@@ -95,9 +102,8 @@ return [
     },
     ServerRequestFactoryInterface::class => \DI\get(ServerRequestFactory::class),
     // Redis
-    RedisRepository::class => function (Settings $settings) {
+    RedisAdapter::class => function (Settings $settings) {
         $redisConfig = $settings->get("redis");
-        $appConfig = $settings->get("slim");
 
         $redisConfig = [
             "scheme" => "tcp",
@@ -107,14 +113,8 @@ return [
             "database" => $redisConfig["database"] ?? 0,
         ];
 
-        $redisClient = new RedisClient($redisConfig);
-
-        return new RedisRepository(
-            $redisClient,
-            (string)$appConfig["appName"],
-        );
+        return new RedisAdapter(new RedisClient($redisConfig));
     },
     // Repositories
     UserRepositoryInterface::class => DI\get(UserRepository::class),
-    RedisRepositoryInterface::class => DI\get(RedisRepository::class),
 ];
