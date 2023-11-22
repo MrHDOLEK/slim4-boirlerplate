@@ -1,8 +1,0 @@
-{
-    "eventName": "Tests.Infrastructure.Events.TestEvent",
-    "payload": {
-        "metadata": {
-            "key": "value"
-        }
-    }
-}

@@ -1,7 +1,0 @@
-{
-  "user-command-queue": {
-    "queueName": "user-command-queue",
-    "workerName": "event-queue-worker",
-    "numberOfConsumers": 1
-  }
-}
