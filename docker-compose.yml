@@ -2,20 +2,19 @@ version: '3.9'
 services:
     app:
         build:
-            context: .docker/dev/php
-            dockerfile: Dockerfile
+            context: .
+            dockerfile: .docker/dev/php/Dockerfile
             args:
                 INSTALL_XDEBUG: ${DOCKER_INSTALL_XDEBUG:-false}
-        working_dir: /application
+        working_dir: /var/www
         environment:
             - DOCKER=1
             - PHP_IDE_CONFIG=serverName=slim.local
         volumes:
-            - ./.docker/dev/ngnix/nginx.conf:/etc/nginx/nginx.conf:ro
-            - ./.docker/dev/php/php.ini:/usr/local/etc/php/conf.d/zzz-overrides.ini:ro
-            - ./.docker/dev/php/php-fpm.conf:/usr/local/etc/php-fpm.d/zzz-overrides.conf:ro
-            - ./.docker/dev/php/supervisord.conf:/etc/supervisor/custom-supervisord.conf:ro
-            - .:/application
+            - ./.docker/dev/nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./.docker/dev/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+            - ./.docker/dev/php/php-fpm.conf:/etc/php/fpm/php-fpm.conf
+            - .:/var/www
         ports:
             - ${EXTERNAL_APP_PORT:-80}:80
         extra_hosts:
