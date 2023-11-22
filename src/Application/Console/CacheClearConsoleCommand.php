@@ -11,8 +11,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: "app:cache:clear", description: "Clear all caches")]
-class CacheClearConsoleCommand extends Command
+class CacheClearConsoleCommand extends ConsoleCommand
 {
+    public static string $signature;
+
     public function __construct(
         private readonly Settings $settings,
     ) {
@@ -21,6 +23,8 @@ class CacheClearConsoleCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $output->writeln("<info>Start clear cache</info>");
+
         $cacheDirs = [$this->settings->get("doctrine.cache_dir"), $this->settings->get("slim.cache_dir")];
 
         foreach ($cacheDirs as $cacheDir) {
@@ -30,6 +34,8 @@ class CacheClearConsoleCommand extends Command
 
             $this->removeDirectory($cacheDir);
         }
+
+        $output->writeln("<info>Done clear cache</info>");
 
         return Command::SUCCESS;
     }

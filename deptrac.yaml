@@ -31,3 +31,5 @@ deptrac:
       - App\Infrastructure\AMQP\Queue\QueueContainer
       - App\Infrastructure\AMQP\Consumer
       - App\Infrastructure\AMQP\Queue\QueueContainer
+    App\Application\Console\ScheduleConsoleCommand:
+      - App\Infrastructure\Environment\Settings

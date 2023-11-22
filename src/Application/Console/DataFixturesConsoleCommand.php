@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: "db:seed", description: "Command to run seeds for a databases.")]
-class DataFixturesCommand extends Command
+class DataFixturesConsoleCommand extends ConsoleCommand
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,

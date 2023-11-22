@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Environment;
 
+use App\Infrastructure\Utils\Constants;
+
 class Settings
 {
     public function __construct(
@@ -34,5 +36,10 @@ class Settings
     public static function getAppRoot(): string
     {
         return dirname(__DIR__, 3);
+    }
+
+    public static function getConsoleRoot(): string
+    {
+        return sprintf("%s%s ", dirname(__DIR__, 3), Constants::CONSOLE_ROUTE);
     }
 }
