@@ -124,6 +124,29 @@ class CreateUserConsoleCommand extends Command
 }
 ```
 
+### Scheduling Commands
+
+To schedule a command, we use the GO\Scheduler class. This class allows us to define the timing and frequency of command execution. Here's an example of how to schedule a command to run daily:
+
+```php
+$scheduler = new GO\Scheduler();
+$scheduler->php('/path/to/command app:user:create')->daily();
+$scheduler->run();
+```
+In this example, the app:user:create command is scheduled to run every day.
+
+#### Running the Scheduler
+The scheduler should be triggered by a system cron job to ensure it runs at regular intervals. Typically, you would set up a cron job to execute a PHP script that initializes and runs the scheduler.
+
+For instance, a cron job running every minute might look like this:
+
+```bash
+* * * * * ./bin/console.php schedule
+```
+
+This setup ensures that your scheduled commands are executed reliably and on time.
+
+
 ### Domain event and event handlers
 
 The framework implements the amqp protocol with handlers that allow events to be easily pushed onto the queue.

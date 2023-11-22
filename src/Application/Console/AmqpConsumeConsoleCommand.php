@@ -14,8 +14,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: "app:amqp:consume", description: "Start consuming a given AMQP queue")]
-class AmqpConsumeConsoleCommand extends Command implements SignalableCommandInterface
+class AmqpConsumeConsoleCommand extends ConsoleCommand implements SignalableCommandInterface
 {
+    public static string $signature;
+
     public function __construct(
         private readonly QueueContainer $queueContainer,
         private readonly Consumer $consumer,
