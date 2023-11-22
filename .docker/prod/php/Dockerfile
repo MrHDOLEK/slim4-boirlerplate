@@ -1,64 +1,55 @@
-### PHP DEPENDENCIES ###
-FROM composer:2.6.2 as vendor
+ARG PHP_VERSION=8.2.4
 
-WORKDIR /app_composer_dependencies
+FROM php:${PHP_VERSION}-fpm-buster
 
-COPY composer.json composer.lock ./
+ARG COMPOSER_VERSION=2.5.7
 
-RUN composer install \
-    --no-interaction \
-    --no-plugins \
-    --no-scripts \
-    --no-dev \
-    --prefer-dist \
-    --ignore-platform-reqs
+ENV COMPOSER_MEMORY_LIMIT=-1
 
-### APPLICATION ###
-FROM php:8.2.10-fpm-bullseye as app
+ARG INSTALL_COMPOSER_DEV=false
+ARG INSTALL_XDEBUG=false
 
-COPY --from=vendor /usr/bin/composer /usr/local/bin/composer
+RUN useradd nginx && usermod -u 1001 www-data && groupmod -g 1001 www-data
 
-# For other versions check: http://nginx.org/packages/mainline/debian/pool/nginx/n/nginx/
-ARG NGINX_VERSION="1.25.0-1~bullseye"
-ARG PHPREDIS_VERSION=6.0.0
+RUN apt-get update && apt-get install -y nginx python3 supervisor \
+     git zip bzip2 libpng-dev libpng-dev libicu-dev \
+     vim libjpeg62-turbo-dev libfreetype6-dev libonig-dev \
+     libpq-dev libxpm-dev libvpx-dev libbz2-dev zlib1g-dev libzip-dev gnumeric \
+    && curl -sS https://getcomposer.org/installer | php -- --version="${COMPOSER_VERSION}" --install-dir=/usr/local/bin --filename=composer \
+    && docker-php-ext-install intl bcmath mbstring bz2 gd zip pgsql pdo_pgsql opcache pcntl sockets \
+    && docker-php-ext-enable intl pcntl \
+    && apt-get autoclean \
+    && apt-get autoremove
 
-RUN apt-get update \
-    && apt-get install --assume-yes gpg \
-    && curl https://nginx.org/keys/nginx_signing.key | gpg --dearmour --output /etc/apt/trusted.gpg.d/apt.nginx.org.gpg > /dev/null \
-    && echo "deb https://nginx.org/packages/mainline/debian bullseye nginx" | tee /etc/apt/sources.list.d/nginx.list \
-    && apt-get update && apt-get install --assume-yes \
-        nginx=${NGINX_VERSION} \
-        libzip-dev \
-        libpq-dev \
-        supervisor \
-        cron \
-    && pecl install redis-${PHPREDIS_VERSION} \
-    && docker-php-ext-install \
-        zip \
-        pdo_pgsql \
-        sockets \
-        pcntl \
-    && docker-php-ext-enable \
-        pcntl \
-        redis
+COPY ./.docker/prod/php/entrypoint.sh /etc/entrypoint.sh
+COPY ./.docker/prod/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./.docker/prod/php/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY ./.docker/prod/php/php-fpm.conf /etc/php/fpm/php-fpm.conf
+COPY ./.docker/prod/php/supervisord.conf /etc/supervisord.conf
 
-RUN mv "${PHP_INI_DIR}/php.ini-production" "${PHP_INI_DIR}/php.ini"
-COPY ./environment/prod/app/php.ini "${PHP_INI_DIR}/conf.d/zzz-overrides-php.ini"
-COPY ./environment/prod/app/php-fpm.conf "/usr/local/etc/php-fpm.d/zzz-overrides.conf"
-COPY ./environment/prod/app/nginx.conf "/etc/nginx/nginx.conf"
-COPY ./environment/prod/app/supervisord.conf "/etc/supervisor/custom-supervisord.conf"
-COPY ./environment/prod/app/entrypoint.sh /entrypoint.sh
+RUN chmod +x /etc/entrypoint.sh
 
-WORKDIR /application
+WORKDIR /var/www
 
-# Copy Composer dependencies
-COPY --chown=www-data:www-data --from=vendor /app_composer_dependencies/vendor ./vendor/
+COPY --chown=www-data:www-data . /var/www
 
-# Copy App files
-COPY --chown=www-data:www-data . .
+RUN find /var/www -type d -exec chmod -R 555 {} \; \
+    && find /var/www -type f -exec chmod -R 444 {} \;
 
-RUN composer dump-autoload --optimize
+
+RUN if [ ${INSTALL_COMPOSER_DEV} = true ]; then \
+    composer install --optimize-autoloader \
+;else \
+    composer install --optimize-autoloader --prefer-dist --no-dev -o \
+;fi
+
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+    pecl install xdebug-${XDEBUG_VERSION} \
+    && docker-php-ext-enable xdebug \
+;fi
+
+RUN apt-get remove -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 EXPOSE 80
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/etc/entrypoint.sh"]

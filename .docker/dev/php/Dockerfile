@@ -1,60 +1,42 @@
-FROM composer/composer:2.6.2-bin as composer-bin
+ARG PHP_VERSION=8.2.4
 
-FROM php:8.2.10-fpm-bullseye
+FROM php:${PHP_VERSION}-fpm-buster
 
-COPY --from=composer-bin ./composer /usr/bin/composer
+ARG COMPOSER_VERSION=2.5.7
 
-ARG USER_NAME=host-user
-ARG USER_ID=1000
-ARG PHP_FPM_GROUP=www-data
+ENV COMPOSER_MEMORY_LIMIT=-1
 
-RUN adduser \
-        --disabled-password \
-        --uid ${USER_ID} \
-        ${USER_NAME} \
-    && usermod \
-        --append \
-        --groups \
-        ${PHP_FPM_GROUP} \
-        ${USER_NAME}
+RUN useradd nginx && usermod -u 1001 www-data && groupmod -g 1001 www-data
 
-# Use the default development configuration
-RUN mv "${PHP_INI_DIR}/php.ini-development" "${PHP_INI_DIR}/php.ini"
+RUN apt-get update && apt-get install -y nginx python3 supervisor \
+     git zip bzip2 libpng-dev libpng-dev libicu-dev \
+     vim libjpeg62-turbo-dev libfreetype6-dev libonig-dev \
+     libpq-dev libxpm-dev libvpx-dev libbz2-dev zlib1g-dev libzip-dev gnumeric \
+    && curl -sS https://getcomposer.org/installer | php -- --version="${COMPOSER_VERSION}" --install-dir=/usr/local/bin --filename=composer \
+    && docker-php-ext-install intl bcmath mbstring bz2 gd zip pgsql pdo_pgsql opcache pcntl sockets \
+    && docker-php-ext-enable intl pcntl \
+    && apt-get autoclean \
+    && apt-get autoremove
 
-# For other versions check: http://nginx.org/packages/mainline/debian/pool/nginx/n/nginx/
-ARG NGINX_VERSION="1.25.2-1~bullseye"
-ARG PHPREDIS_VERSION=6.0.0
+COPY ./.docker/dev/php/entrypoint.sh /etc/entrypoint.sh
+COPY ./.docker/dev/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./.docker/dev/php/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY ./.docker/dev/php/php-fpm.conf /etc/php/fpm/php-fpm.conf
 
-RUN apt-get update \
-    && apt-get install --assume-yes gpg \
-    && curl https://nginx.org/keys/nginx_signing.key | gpg --dearmour --output /etc/apt/trusted.gpg.d/apt.nginx.org.gpg > /dev/null \
-    && echo "deb https://nginx.org/packages/mainline/debian bullseye nginx" | tee /etc/apt/sources.list.d/nginx.list \
-    && apt-get update && apt-get install --assume-yes \
-        nginx=${NGINX_VERSION} \
-        libzip-dev \
-        libpq-dev \
-        supervisor \
-        cron \
-    && pecl install redis-${PHPREDIS_VERSION} \
-    && docker-php-ext-install \
-        zip \
-        pdo_pgsql \
-        sockets \
-        pcntl \
-    && docker-php-ext-enable \
-        pcntl \
-        redis
+RUN chmod +x /etc/entrypoint.sh
 
-ARG XDEBUG_VERSION=3.2.1
-ARG INSTALL_XDEBUG=true
+WORKDIR /var/www
 
-RUN if [ ${INSTALL_XDEBUG} = true ]; then \
-    pecl install xdebug-${XDEBUG_VERSION} \
-    && docker-php-ext-enable xdebug \
-;fi
+COPY --chown=www-data:www-data . /var/www
 
-COPY ./entrypoint.sh /entrypoint.sh
+RUN find /var/www -type d -exec chmod -R 555 {} \; \
+    && find /var/www -type f -exec chmod -R 444 {} \;
 
-WORKDIR /application
 
-ENTRYPOINT ["/entrypoint.sh"]
+RUN composer install --optimize-autoloader --prefer-dist --no-dev -o \
+
+RUN apt-get remove -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+EXPOSE 80
+
+ENTRYPOINT ["/etc/entrypoint.sh"]
