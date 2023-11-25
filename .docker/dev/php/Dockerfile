@@ -6,6 +6,8 @@ FROM phpswoole/swoole:${SWOOLE_VERSION}-php${PHP_VERSION}
 ARG COMPOSER_VERSION=2.5.7
 
 ENV COMPOSER_MEMORY_LIMIT=-1
+ARG INSTALL_XDEBUG=false
+
 
 RUN useradd nginx && usermod -u 1001 www-data && groupmod -g 1001 www-data
 
@@ -37,6 +39,11 @@ RUN find /var/www -type d -exec chmod -R 555 {} \; \
     && find /var/www -type f -exec chmod -R 444 {} \;
 
 RUN composer install --optimize-autoloader --prefer-dist --no-dev -o
+
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+        pecl install xdebug  \
+        && docker-php-ext-enable xdebug \
+;fi
 
 RUN apt-get remove -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

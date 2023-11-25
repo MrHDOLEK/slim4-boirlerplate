@@ -44,7 +44,7 @@ RUN if [ ${INSTALL_COMPOSER_DEV} = true ]; then \
 ;fi
 
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
-    pecl install xdebug-${XDEBUG_VERSION} \
+    pecl install xdebug  \
     && docker-php-ext-enable xdebug \
 ;fi
 

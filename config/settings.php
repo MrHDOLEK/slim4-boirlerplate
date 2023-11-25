@@ -27,6 +27,17 @@ return [
         // Path where Slim will cache the container, compiler passes, ...
         "cache_dir" => Settings::getAppRoot() . "/var/cache/slim",
     ],
+    "swoole" => [
+        // Logging
+        "log_level" => 1,
+        "log_file" => "/dev/stderr",
+        "log_rotation" => SWOOLE_LOG_ROTATION_DAILY,
+        "log_date_format" => "%Y-%m-%d %H:%M:%S",
+        "log_date_with_microseconds" => false,
+
+        // Enable trace logs
+        "trace_flags" => SWOOLE_TRACE_ALL,
+    ],
     "rabbitmq" => [
         "host" => $_ENV["RABBITMQ_HOST"],
         "port" => $_ENV["RABBITMQ_PORT"],

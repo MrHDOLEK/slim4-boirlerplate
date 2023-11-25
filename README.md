@@ -13,6 +13,10 @@
 ---
 #### An Slim 4 Framework skeleton using AMQP and DDD
 
+I was inspired to create this skeleton from: [robiningelbrecht](https://github.com/robiningelbrecht).
+
+You will also find a dedicated configuration just for swool, also based on slim: [skoro](https://github.com/skoro)
+
 ## Project setup
 
 ### Development
