@@ -1,6 +1,7 @@
 ARG PHP_VERSION=8.2
+ARG SWOOLE_VERSION=4.8
 
-FROM phpswoole/swoole:5.1-php${PHP_VERSION}
+FROM phpswoole/swoole:${SWOOLE_VERSION}-php${PHP_VERSION}
 
 ARG COMPOSER_VERSION=2.5.7
 
@@ -34,7 +35,6 @@ COPY --chown=www-data:www-data . /var/www
 
 RUN find /var/www -type d -exec chmod -R 555 {} \; \
     && find /var/www -type f -exec chmod -R 444 {} \;
-
 
 RUN composer install --optimize-autoloader --prefer-dist --no-dev -o
 

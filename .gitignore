@@ -23,3 +23,4 @@ clover.xml
 tests/*.txt
 /test/*/*Success__1.json
 **/__snapshots__/
+.pid
