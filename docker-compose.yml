@@ -16,7 +16,7 @@ services:
             - ./.docker/dev/php/php-fpm.conf:/etc/php/fpm/php-fpm.conf
             - .:/var/www
         ports:
-            - ${EXTERNAL_APP_PORT:-80}:80
+            - ${EXTERNAL_APP_PORT:-80}:9501
         extra_hosts:
             - "host.docker.internal:host-gateway"
         networks:

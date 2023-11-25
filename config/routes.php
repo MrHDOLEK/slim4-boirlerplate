@@ -26,10 +26,11 @@ return function (App $app): void {
         return $response;
     });
 
-    $app->get("/health-check", HealthCheckAction::class);
-
-    $app->get("/docs/v1", SwaggerUiAction::class);
-    $app->get("/docs/v1/json", OpenApiDocsAction::class);
+    $app->group("", function (Group $group): void {
+        $group->get("/docs/v1", SwaggerUiAction::class);
+        $group->get("/docs/v1/json", OpenApiDocsAction::class);
+        $group->get("/health-check", HealthCheckAction::class);
+    });
 
     $app->group("/api/v1", function (Group $group): void {
         $group->group("/user", function (Group $group): void {

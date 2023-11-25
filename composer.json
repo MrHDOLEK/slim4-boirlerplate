@@ -24,11 +24,13 @@
         "ext-json": "*",
         "ext-pcntl": "*",
         "ext-sockets": "*",
+        "ext-swoole": "*",
         "awurth/slim-validation": "^3.3",
         "doctrine/data-fixtures": "^1.6",
         "doctrine/migrations": "^3.6",
         "doctrine/orm": "^2.15",
         "fakerphp/faker": "^1.23",
+        "laminas/laminas-diactoros": "^2.26",
         "lcobucci/clock": "^3.1",
         "monolog/monolog": "^2.8",
         "peppeocchi/php-cron-scheduler": "^4.0",
@@ -37,6 +39,7 @@
         "php-di/slim-bridge": "^3.4",
         "predis/predis": "^2.2",
         "ramsey/uuid": "^4.7",
+        "skoro/slim-swoole-integration": "^0.1.1",
         "slim/psr7": "^1.5",
         "slim/slim": "^4.10",
         "slim/twig-view": "^3.3",
@@ -57,7 +60,8 @@
         "phpstan/phpstan": "^1.8",
         "phpunit/phpunit": "^9.5.26",
         "qossmic/deptrac-shim": "^1.0",
-        "spatie/phpunit-snapshot-assertions": "^4.2"
+        "spatie/phpunit-snapshot-assertions": "^4.2",
+        "swoole/ide-helper": "^5.1"
     },
     "config": {
         "allow-plugins": {
@@ -94,6 +98,11 @@
         "openapi": "php vendor/bin/openapi /var/www/src --output resources/docs/openapi.yaml",
         "post-create-project-cmd": [
             "cp ./.env.dist ./.env"
+        ],
+        "server": "@php bin/server.php",
+        "server-debug": [
+            "@putenv DEBUG=true",
+            "@server"
         ]
     }
 }
