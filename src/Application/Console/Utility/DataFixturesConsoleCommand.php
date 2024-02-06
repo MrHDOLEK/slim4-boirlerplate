@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Console;
+namespace App\Application\Console\Utility;
 
+use App\Infrastructure\Environment\Environment;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -18,12 +19,19 @@ class DataFixturesConsoleCommand extends ConsoleCommand
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly Environment $environment,
     ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if ($this->environment === Environment::PRODUCTION) {
+            $output->writeln("<info>Command in production mode cannot be run</info>");
+
+            return Command::SUCCESS;
+        }
+
         $output->writeln("<info>Purge db</info>");
 
         $em = $this->entityManager;
@@ -31,10 +39,10 @@ class DataFixturesConsoleCommand extends ConsoleCommand
         $purger->setPurgeMode(ORMPurger::PURGE_MODE_DELETE);
         $purger->purge();
 
-        $output->writeln("Please wait");
+        $output->writeln("<info>Please wait<info>");
 
         $loader = new Loader();
-        $loader->loadFromDirectory(dirname(__DIR__, 2) . "/Infrastructure/Persistence/Doctrine/Fixtures");
+        $loader->loadFromDirectory(dirname(__DIR__, 4) . "/fixtures");
         $executor = new ORMExecutor($em, $purger);
         $executor->execute($loader->getFixtures());
 

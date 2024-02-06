@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Application\Console;
 
-use App\Application\Console\AmqpConsumeConsoleCommand;
+use App\Application\Console\Utility\AmqpConsumeConsoleCommand;
 use App\Infrastructure\AMQP\AMQPChannelFactory;
 use App\Infrastructure\AMQP\Consumer;
 use App\Infrastructure\AMQP\Queue\QueueContainer;

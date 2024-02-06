@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Application\Console;
 
-use App\Application\Console\CacheClearConsoleCommand;
+use App\Application\Console\Utility\CacheClearConsoleCommand;
 use App\Infrastructure\Environment\Settings;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Command\Command;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
+namespace fixtures;
 
 use App\Domain\Entity\User\User;
 use Doctrine\Common\DataFixtures\FixtureInterface;

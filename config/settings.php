@@ -67,7 +67,7 @@ return [
                 "execution_time_column_name" => "execution_time",
             ],
             "migrations_paths" => [
-                "App\Infrastructure\Persistence\Doctrine\Migrations" => Settings::getAppRoot() . "/src/Infrastructure/Persistence/Doctrine/Migrations",
+                "DoctrineMigrations" => Settings::getAppRoot() . "/migrations",
             ],
             "all_or_nothing" => true,
             "transactional" => true,

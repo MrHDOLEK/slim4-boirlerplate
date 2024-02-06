@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Console;
+namespace App\Application\Console\Utility;
 
 use App\Infrastructure\Environment\Settings;
 use GO\Scheduler;

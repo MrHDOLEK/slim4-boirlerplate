@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Application\Console;
 
-use App\Application\Console\CacheClearConsoleCommand;
-use App\Application\Console\ConsoleCommand;
+use App\Application\Console\Utility\CacheClearConsoleCommand;
+use App\Application\Console\Utility\ConsoleCommand;
 use PHPUnit\Framework\TestCase;
 
 class ConsoleCommandTest extends TestCase

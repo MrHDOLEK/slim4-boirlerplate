@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Console;
+namespace App\Application\Console\Utility;
 
 use App\Infrastructure\AMQP\Consumer;
 use App\Infrastructure\AMQP\Queue\QueueContainer;
