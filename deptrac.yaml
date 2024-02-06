@@ -19,17 +19,9 @@ deptrac:
   ruleset:
     Application:
       - Domain
+      - Infrastructure
     Domain:
       - Infrastructure
     Infrastructure:
       - Entity
       - Domain
-  skip_violations:
-    App\Application\Console\CacheClearConsoleCommand:
-      - App\Infrastructure\Environment\Settings
-    App\Application\Console\AmqpConsumeConsoleCommand:
-      - App\Infrastructure\AMQP\Queue\QueueContainer
-      - App\Infrastructure\AMQP\Consumer
-      - App\Infrastructure\AMQP\Queue\QueueContainer
-    App\Application\Console\ScheduleConsoleCommand:
-      - App\Infrastructure\Environment\Settings

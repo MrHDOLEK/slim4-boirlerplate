@@ -8,7 +8,7 @@ use App\Domain\Entity\User\Exception\UserNotFoundException;
 use App\Domain\Entity\User\User;
 use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Domain\Entity\User\UsersCollection;
-use App\Infrastructure\Persistence\Doctrine\Fixtures\UsersFixtures;
+use fixtures\UsersFixtures;
 use Tests\TestCase;
 
 class UserRepositoryTest extends TestCase

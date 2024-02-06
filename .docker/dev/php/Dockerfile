@@ -33,7 +33,7 @@ RUN find /var/www -type d -exec chmod -R 555 {} \; \
     && find /var/www -type f -exec chmod -R 444 {} \;
 
 
-RUN composer install --optimize-autoloader --prefer-dist --no-dev -o \
+RUN composer install --optimize-autoloader --prefer-dist --no-dev -o
 
 RUN apt-get remove -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
