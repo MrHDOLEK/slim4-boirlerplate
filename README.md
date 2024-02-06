@@ -43,38 +43,6 @@ Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/p
 
 -  `make help`
 
-## Describe folders structure
-- src
-    - Application
-        - Actions <- Contains all the controllers responsible for handling HTTP requests and generating responses.
-        - Console <- Houses all the console commands. You can invoke these commands using php ./bin/console.php
-        - DTO <- Stands for Data Transfer Object. DTOs are used to encapsulate data and pass it between processes or across network calls.
-        - Exception <- Contains custom exception classes for specific application errors or scenarios.
-        - Handlers <- Pertains to the life cycle of a request. It may contain request handlers, error handlers, and other similar components.
-        - Middleware <- Middleware components that sit between the request and response, useful for authentication, logging, CORS, etc.
-        - ResponseEmitter <- This component is responsible for emitting the final API response to the client.
-        - Service
-    - Domain
-        - DomainException
-        - Entity <- All the domain entities reside here. Entities are the main business objects that contain the business logic and data.
-        - Service <- This is where the core domain logic lives. These services interact with entities to execute business operations.
-    - Infrastructure
-        - Attribute
-        - Console <- Related to loading console commands into the application's dependency container.
-        - DependencyInjection <- Manages the dependencies and their relationships in the application. It ensures that objects get the right services they depend upon.
-        - Environment <- Might handle environment-specific configurations or utilities.
-        - Events <- Here are the things that make it possible to throw and handle events
-        - AMQP <- Here you will find the implementation of the protocol together with its full support
-        - Persistence <- Deals with data storage and retrieval.
-            - Doctrine
-                - Fixtures <- Contains sample data that can be loaded into the database for testing or initial setup.
-                - Mapping <- Manages how objects are mapped to database tables.
-                - Migrations <- Helps in versioning and migrating database schemas.
-                - Repository <- Repositories are used to retrieve and store data in the database.
-                - Queues <- Here are all registered queues with configuration
-        - Serialization
-
-
 ## Some examples
 
 ### Registering a new route
