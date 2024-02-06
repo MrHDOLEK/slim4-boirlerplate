@@ -27,7 +27,7 @@ abstract class EventQueue extends AmqpQueue
     public function queue(Envelope $envelope): void
     {
         if (!$envelope instanceof DomainEvent) {
-            throw new \RuntimeException(sprintf('Queue "%s" requires a event to be queued, %s given', $this->getName(), $envelope::class));
+            throw new RuntimeException(sprintf('Queue "%s" requires a event to be queued, %s given', $this->getName(), $envelope::class));
         }
 
         parent::queue($envelope);

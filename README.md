@@ -13,6 +13,8 @@
 ---
 #### An Slim 4 Framework skeleton using AMQP and DDD
 
+I was inspired to create this skeleton from: [robiningelbrecht](https://github.com/robiningelbrecht).
+
 ## Project setup
 
 ### Development

@@ -26,7 +26,7 @@ abstract class AmqpQueue implements Queue
     public function getName(): string
     {
         if (!$this->amqpQueueAttribute) {
-            throw new \RuntimeException("AsAmqpQueue attribute not set");
+            throw new RuntimeException("AsAmqpQueue attribute not set");
         }
 
         return $this->amqpQueueAttribute->getName();
@@ -35,7 +35,7 @@ abstract class AmqpQueue implements Queue
     public function getNumberOfConsumers(): int
     {
         if (!$this->amqpQueueAttribute) {
-            throw new \RuntimeException("AsAmqpQueue attribute not set");
+            throw new RuntimeException("AsAmqpQueue attribute not set");
         }
 
         return $this->amqpQueueAttribute->getNumberOfWorkers();

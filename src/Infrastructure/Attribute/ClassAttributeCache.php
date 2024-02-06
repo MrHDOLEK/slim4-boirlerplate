@@ -52,7 +52,7 @@ class ClassAttributeCache
         if ($written === false) {
             @unlink($this->cacheFileName);
 
-            throw new \InvalidArgumentException(sprintf("Error while writing to %s", $this->cacheFileName));
+            throw new InvalidArgumentException(sprintf("Error while writing to %s", $this->cacheFileName));
         }
 
         return $this->cacheFileName;
