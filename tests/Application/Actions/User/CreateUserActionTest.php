@@ -15,19 +15,14 @@ class CreateUserActionTest extends TestCase
     {
         $app = $this->getApp();
 
-        /** @var Container $container */
-        $container = $app->getContainer();
-
-        $user = new User("steve.jobs", "Steve", "Jobs");
-
-        $userRepositoryProphecy = $this->prophesize(UserRepositoryInterface::class);
-        $userRepositoryProphecy
-            ->save($user)
-            ->shouldBeCalledOnce();
-
-        $container->set(UserRepositoryInterface::class, $userRepositoryProphecy->reveal());
-
-        $request = $this->createRequest(method: "POST", path: "/api/v1/user", body: json_encode(["username" => "steve.jobs", "firstName" => "Steve", "lastName" => "Jobs"]));
+        $request = $this->createRequest(
+            method: "POST",
+            path: "/api/v1/user",
+            body: '{
+                "username": "steve.jobs",
+                "firstName": "Steve",
+                "lastName": "Jobs"
+            }');
         $response = $app->handle($request);
 
         $this->assertSame(201, $response->getStatusCode());
