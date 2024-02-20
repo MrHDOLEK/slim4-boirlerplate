@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Application\Actions\User;
 
-use App\Domain\Entity\User\User;
-use App\Domain\Entity\User\UserRepositoryInterface;
-use DI\Container;
 use Tests\TestCase;
 
 class CreateUserActionTest extends TestCase
@@ -22,7 +19,8 @@ class CreateUserActionTest extends TestCase
                 "username": "steve.jobs",
                 "firstName": "Steve",
                 "lastName": "Jobs"
-            }');
+            }',
+        );
         $response = $app->handle($request);
 
         $this->assertSame(201, $response->getStatusCode());
