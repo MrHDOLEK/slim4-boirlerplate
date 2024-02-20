@@ -11,9 +11,9 @@ final class UserValidator extends ValidationMiddleware
     protected function rules(array $data = []): array
     {
         return [
-            "username" => V::allOf(V::stringType(), V::notEmpty()),
-            "firstName" => V::allOf(V::stringType(), V::notEmpty()),
-            "lastName" => V::allOf(V::stringType(), V::notEmpty()),
+            "username" => V::allOf(V::stringType(), V::notEmpty(), V::length(1, 255)),
+            "firstName" => V::allOf(V::stringType(), V::notEmpty(), V::length(1, 255)),
+            "lastName" => V::allOf(V::stringType(), V::notEmpty(), V::length(1, 255)),
         ];
     }
 

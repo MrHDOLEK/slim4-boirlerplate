@@ -14,5 +14,4 @@ declare(strict_types=1);
 // I tried to create a mechanism that fetches these classes automatically..
 // But I failed :'(
 
-return [
-];
+return [];
