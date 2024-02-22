@@ -37,4 +37,10 @@ final readonly class UserService
         $this->userRepository->save($user);
         $this->userEventsService->userWasCreated($user);
     }
+
+    public function updateUser(User $user): void
+    {
+        $this->userRepository->save($user);
+        $this->userEventsService->userWasUpdated($user);
+    }
 }

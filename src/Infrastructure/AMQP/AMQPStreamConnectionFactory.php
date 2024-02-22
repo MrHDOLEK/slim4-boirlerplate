@@ -18,7 +18,7 @@ class AMQPStreamConnectionFactory
         private readonly string $password,
         private readonly string $vhost,
     ) {
-        if (!class_exists('\PhpAmqpLib\Connection\AMQPStreamConnection')) {
+        if (!class_exists(AMQPStreamConnection::class)) {
             throw new RuntimeException("Could not find php-amqplib. Install it with composer.");
         }
     }

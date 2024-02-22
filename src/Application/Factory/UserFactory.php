@@ -16,4 +16,13 @@ final class UserFactory
             $userData["lastName"],
         );
     }
+
+    public static function updateFromRequest(User $user, array $userData): User
+    {
+        $user->setUsername($userData["username"]);
+        $user->setFirstName($userData["firstName"]);
+        $user->setLastName($userData["lastName"]);
+
+        return $user;
+    }
 }
