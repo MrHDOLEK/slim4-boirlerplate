@@ -47,11 +47,10 @@ use Throwable;
 class UpdateUserAction extends UserAction
 {
     public function __construct(
-        private readonly UserService   $userService,
+        private readonly UserService $userService,
         protected readonly UserFactory $userFactory,
-        protected LoggerInterface      $logger,
-    )
-    {
+        protected LoggerInterface $logger,
+    ) {
         parent::__construct($logger);
     }
 
