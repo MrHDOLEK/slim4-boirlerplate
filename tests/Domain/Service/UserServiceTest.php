@@ -136,4 +136,28 @@ class UserServiceTest extends TestCase
         $this->expectException(UserNotFoundException::class);
         $userService->getUserById(1);
     }
+
+    /**
+     * @dataProvider userProvider
+     */
+    public function testUpdateUserSuccess(User $user): void
+    {
+        $userRepositoryProphecy = $this->prophesize(
+            UserRepositoryInterface::class,
+        );
+
+        $userEventServiceMock = $this->createMock(UserEventsService::class);
+        $userEventServiceMock
+            ->expects($this->once())
+            ->method("userWasUpdated");
+        $userRepositoryProphecy->save($user)
+            ->shouldBeCalledOnce();
+
+        $userService = new UserService(
+            $userRepositoryProphecy->reveal(),
+            $userEventServiceMock,
+        );
+
+        $userService->updateUser($user);
+    }
 }
