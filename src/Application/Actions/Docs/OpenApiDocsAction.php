@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Actions\Docs;
 
+use OpenApi\Generator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -19,7 +20,7 @@ final class OpenApiDocsAction
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $json = json_encode(\OpenApi\Generator::scan(["/var/www/src"]), JSON_PRETTY_PRINT);
+        $json = json_encode(Generator::scan(["/var/www/src"]), JSON_PRETTY_PRINT);
         $response->getBody()->write($json);
 
         return $response

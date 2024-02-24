@@ -31,7 +31,7 @@ use Throwable;
  *          example={}
  *      )
  *     ),
- *     @OA\Response(response="400", description="User data validation error"),
+ *     @OA\Response(response="422", description="User data validation error"),
  *     @OA\Response(response="401", description="Unauthorized")
  * )
  *
