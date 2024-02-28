@@ -52,6 +52,7 @@
     "require-dev": {
         "blumilksoftware/codestyle": "*",
         "jangregor/phpstan-prophecy": "^1.0.0",
+        "league/openapi-psr7-validator": "^0.22.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/extension-installer": "^1.2.0",
         "phpstan/phpstan": "^1.8",
@@ -92,7 +93,7 @@
         "snapshots:cleanup": "find . -name __snapshots__ -type d -prune -exec rm -rf {} \\; ",
         "migrate": "php vendor/bin/doctrine-migrations migrate",
         "db:seed": "php bin/console.php db:seed",
-        "openapi": "php vendor/bin/openapi /var/www/src --output resources/docs/openapi.yaml",
+        "openapi": "php vendor/bin/openapi /var/www/src --output resources/docs/openapi.json",
         "post-create-project-cmd": [
             "cp ./.env.dist ./.env"
         ]

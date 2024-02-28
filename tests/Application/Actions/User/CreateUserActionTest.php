@@ -8,6 +8,8 @@ use App\Domain\Entity\User\User;
 use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Domain\Service\User\UserEventsService;
 use DI\Container;
+use League\OpenAPIValidation\PSR7\OperationAddress;
+use League\OpenAPIValidation\PSR7\ValidatorBuilder;
 use Tests\TestCase;
 
 class CreateUserActionTest extends TestCase
@@ -71,5 +73,26 @@ class CreateUserActionTest extends TestCase
         $response = $app->handle($request);
 
         $this->assertSame(405, $response->getStatusCode());
+    }
+
+    public function testDocumentationOfEndpoint(): void
+    {
+        $jsonFile = $this->getOpenApiPatch();
+
+        $validator = (new ValidatorBuilder())->fromJsonFile($jsonFile)->getRoutedRequestValidator();
+
+        $request = $this->createRequest(
+            "POST",
+            "/api/v1/user",
+            headers: [
+                "Content-Type" => "application/json",
+            ],
+            body: json_encode(["username" => "steve.jobs", "firstName" => "Steve", "lastName" => "Jobs"]),
+        );
+
+        $address = new OperationAddress("/api/v1/user", "post");
+
+        $validator->validate($address, $request);
+        $this->expectNotToPerformAssertions();
     }
 }

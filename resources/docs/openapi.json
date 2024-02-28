@@ -1,0 +1,212 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API",
+        "version": "0.1"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/docs/v1/json": {
+            "get": {
+                "tags": [
+                    "documentation"
+                ],
+                "summary": "JSON docs",
+                "operationId": "46f4d5f536c57c8003fbe3b231b638e9",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/docs/v1": {
+            "get": {
+                "tags": [
+                    "documentation"
+                ],
+                "summary": "Swagger UI",
+                "operationId": "2499ff88cc1cc439a83e3b68fe44805c",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/health-check": {
+            "get": {
+                "tags": [
+                    "status"
+                ],
+                "summary": "Lists API status",
+                "operationId": "fdb0b167a05afbac00a01f102b8c8dce",
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "503": {
+                        "description": "some services are not responding"
+                    }
+                }
+            }
+        },
+        "/api/v1/user": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create a new user",
+                "operationId": "2ea447939ca8847cdd3560b4ec5201c1",
+                "requestBody": {
+                    "request": "User",
+                    "description": "User data in JSON format",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "example": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "User data validation error"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/v1/users": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get all users",
+                "operationId": "a1d85b42797c41de9908ef2337cd6d88",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserResponseDto"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/v1/user/{id}": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get select user by id",
+                "operationId": "7205ce94a8da3efc14c79c36e8da7cb3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserResponseDto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "UserResponseDto": {
+                "title": "UserResponseDto",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "example": "username"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "example": "firstName"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "lastName"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "required": [
+                    "username",
+                    "firstName",
+                    "lastName"
+                ],
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "example": "Janusz123"
+                    },
+                    "firstName": {
+                        "type": "string",
+                        "example": "Janusz"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "Borowy"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}

@@ -7,34 +7,37 @@ namespace App\Application\Actions\User;
 use App\Application\Factory\UserFactory;
 use App\Domain\Service\User\UserService;
 use Fig\Http\Message\StatusCodeInterface;
+use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpBadRequestException;
+use stdClass;
 use Throwable;
 
+#[OA\Post(
+    path: "/api/v1/user",
+    summary: "Create a new user",
+    requestBody: new OA\RequestBody(
+        request: "User",
+        description: "User data in JSON format",
+        required: true,
+        content: new OA\JsonContent(ref: "#/components/schemas/User"),
+    ),
+    tags: ["user"],
+    responses: [
+        new OA\Response(
+            response: "201",
+            description: "User created",
+            content: new OA\JsonContent(
+                type: "object",
+                example: new stdClass(),
+            ),
+        ),
+        new OA\Response(response: "422", description: "User data validation error"),
+        new OA\Response(response: "401", description: "Unauthorized"),
+    ],
+)]
 /**
- * @OA\Post (
- *     path="/api/v1/user",
- *     summary="Create a new user",
- *     tags={"user"},
- *     @OA\RequestBody(
- *          request="User",
- *          required=true,
- *          description="User data in JSON format",
- *          @OA\JsonContent(ref="#/components/schemas/User"),
- *     ),
- *     @OA\Response(
- *      response="201",
- *      description="User created",
- *      @OA\JsonContent(
- *          type="object",
- *          example={}
- *      )
- *     ),
- *     @OA\Response(response="422", description="User data validation error"),
- *     @OA\Response(response="401", description="Unauthorized")
- * )
- *
  * @throws HttpBadRequestException
  */
 class AddUserAction extends UserAction

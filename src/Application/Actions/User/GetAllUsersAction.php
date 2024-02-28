@@ -6,27 +6,29 @@ namespace App\Application\Actions\User;
 
 use App\Application\DTO\Response\UsersResponseDto;
 use App\Domain\Service\User\UserService;
+use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Slim\Exception\HttpBadRequestException;
 
+#[OA\Get(
+    path: "/api/v1/users",
+    summary: "Get all users",
+    tags: ["user"],
+    responses: [
+        new OA\Response(
+            response: "200",
+            description: "Success",
+            content: new OA\JsonContent(
+                type: "array",
+                items: new OA\Items(ref: "#/components/schemas/UserResponseDto"),
+            ),
+        ),
+        new OA\Response(response: "404", description: "Not Found"),
+        new OA\Response(response: "500", description: "Internal server error"),
+    ],
+)]
 /**
- * @OA\Get(
- *     path="/api/v1/users",
- *     summary="Get all users",
- *     tags={"user"},
- *      @OA\Response(
- *        response="200",
- *        description="Success",
- *          @OA\JsonContent(
- *              type="array",
- *              @OA\Items(ref="#/components/schemas/UserResponseDto")
- *          )
- *      ),
- *     @OA\Response(response = "404", description = "Not Found"),
- *     @OA\Response(response = "500", description = "Internal servel error")
- *)
- *
  * @throws HttpBadRequestException
  */
 class GetAllUsersAction extends UserAction
