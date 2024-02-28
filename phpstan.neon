@@ -1,6 +1,8 @@
 parameters:
-	level: 5
-	checkMissingIterableValueType: false
-	paths:
-		- src
-		- config
+    level: 5
+    checkMissingIterableValueType: false
+    paths:
+        - src
+        - config
+    ignoreErrors:
+        - '#Property .*::\$id is never written, only read#'
