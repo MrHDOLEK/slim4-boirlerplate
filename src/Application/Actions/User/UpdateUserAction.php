@@ -7,7 +7,6 @@ namespace App\Application\Actions\User;
 use App\Application\Factory\UserFactory;
 use App\Domain\Entity\User\Exception\UserNotFoundException;
 use App\Domain\Service\User\UserService;
-use Fig\Http\Message\StatusCodeInterface;
 use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
