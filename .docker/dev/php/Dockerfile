@@ -18,6 +18,14 @@ RUN apt-get update && apt-get install -y nginx python3 supervisor \
     && apt-get autoclean \
     && apt-get autoremove
 
+ARG XDEBUG_VERSION=3.3.1
+ARG INSTALL_XDEBUG=true
+
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+    pecl install xdebug-${XDEBUG_VERSION} \
+    && docker-php-ext-enable xdebug \
+;fi
+
 COPY ./.docker/dev/php/entrypoint.sh /etc/entrypoint.sh
 COPY ./.docker/dev/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./.docker/dev/php/php.ini /usr/local/etc/php/conf.d/php.ini

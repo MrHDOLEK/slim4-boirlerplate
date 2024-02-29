@@ -49,7 +49,7 @@ class UserValidatorTest extends TestCase
                 [],
                 '{
                   "firstName": "Janusz",
-                  "lastName": "Borowy"
+                  "lastName": "' . str_repeat("a", 256) . '"
                 }',
             );
             $handler = $this->prophesize(RequestHandlerInterface::class);
@@ -60,10 +60,15 @@ class UserValidatorTest extends TestCase
             $this->assertInstanceOf(ValidationException::class, $exception);
 
             $this->assertEquals(
-                ["username" => "null must be a string, null must not be empty"],
+                ["username" => "null must be a string, null must not be empty, null must have a length between 1 and 255"],
                 $exception->errors()[0]->jsonSerialize(),
             );
-            $this->assertEquals(1, count($validator->getErrors()));
+            $this->assertStringContainsString(
+                "must have a length between 1 and 255",
+                $exception->errors()[1]->jsonSerialize()["lastName"],
+            );
+
+            $this->assertCount(2, $validator->getErrors());
         }
     }
 }

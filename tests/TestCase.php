@@ -73,6 +73,11 @@ class TestCase extends PHPUnit_TestCase
         return $this->container;
     }
 
+    public function getOpenApiPatch(): string
+    {
+        return dirname(__DIR__) . "/resources/docs/openapi.json";
+    }
+
     protected function createRequest(
         string $method,
         string $path,
