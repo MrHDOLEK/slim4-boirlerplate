@@ -42,7 +42,7 @@
         "slim/twig-view": "^3.3",
         "symfony/cache": "^6.3",
         "symfony/console": "^6.3",
-        "symfony/doctrine-bridge": "^6.3",
+        "symfony/doctrine-bridge": "^7.0",
         "symfony/finder": "^6.3",
         "symfony/yaml": "^6.2",
         "thecodingmachine/safe": "^2.5",
