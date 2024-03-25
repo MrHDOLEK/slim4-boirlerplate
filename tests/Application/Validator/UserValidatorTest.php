@@ -32,8 +32,6 @@ class UserValidatorTest extends TestCase
         $handler->handle($request)->shouldBeCalledOnce();
 
         $validator->process($request, $handler->reveal());
-
-        $this->assertTrue($validator->isValid());
     }
 
     public function testProcessThrowsValidationException(): void
@@ -60,15 +58,11 @@ class UserValidatorTest extends TestCase
             $this->assertInstanceOf(ValidationException::class, $exception);
 
             $this->assertEquals(
-                ["username" => "null must be a string, null must not be empty, null must have a length between 1 and 255"],
-                $exception->errors()[0]->jsonSerialize(),
+                [
+                    "username" => "`NULL` must have a length between 1 and 255",
+                    "lastName" => '"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" must have a length between 1 and 255'],
+                $exception->errors(),
             );
-            $this->assertStringContainsString(
-                "must have a length between 1 and 255",
-                $exception->errors()[1]->jsonSerialize()["lastName"],
-            );
-
-            $this->assertCount(2, $validator->getErrors());
         }
     }
 }

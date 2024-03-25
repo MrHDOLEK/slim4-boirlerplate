@@ -3,7 +3,7 @@ services:
     app:
         build:
             context: .
-            dockerfile: .docker/dev/php/Dockerfile
+            dockerfile: .docker/php/Dockerfile
             args:
                 INSTALL_XDEBUG: ${DOCKER_INSTALL_XDEBUG:-false}
         working_dir: /var/www
@@ -11,9 +11,9 @@ services:
             - DOCKER=1
             - PHP_IDE_CONFIG=serverName=slim.local
         volumes:
-            - ./.docker/dev/nginx/nginx.conf:/etc/nginx/nginx.conf
-            - ./.docker/dev/php/php.ini:/usr/local/etc/php/conf.d/php.ini
-            - ./.docker/dev/php/php-fpm.conf:/etc/php/fpm/php-fpm.conf
+            - ./.docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./.docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+            - ./.docker/php/php-fpm.conf:/etc/php/fpm/php-fpm.conf
             - .:/var/www
         ports:
             - ${EXTERNAL_APP_PORT:-80}:80

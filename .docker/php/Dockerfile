@@ -1,6 +1,6 @@
-ARG PHP_VERSION=8.2.4
+ARG PHP_VERSION=8.3.2
 
-FROM php:${PHP_VERSION}-fpm-buster
+FROM php:${PHP_VERSION}-fpm-bullseye
 
 ARG COMPOSER_VERSION=2.5.7
 
@@ -21,11 +21,11 @@ RUN apt-get update && apt-get install -y nginx python3 supervisor \
     && apt-get autoclean \
     && apt-get autoremove
 
-COPY ./.docker/prod/php/entrypoint.sh /etc/entrypoint.sh
-COPY ./.docker/prod/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY ./.docker/prod/php/php.ini /usr/local/etc/php/conf.d/php.ini
-COPY ./.docker/prod/php/php-fpm.conf /etc/php/fpm/php-fpm.conf
-COPY ./.docker/prod/php/supervisord.conf /etc/supervisord.conf
+COPY ./.docker/php/entrypoint.sh /etc/entrypoint.sh
+COPY ./.docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./.docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY ./.docker/php/php-fpm.conf /etc/php/fpm/php-fpm.conf
+COPY ./.docker/php/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN chmod +x /etc/entrypoint.sh
 
