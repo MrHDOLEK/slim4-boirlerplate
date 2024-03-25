@@ -140,7 +140,7 @@ class UserServiceTest extends TestCase
     /**
      * @dataProvider userProvider
      */
-    public function testCreateUserSuccess(User $user): void
+    public function testUpdateUserSuccess(User $user): void
     {
         $userRepositoryProphecy = $this->prophesize(
             UserRepositoryInterface::class,
@@ -149,7 +149,7 @@ class UserServiceTest extends TestCase
         $userEventServiceMock = $this->createMock(UserEventsService::class);
         $userEventServiceMock
             ->expects($this->once())
-            ->method("userWasCreated");
+            ->method("userWasUpdated");
         $userRepositoryProphecy->save($user)
             ->shouldBeCalledOnce();
 
@@ -158,6 +158,6 @@ class UserServiceTest extends TestCase
             $userEventServiceMock,
         );
 
-        $userService->createUser($user);
+        $userService->updateUser($user);
     }
 }

@@ -8,6 +8,7 @@ use App\Application\Actions\HealthCheck\HealthCheckAction;
 use App\Application\Actions\User\AddUserAction;
 use App\Application\Actions\User\GetAllUsersAction;
 use App\Application\Actions\User\GetUserByIdAction;
+use App\Application\Actions\User\UpdateUserAction;
 use App\Application\Validator\UserValidator;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -38,6 +39,9 @@ return function (App $app): void {
             $group->post("", AddUserAction::class)
                 ->add(UserValidator::class)
                 ->setName("addUser");
+            $group->patch("/{id}", UpdateUserAction::class)
+                ->add(UserValidator::class)
+                ->setName("updateUserById");
         });
 
         $group->get("/users", GetAllUsersAction::class)
