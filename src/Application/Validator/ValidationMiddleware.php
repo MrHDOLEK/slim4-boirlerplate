@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Application\Validator;
 
-use App\Application\Factory\ValidationErrorFactory;
 use App\Domain\DomainException\ValidationException;
-use Awurth\SlimValidation\Validator;
-use Awurth\SlimValidation\ValidatorInterface;
+use Awurth\Validator\Failure\ValidationFailureCollectionInterface;
+use Awurth\Validator\Validator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\Exception\HttpBadRequestException;
 
-abstract class ValidationMiddleware extends Validator implements ValidatorInterface, MiddlewareInterface
+abstract class ValidationMiddleware implements MiddlewareInterface
 {
     /**
      * @throws ValidationException
@@ -39,12 +38,15 @@ abstract class ValidationMiddleware extends Validator implements ValidatorInterf
             throw new HttpBadRequestException($request, "Malformed JSON input.");
         }
 
-        $validator = $this->validate($data, $this->rules($data));
+        $validator = Validator::create();
+        $failures = $validator->validate($data, $this->rules($data));
 
-        if (!$this->isValid()) {
+        if ($failures->count() > 0) {
+            $failuresMessage = $this->aggregateFailures($failures);
+
             throw new ValidationException(
                 $this->message(),
-                ValidationErrorFactory::create($validator->getErrors()),
+                $failuresMessage,
             );
         }
     }
@@ -52,4 +54,19 @@ abstract class ValidationMiddleware extends Validator implements ValidatorInterf
     abstract protected function rules(array $data = []): array;
 
     abstract protected function message(): string;
+
+    private function aggregateFailures(ValidationFailureCollectionInterface $failures): array
+    {
+        $aggregatedMessages = [];
+
+        foreach ($failures as $failure) {
+            $field = $failure->getValidation()->getProperty();
+
+            if (!isset($aggregatedMessages[$field])) {
+                $aggregatedMessages[$field] = $failure->getMessage();
+            }
+        }
+
+        return $aggregatedMessages;
+    }
 }
