@@ -7,7 +7,7 @@ namespace App\Domain\Service\User;
 use App\Domain\Entity\User\User;
 use App\Domain\Service\User\DomainEvents\UserWasCreated;
 use App\Domain\Service\User\DomainEvents\UserWasUpdated;
-use App\Infrastructure\Persistence\Queues\UserEventQueue;
+use App\Infrastructure\Queues\UserEventQueue;
 
 class UserEventsService
 {

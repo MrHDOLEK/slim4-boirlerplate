@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Handlers\HttpErrorHandler;
-use App\Application\Handlers\ShutdownHandler;
+use App\Application\Handlers\ErrorHandler;
 use App\Infrastructure\DependencyInjection\ContainerFactory;
 use App\Infrastructure\Environment\Settings;
 use Psr\Container\ContainerInterface;
@@ -37,11 +36,7 @@ $request = $serverRequestCreator->createServerRequestFromGlobals();
 
 // Create Error Handler
 $responseFactory = $app->getResponseFactory();
-$errorHandler = new HttpErrorHandler($callableResolver, $responseFactory, $logger);
-
-// Create Shutdown Handler
-$shutdownHandler = new ShutdownHandler($request, $errorHandler, $displayErrorDetails);
-register_shutdown_function($shutdownHandler);
+$errorHandler = new ErrorHandler($callableResolver, $responseFactory, $logger);
 
 // Add Routing Middleware
 $app->addRoutingMiddleware();

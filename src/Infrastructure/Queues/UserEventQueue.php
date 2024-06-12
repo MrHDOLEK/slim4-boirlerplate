@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence\Queues;
+namespace App\Infrastructure\Queues;
 
 use App\Infrastructure\Attribute\AsAmqpQueue;
 use App\Infrastructure\Events\EventQueue;

@@ -9,6 +9,7 @@ use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\Events\EventQueueWorker;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use PhpAmqpLib\Wire\AMQPTable;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -48,7 +49,15 @@ class EventQueueTest extends TestCase
             ->with($this->eventQueue)
             ->willReturn($amqpChannel);
 
-        $properties = ["content_type" => "text/plain", "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT];
+        $properties =
+            [
+                "content_type" => "text/plain",
+                "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+                "expiration" => 43200000,
+                "application_headers" => new AMQPTable([
+                    "x-retry-count" => 0,
+                ]),
+            ];
         $message = new AMQPMessage(serialize($event), $properties);
 
         $amqpChannel
@@ -84,7 +93,14 @@ class EventQueueTest extends TestCase
             ->with($this->eventQueue)
             ->willReturn($amqpChannel);
 
-        $properties = ["content_type" => "text/plain", "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT];
+        $properties = [
+            "content_type" => "text/plain",
+            "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+            "expiration" => 43200000,
+            "application_headers" => new AMQPTable([
+                "x-retry-count" => 0,
+            ]),
+        ];
         $message = new AMQPMessage(serialize($event), $properties);
 
         $amqpChannel

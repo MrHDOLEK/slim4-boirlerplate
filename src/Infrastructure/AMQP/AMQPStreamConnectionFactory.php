@@ -32,6 +32,8 @@ class AMQPStreamConnectionFactory
                 $this->username,
                 $this->password,
                 $this->vhost,
+                connection_timeout: 30.0,
+                read_write_timeout: 30.0,
             );
         }
 
