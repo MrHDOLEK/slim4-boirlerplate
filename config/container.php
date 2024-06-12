@@ -73,6 +73,7 @@ return [
         $config->setResultCache($redisAdapter);
         $config->setMetadataCache($redisAdapter);
         $config->setQueryCache($redisAdapter);
+        $config->setAutoGenerateProxyClasses(true);
 
         return EntityManager::create($settings->get("doctrine.connection"), $config);
     },

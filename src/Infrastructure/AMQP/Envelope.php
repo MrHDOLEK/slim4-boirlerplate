@@ -6,4 +6,5 @@ namespace App\Infrastructure\AMQP;
 
 interface Envelope
 {
+    public function jsonSerialize(): array;
 }

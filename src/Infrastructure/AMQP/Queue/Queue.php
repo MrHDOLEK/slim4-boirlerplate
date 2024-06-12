@@ -21,4 +21,6 @@ interface Queue
      * @param array<Envelope> $envelopes
      */
     public function queueBatch(array $envelopes): void;
+
+    public function queueRawJson(Envelope $envelope): void;
 }

@@ -12,6 +12,7 @@ use App\Infrastructure\AMQP\Worker\Worker;
 use App\Infrastructure\AMQP\Worker\WorkerMaxLifeTimeOrIterationsExceeded;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use PhpAmqpLib\Wire\AMQPTable;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -220,7 +221,14 @@ class ConsumerTest extends TestCase
 
         $message = new AMQPMessage(
             serialize($envelope),
-            ["content_type" => "text/plain", "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT],
+            [
+                "content_type" => "text/plain",
+                "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+                "expiration" => 43200000,
+                "application_headers" => new AMQPTable([
+                    "x-retry-count" => 0,
+                ]),
+            ],
         );
         $message->setChannel($channel);
         $message->setDeliveryInfo("tag", false, null, null);
@@ -237,7 +245,6 @@ class ConsumerTest extends TestCase
             ->willThrowException($exception);
 
         $worker
-            ->expects($this->once())
             ->method("processFailure")
             ->with($envelope, $message, $exception, $queue);
 

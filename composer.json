@@ -17,6 +17,14 @@
             "name": "Aleksander Kowalski",
             "email": "mrhdolek14@gmail.com",
             "homepage": "https://github.com/MrHDOLEK"
+        },
+        {
+            "name": "Kamil Piech",
+            "homepage": "https://github.com/kamilpiech97"
+        },
+        {
+            "name": "Robiningel Brecht",
+            "homepage": "https://github.com/robiningelbrecht"
         }
     ],
     "require": {
