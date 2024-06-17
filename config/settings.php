@@ -27,6 +27,10 @@ return [
         // Path where Slim will cache the container, compiler passes, ...
         "cache_dir" => Settings::getAppRoot() . "/var/cache/slim",
     ],
+    "swoole" => [
+        "server_addr" => $_ENV["SERVER_ADDR"] ?? "localhost",
+        "server_port" => $_ENV["SERVER_PORT"] ?? 80,
+    ],
     "rabbitmq" => [
         "host" => $_ENV["RABBITMQ_HOST"],
         "port" => $_ENV["RABBITMQ_PORT"],

@@ -4,6 +4,7 @@ services:
         build:
             context: .
             dockerfile: .docker/php/Dockerfile
+            target: ${DOCKER_TARGET_APP:-fpm}
             args:
                 INSTALL_XDEBUG: ${DOCKER_INSTALL_XDEBUG:-false}
         working_dir: /var/www
