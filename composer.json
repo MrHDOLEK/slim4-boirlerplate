@@ -51,7 +51,7 @@
         "slim/twig-view": "^3.3",
         "swoole/ide-helper": "^5.1",
         "symfony/cache": "^6.3",
-        "symfony/console": "^6.3",
+        "symfony/console": "^7.1",
         "symfony/doctrine-bridge": "^6.3",
         "symfony/finder": "^6.3",
         "symfony/yaml": "^6.2",
