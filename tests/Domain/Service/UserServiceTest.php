@@ -10,11 +10,12 @@ use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Domain\Entity\User\UsersCollection;
 use App\Domain\Service\User\UserEventsService;
 use App\Domain\Service\User\UserService;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class UserServiceTest extends TestCase
 {
-    public function userProvider(): array
+    public static function userProvider(): array
     {
         $user = new User(
             "test",
@@ -29,9 +30,7 @@ class UserServiceTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider userProvider
-     */
+    #[DataProvider("userProvider")]
     public function testGetAllUsersSuccess(User $user): void
     {
         $usersCollection = new UsersCollection($user);
@@ -59,9 +58,7 @@ class UserServiceTest extends TestCase
         $this->assertEquals(1, $users->count());
     }
 
-    /**
-     * @dataProvider userProvider
-     */
+    #[DataProvider("userProvider")]
     public function testGetUserByIdSuccess(User $user): void
     {
         $userRepositoryProphecy = $this->prophesize(
@@ -137,9 +134,7 @@ class UserServiceTest extends TestCase
         $userService->getUserById(1);
     }
 
-    /**
-     * @dataProvider userProvider
-     */
+    #[DataProvider("userProvider")]
     public function testUpdateUserSuccess(User $user): void
     {
         $userRepositoryProphecy = $this->prophesize(

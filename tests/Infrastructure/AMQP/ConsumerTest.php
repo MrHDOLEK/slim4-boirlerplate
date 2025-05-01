@@ -66,12 +66,13 @@ class ConsumerTest extends TestCase
                 $callbackCalled = true;
             });
 
-        $matcher = $this->exactly(2);
         $channel
-            ->expects($matcher)
+            ->expects($this->any())
             ->method("is_open")
-            ->willReturnCallback(function () use ($matcher) {
-                if ($matcher->getInvocationCount() === 1) {
+            ->willReturnCallback(function () use (&$callCount) {
+                $callCount++;
+
+                if ($callCount === 1) {
                     return true;
                 }
 

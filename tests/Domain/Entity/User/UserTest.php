@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Tests\Domain\Entity\User;
 
 use App\Domain\Entity\User\User;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    public function userProvider(): array
+    public static function userProvider(): array
     {
         return [
             ["bill.gates", "Bill", "Gates"],
@@ -20,9 +21,7 @@ class UserTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider userProvider
-     */
+    #[DataProvider("userProvider")]
     public function testGetters(string $username, string $firstName, string $lastName): void
     {
         $user = new User($username, $firstName, $lastName);
@@ -32,9 +31,7 @@ class UserTest extends TestCase
         $this->assertEquals($lastName, $user->lastName());
     }
 
-    /**
-     * @dataProvider userProvider
-     */
+    #[DataProvider("userProvider")]
     public function testJsonSerialize(string $username, string $firstName, string $lastName): void
     {
         $user = new User($username, $firstName, $lastName);

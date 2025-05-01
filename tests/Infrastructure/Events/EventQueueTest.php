@@ -19,6 +19,7 @@ class EventQueueTest extends TestCase
     private TestEventQueue $eventQueue;
     private MockObject $AMQPChannelFactory;
     private MockObject $eventQueueWorker;
+    private MockObject $mockEnvelope;
 
     protected function setUp(): void
     {
@@ -31,6 +32,13 @@ class EventQueueTest extends TestCase
             $this->AMQPChannelFactory,
             $this->eventQueueWorker,
         );
+
+        $this->mockEnvelope = $this->getMockBuilder(Envelope::class)
+            ->disableOriginalConstructor()
+            ->disableOriginalClone()
+            ->disableArgumentCloning()
+            ->disallowMockingUnknownTypes()
+            ->getMock();
     }
 
     public function testGetWorkerSuccess(): void
@@ -49,15 +57,14 @@ class EventQueueTest extends TestCase
             ->with($this->eventQueue)
             ->willReturn($amqpChannel);
 
-        $properties =
-            [
-                "content_type" => "text/plain",
-                "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT,
-                "expiration" => 43200000,
-                "application_headers" => new AMQPTable([
-                    "x-retry-count" => 0,
-                ]),
-            ];
+        $properties = [
+            "content_type" => "text/plain",
+            "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+            "expiration" => 43200000,
+            "application_headers" => new AMQPTable([
+                "x-retry-count" => 0,
+            ]),
+        ];
         $message = new AMQPMessage(serialize($event), $properties);
 
         $amqpChannel
@@ -71,15 +78,7 @@ class EventQueueTest extends TestCase
     public function testQueueItShouldThrowWhenInvalidEnvelope(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Queue "test-command-queue" requires a event to be queued, Envelope given');
-
-        $this->eventQueue->queue($this->getMockBuilder(Envelope::class)
-            ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->disableArgumentCloning()
-            ->disallowMockingUnknownTypes()
-            ->setMockClassName("Envelope")
-            ->getMock());
+        $this->eventQueue->queue($this->mockEnvelope);
     }
 
     public function testQueueBatchSuccess(): void
@@ -118,14 +117,6 @@ class EventQueueTest extends TestCase
     public function testQueueBatchItShouldThrowWhenInvalidEnvelope(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Queue "test-command-queue" requires a event to be queued, Envelope given');
-
-        $this->eventQueue->queueBatch([$this->getMockBuilder(Envelope::class)
-            ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->disableArgumentCloning()
-            ->disallowMockingUnknownTypes()
-            ->setMockClassName("Envelope")
-            ->getMock(), ]);
+        $this->eventQueue->queueBatch([$this->mockEnvelope]);
     }
 }

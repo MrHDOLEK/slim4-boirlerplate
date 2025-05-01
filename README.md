@@ -307,10 +307,6 @@ If you change something in yaml, you can use the commands below to generate a mi
 > docker-compose run --rm php vendor/bin/doctrine-migrations migrate
 ```
 
-### Swoole
-
-To use swoole, just set `DOCKER_TARGET_APP=swoole` in .env and rebuild the application container.
-
 ## Documentations
 
 Learn more at these links:

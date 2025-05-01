@@ -17,6 +17,11 @@ readonly class AMQPChannelOptions
         private ?int $ticket = null,
     ) {}
 
+    public static function default(): self
+    {
+        return new self(false, true, false, false);
+    }
+
     public function isPassive(): bool
     {
         return $this->passive;
@@ -53,10 +58,5 @@ readonly class AMQPChannelOptions
     public function getTicket(): ?int
     {
         return $this->ticket;
-    }
-
-    public static function default(): self
-    {
-        return new self(false, true, false, false);
     }
 }
