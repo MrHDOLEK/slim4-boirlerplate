@@ -15,7 +15,7 @@ use Throwable;
 
 class Consumer
 {
-    private const int TWELVE_HOURS_IN_MS = 43200000;
+    private const TWELVE_HOURS_IN_MS = 12 * 60 * 60 * 1000;
 
     private ?AMQPChannel $channel = null;
     private bool $forceShutDown = false;
