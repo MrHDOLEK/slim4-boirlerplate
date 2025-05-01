@@ -49,7 +49,6 @@
         "slim/psr7": "^1.6",
         "slim/slim": "^4.14",
         "slim/twig-view": "^3.4",
-        "swoole/ide-helper": "^6.0",
         "symfony/cache": "^6.3",
         "symfony/console": "^6.3",
         "symfony/doctrine-bridge": "^6.3",
