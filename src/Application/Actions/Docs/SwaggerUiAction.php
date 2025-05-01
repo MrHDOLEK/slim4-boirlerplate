@@ -8,6 +8,7 @@ use OpenApi\Attributes as OA;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Views\Twig;
+use Symfony\Component\Yaml\Yaml;
 
 #[OA\Info(version: "0.1", title: "API")]
 #[OA\Server(url: "/", description: "Local server")]
@@ -28,11 +29,8 @@ final class SwaggerUiAction
     )]
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $jsonPath = __DIR__ . "/../../../../resources/docs/openapi.json";
-        $spec = json_decode(file_get_contents($jsonPath), true);
-
         $viewData = [
-            "spec" => json_encode($spec),
+            "spec" => json_encode(Yaml::parseFile(__DIR__ . "/../../../../resources/docs/openapi.yaml")),
         ];
 
         return $this->twig->render($response, "docs/swagger.twig", $viewData);
