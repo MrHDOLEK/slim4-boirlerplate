@@ -29,7 +29,7 @@ final readonly class UserService
      */
     public function getAllUsers(): UsersCollection
     {
-        return $this->userRepository->findAll();
+        return $this->userRepository->getAll();
     }
 
     public function createUser(User $user): void

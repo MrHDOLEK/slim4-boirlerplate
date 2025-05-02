@@ -26,7 +26,7 @@ class UserRepositoryTest extends TestCase
          */
         $userRepository = $this->getContainer()->get(UserRepositoryInterface::class);
 
-        $users = $userRepository->findAll();
+        $users = $userRepository->getAll();
 
         $this->assertInstanceOf(UsersCollection::class, $users);
         $this->assertInstanceOf(User::class, $users->offsetGet(1));

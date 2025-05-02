@@ -40,7 +40,7 @@ class UserServiceTest extends TestCase
         $userRepoMock = $this->createMock(UserRepositoryInterface::class);
         $userRepoMock
             ->expects($this->once())
-            ->method("findAll")
+            ->method("getAll")
             ->willReturn($usersCollection);
 
         /** @var UserEventsService&MockObject $eventServiceMock */
@@ -86,7 +86,7 @@ class UserServiceTest extends TestCase
         $userRepoMock = $this->createMock(UserRepositoryInterface::class);
         $userRepoMock
             ->expects($this->once())
-            ->method("findAll")
+            ->method("getAll")
             ->willThrowException(new UserNotFoundException());
 
         /** @var UserEventsService&MockObject $eventServiceMock */

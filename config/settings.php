@@ -45,6 +45,7 @@ return [
         // Path where Doctrine will cache the processed metadata
         // when 'dev_mode' is false.
         "cache_dir" => Settings::getAppRoot() . "/var/cache/doctrine",
+        "cache_ttl" => $_ENV["DOCTRINE_CACHE_TTL"] ?? 0,
         // List of paths where Doctrine will search for metadata.
         // Metadata can be either YML/XML files or PHP classes annotated
         // with comments or PHP8 attributes.

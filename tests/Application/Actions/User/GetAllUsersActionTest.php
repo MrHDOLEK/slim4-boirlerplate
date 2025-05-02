@@ -27,7 +27,7 @@ class GetAllUsersActionTest extends TestCase
         $userRepoMock = $this->createMock(UserRepositoryInterface::class);
         $userRepoMock
             ->expects($this->once())
-            ->method("findAll")
+            ->method("getAll")
             ->willReturn($users);
 
         $container->set(UserRepositoryInterface::class, $userRepoMock);

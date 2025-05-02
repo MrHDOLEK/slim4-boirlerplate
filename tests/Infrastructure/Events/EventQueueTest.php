@@ -27,7 +27,7 @@ class EventQueueTest extends TestCase
 
         $this->AMQPChannelFactory = $this->createMock(AMQPChannelFactory::class);
         $this->eventQueueWorker = $this->createMock(EventQueueWorker::class);
-        $this->mockEnvelope     = $this->createMock(Envelope::class);
+        $this->mockEnvelope = $this->createMock(Envelope::class);
 
         $this->eventQueue = new TestEventQueue(
             $this->AMQPChannelFactory,
@@ -42,27 +42,27 @@ class EventQueueTest extends TestCase
 
     public function testQueueSuccess(): void
     {
-        $event       = new TestEvent();
+        $event = new TestEvent();
         $amqpChannel = $this->createMock(AMQPChannel::class);
 
         $this->AMQPChannelFactory
             ->expects($this->once())
-            ->method('getForQueue')
+            ->method("getForQueue")
             ->with($this->eventQueue)
             ->willReturn($amqpChannel);
 
         $properties = [
-            'content_type'       => 'text/plain',
-            'delivery_mode'      => AMQPMessage::DELIVERY_MODE_PERSISTENT,
-            'expiration'         => 43200000,
-            'application_headers' => new AMQPTable(['x-retry-count' => 0]),
+            "content_type" => "text/plain",
+            "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+            "expiration" => 43200000,
+            "application_headers" => new AMQPTable(["x-retry-count" => 0]),
         ];
         $message = new AMQPMessage(serialize($event), $properties);
 
         $amqpChannel
             ->expects($this->once())
-            ->method('basic_publish')
-            ->with($message, '', 'test-command-queue');
+            ->method("basic_publish")
+            ->with($message, "", "test-command-queue");
 
         $this->eventQueue->queue($event);
     }
@@ -75,30 +75,30 @@ class EventQueueTest extends TestCase
 
     public function testQueueBatchSuccess(): void
     {
-        $event       = new TestEvent();
+        $event = new TestEvent();
         $amqpChannel = $this->createMock(AMQPChannel::class);
 
         $this->AMQPChannelFactory
             ->expects($this->once())
-            ->method('getForQueue')
+            ->method("getForQueue")
             ->with($this->eventQueue)
             ->willReturn($amqpChannel);
 
         $properties = [
-            'content_type'       => 'text/plain',
-            'delivery_mode'      => AMQPMessage::DELIVERY_MODE_PERSISTENT,
-            'expiration'         => 43200000,
-            'application_headers' => new AMQPTable(['x-retry-count' => 0]),
+            "content_type" => "text/plain",
+            "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+            "expiration" => 43200000,
+            "application_headers" => new AMQPTable(["x-retry-count" => 0]),
         ];
         $message = new AMQPMessage(serialize($event), $properties);
 
         $amqpChannel
             ->expects($this->once())
-            ->method('batch_basic_publish')
-            ->with($message, '', 'test-command-queue');
+            ->method("batch_basic_publish")
+            ->with($message, "", "test-command-queue");
         $amqpChannel
             ->expects($this->once())
-            ->method('publish_batch');
+            ->method("publish_batch");
 
         $this->eventQueue->queueBatch([$event]);
     }
