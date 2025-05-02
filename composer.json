@@ -62,7 +62,6 @@
         "blumilksoftware/codestyle": "*",
         "jangregor/phpstan-prophecy": "^2.1",
         "league/openapi-psr7-validator": "^0.22.0",
-        "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/extension-installer": "^1.2.0",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^10.5",

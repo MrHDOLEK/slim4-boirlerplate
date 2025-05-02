@@ -17,7 +17,9 @@ class Consumer
 {
     private const TWELVE_HOURS_IN_MS = 12 * 60 * 60 * 1000;
 
+    /** @phpstan-ignore-next-line  */
     private ?AMQPChannel $channel = null;
+
     private bool $forceShutDown = false;
 
     public function __construct(

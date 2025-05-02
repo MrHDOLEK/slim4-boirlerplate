@@ -9,7 +9,6 @@ use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
@@ -21,8 +20,6 @@ use Slim\Routing\RouteContext;
 
 class TestCase extends PHPUnit_TestCase
 {
-    use ProphecyTrait;
-
     protected array $fixtures = [];
     private App $app;
 
@@ -75,7 +72,7 @@ class TestCase extends PHPUnit_TestCase
 
     public function getOpenApiPatch(): string
     {
-        return dirname(__DIR__) . "/resources/docs/openapi.json";
+        return dirname(__DIR__) . "/resources/docs/openapi.yaml";
     }
 
     protected function createRequest(

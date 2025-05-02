@@ -11,6 +11,7 @@ use App\Domain\Entity\User\UsersCollection;
 use App\Domain\Service\User\UserEventsService;
 use App\Domain\Service\User\UserService;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 class UserServiceTest extends TestCase
@@ -35,124 +36,111 @@ class UserServiceTest extends TestCase
     {
         $usersCollection = new UsersCollection($user);
 
-        $userRepositoryProphecy = $this->prophesize(
-            UserRepositoryInterface::class,
-        );
+        /** @var UserRepositoryInterface&MockObject $userRepoMock */
+        $userRepoMock = $this->createMock(UserRepositoryInterface::class);
+        $userRepoMock
+            ->expects($this->once())
+            ->method("findAll")
+            ->willReturn($usersCollection);
 
-        $userEventServiceMock = $this->createMock(UserEventsService::class);
-        $userEventServiceMock
+        /** @var UserEventsService&MockObject $eventServiceMock */
+        $eventServiceMock = $this->createMock(UserEventsService::class);
+        $eventServiceMock
             ->expects($this->never())
             ->method("userWasCreated");
 
-        $userRepositoryProphecy->findAll()
-            ->willReturn($usersCollection)
-            ->shouldBeCalledOnce();
+        $service = new UserService($userRepoMock, $eventServiceMock);
+        $result = $service->getAllUsers();
 
-        $userService = new UserService(
-            $userRepositoryProphecy->reveal(),
-            $userEventServiceMock,
-        );
-
-        $users = $userService->getAllUsers();
-
-        $this->assertEquals(1, $users->count());
+        $this->assertEquals(1, $result->count());
     }
 
     #[DataProvider("userProvider")]
     public function testGetUserByIdSuccess(User $user): void
     {
-        $userRepositoryProphecy = $this->prophesize(
-            UserRepositoryInterface::class,
-        );
+        /** @var UserRepositoryInterface&MockObject $userRepoMock */
+        $userRepoMock = $this->createMock(UserRepositoryInterface::class);
+        $userRepoMock
+            ->expects($this->once())
+            ->method("findUserOfId")
+            ->with(1)
+            ->willReturn($user);
 
-        $userEventServiceMock = $this->createMock(UserEventsService::class);
-        $userEventServiceMock
+        /** @var UserEventsService&MockObject $eventServiceMock */
+        $eventServiceMock = $this->createMock(UserEventsService::class);
+        $eventServiceMock
             ->expects($this->never())
             ->method("userWasCreated");
 
-        $userRepositoryProphecy->findUserOfId(1)
-            ->willReturn($user)
-            ->shouldBeCalledOnce();
+        $service = new UserService($userRepoMock, $eventServiceMock);
+        $fetched = $service->getUserById(1);
 
-        $userService = new UserService(
-            $userRepositoryProphecy->reveal(),
-            $userEventServiceMock,
-        );
-
-        $user = $userService->getUserById(1);
-
-        $this->assertEquals("Test", $user->lastName());
-        $this->assertEquals("Test", $user->firstName());
-        $this->assertEquals("test", $user->username());
+        $this->assertEquals("Test", $fetched->lastName());
+        $this->assertEquals("Test", $fetched->firstName());
+        $this->assertEquals("test", $fetched->username());
     }
 
     public function testGetAllUsersThrowsUserNotFoundException(): void
     {
-        $userRepositoryProphecy = $this->prophesize(
-            UserRepositoryInterface::class,
-        );
+        /** @var UserRepositoryInterface&MockObject $userRepoMock */
+        $userRepoMock = $this->createMock(UserRepositoryInterface::class);
+        $userRepoMock
+            ->expects($this->once())
+            ->method("findAll")
+            ->willThrowException(new UserNotFoundException());
 
-        $userEventServiceMock = $this->createMock(UserEventsService::class);
-        $userEventServiceMock
+        /** @var UserEventsService&MockObject $eventServiceMock */
+        $eventServiceMock = $this->createMock(UserEventsService::class);
+        $eventServiceMock
             ->expects($this->never())
             ->method("userWasCreated");
 
-        $userRepositoryProphecy->findAll()
-            ->willThrow(UserNotFoundException::class)
-            ->shouldBeCalledOnce();
-
-        $userService = new UserService(
-            $userRepositoryProphecy->reveal(),
-            $userEventServiceMock,
-        );
+        $service = new UserService($userRepoMock, $eventServiceMock);
 
         $this->expectException(UserNotFoundException::class);
-        $userService->getAllUsers();
+        $service->getAllUsers();
     }
 
     public function testGetUserByIdThrowsUserNotFoundException(): void
     {
-        $userRepositoryProphecy = $this->prophesize(
-            UserRepositoryInterface::class,
-        );
+        /** @var UserRepositoryInterface&MockObject $userRepoMock */
+        $userRepoMock = $this->createMock(UserRepositoryInterface::class);
+        $userRepoMock
+            ->expects($this->once())
+            ->method("findUserOfId")
+            ->with(1)
+            ->willThrowException(new UserNotFoundException());
 
-        $userEventServiceMock = $this->createMock(UserEventsService::class);
-        $userEventServiceMock
+        /** @var UserEventsService&MockObject $eventServiceMock */
+        $eventServiceMock = $this->createMock(UserEventsService::class);
+        $eventServiceMock
             ->expects($this->never())
             ->method("userWasCreated");
 
-        $userRepositoryProphecy->findUserOfId(1)
-            ->willThrow(UserNotFoundException::class)
-            ->shouldBeCalledOnce();
-
-        $userService = new UserService(
-            $userRepositoryProphecy->reveal(),
-            $userEventServiceMock,
-        );
+        $service = new UserService($userRepoMock, $eventServiceMock);
 
         $this->expectException(UserNotFoundException::class);
-        $userService->getUserById(1);
+        $service->getUserById(1);
     }
 
     #[DataProvider("userProvider")]
     public function testUpdateUserSuccess(User $user): void
     {
-        $userRepositoryProphecy = $this->prophesize(
-            UserRepositoryInterface::class,
-        );
-
-        $userEventServiceMock = $this->createMock(UserEventsService::class);
-        $userEventServiceMock
+        /** @var UserRepositoryInterface&MockObject $userRepoMock */
+        $userRepoMock = $this->createMock(UserRepositoryInterface::class);
+        $userRepoMock
             ->expects($this->once())
-            ->method("userWasUpdated");
-        $userRepositoryProphecy->save($user)
-            ->shouldBeCalledOnce();
+            ->method("save")
+            ->with($user);
 
-        $userService = new UserService(
-            $userRepositoryProphecy->reveal(),
-            $userEventServiceMock,
-        );
+        /** @var UserEventsService&MockObject $eventServiceMock */
+        $eventServiceMock = $this->createMock(UserEventsService::class);
+        $eventServiceMock
+            ->expects($this->once())
+            ->method("userWasUpdated")
+            ->with($user);
 
-        $userService->updateUser($user);
+        $service = new UserService($userRepoMock, $eventServiceMock);
+        $service->updateUser($user);
     }
 }

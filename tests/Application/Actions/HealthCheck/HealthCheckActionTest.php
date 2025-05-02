@@ -6,6 +6,7 @@ namespace Tests\Application\Actions\HealthCheck;
 
 use App\Application\Service\HealthCheckService;
 use DI\Container;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 class HealthCheckActionTest extends TestCase
@@ -13,66 +14,62 @@ class HealthCheckActionTest extends TestCase
     public function testHealthCheckActionSuccess(): void
     {
         $app = $this->getApp();
-
         /** @var Container $container */
         $container = $app->getContainer();
 
-        $healthCheckServiceProphecy = $this->prophesize(HealthCheckService::class);
-        $healthCheckServiceProphecy
-            ->statusCode()
-            ->willReturn(200)
-            ->shouldBeCalledOnce();
-        $healthCheckServiceProphecy
-            ->statusList()
+        /** @var HealthCheckService&MockObject $healthCheckServiceMock */
+        $healthCheckServiceMock = $this->createMock(HealthCheckService::class);
+        $healthCheckServiceMock
+            ->expects($this->once())
+            ->method("statusCode")
+            ->willReturn(200);
+        $healthCheckServiceMock
+            ->expects($this->once())
+            ->method("statusList")
             ->willReturn([
                 "API_CONNECTION" => "OK",
-            ])
-            ->shouldBeCalledOnce();
+            ]);
 
-        $container->set(HealthCheckService::class, $healthCheckServiceProphecy->reveal());
+        $container->set(HealthCheckService::class, $healthCheckServiceMock);
 
         $request = $this->createRequest("GET", "/health-check");
         $response = $app->handle($request);
 
         $this->assertJsonStringEqualsJsonString(
-            json_encode([
-                "API_CONNECTION" => "OK",
-            ]),
+            json_encode(["API_CONNECTION" => "OK"]),
             (string)$response->getBody(),
         );
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     public function testHealthCheckActionError(): void
     {
         $app = $this->getApp();
-
         /** @var Container $container */
         $container = $app->getContainer();
 
-        $healthCheckServiceProphecy = $this->prophesize(HealthCheckService::class);
-        $healthCheckServiceProphecy
-            ->statusCode()
-            ->willReturn(503)
-            ->shouldBeCalledOnce();
-        $healthCheckServiceProphecy
-            ->statusList()
+        /** @var HealthCheckService&MockObject $healthCheckServiceMock */
+        $healthCheckServiceMock = $this->createMock(HealthCheckService::class);
+        $healthCheckServiceMock
+            ->expects($this->once())
+            ->method("statusCode")
+            ->willReturn(503);
+        $healthCheckServiceMock
+            ->expects($this->once())
+            ->method("statusList")
             ->willReturn([
                 "API_CONNECTION" => "OK",
-            ])
-            ->shouldBeCalledOnce();
+            ]);
 
-        $container->set(HealthCheckService::class, $healthCheckServiceProphecy->reveal());
+        $container->set(HealthCheckService::class, $healthCheckServiceMock);
 
         $request = $this->createRequest("GET", "/health-check");
         $response = $app->handle($request);
 
         $this->assertJsonStringEqualsJsonString(
-            json_encode([
-                "API_CONNECTION" => "OK",
-            ]),
+            json_encode(["API_CONNECTION" => "OK"]),
             (string)$response->getBody(),
         );
-        $this->assertEquals(503, $response->getStatusCode());
+        $this->assertSame(503, $response->getStatusCode());
     }
 }

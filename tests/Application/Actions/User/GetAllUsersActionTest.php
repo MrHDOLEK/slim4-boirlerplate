@@ -10,6 +10,7 @@ use App\Domain\Entity\User\UsersCollection;
 use DI\Container;
 use League\OpenAPIValidation\PSR7\OperationAddress;
 use League\OpenAPIValidation\PSR7\ValidatorBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 class GetAllUsersActionTest extends TestCase
@@ -17,33 +18,36 @@ class GetAllUsersActionTest extends TestCase
     public function testActionSuccess(): void
     {
         $app = $this->getApp();
-
         /** @var Container $container */
         $container = $app->getContainer();
 
         $users = new UsersCollection(new User("bill.gates", "Bill", "Gates"));
 
-        $userRepositoryProphecy = $this->prophesize(UserRepositoryInterface::class);
-        $userRepositoryProphecy
-            ->findAll()
-            ->willReturn($users)
-            ->shouldBeCalledOnce();
+        /** @var UserRepositoryInterface&MockObject $userRepoMock */
+        $userRepoMock = $this->createMock(UserRepositoryInterface::class);
+        $userRepoMock
+            ->expects($this->once())
+            ->method("findAll")
+            ->willReturn($users);
 
-        $container->set(UserRepositoryInterface::class, $userRepositoryProphecy->reveal());
+        $container->set(UserRepositoryInterface::class, $userRepoMock);
 
         $request = $this->createRequest("GET", "/api/v1/users");
         $response = $app->handle($request);
 
         $payload = (string)$response->getBody();
-
-        $this->assertEquals('[{"username":"bill.gates","firstName":"Bill","lastName":"Gates"}]', $payload);
+        $this->assertSame(
+            '[{"username":"bill.gates","firstName":"Bill","lastName":"Gates"}]',
+            $payload,
+        );
     }
 
     public function testDocumentationOfEndpoint(): void
     {
-        $jsonFile = $this->getOpenApiPatch();
-
-        $validator = (new ValidatorBuilder())->fromJsonFile($jsonFile)->getRoutedRequestValidator();
+        $yamlFile = $this->getOpenApiPatch();
+        $validator = (new ValidatorBuilder())
+            ->fromYamlFile($yamlFile)
+            ->getRoutedRequestValidator();
 
         $request = $this->createRequest(
             "GET",
@@ -54,8 +58,8 @@ class GetAllUsersActionTest extends TestCase
         );
 
         $address = new OperationAddress("/api/v1/users", "get");
-
         $validator->validate($address, $request);
+
         $this->expectNotToPerformAssertions();
     }
 }
