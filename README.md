@@ -317,4 +317,3 @@ Learn more at these links:
 - [Doctrine migrations](https://www.doctrine-project.org/projects/doctrine-migrations/en/3.6/)
 - [Doctrine reference](https://www.doctrine-project.org/projects/doctrine-bundle/en/latest/configuration.html)
 - [Twig](https://twig.symfony.com/)
-- [Swoole](https://openswoole.com/docs)
