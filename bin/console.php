@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\ArgvInput;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$env = new ArgvInput()->getParameterOption(['--env', '-e'], 'dev');
+$env = (new ArgvInput())->getParameterOption(['--env', '-e'], 'dev');
 
 if ($env) {
     $_ENV['APP_ENV'] = $env;
