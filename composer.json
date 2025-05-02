@@ -39,7 +39,7 @@
         "fakerphp/faker": "^1.23",
         "laminas/laminas-diactoros": "^3.5",
         "lcobucci/clock": "^3.2",
-        "monolog/monolog": "^2.10",
+        "monolog/monolog": "^3.9",
         "peppeocchi/php-cron-scheduler": "^4.0",
         "php-amqplib/php-amqplib": "^3.7",
         "php-di/php-di": "^7.0",

@@ -7,9 +7,13 @@ use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
 use App\Infrastructure\Console\ConsoleCommandContainer;
 use App\Infrastructure\Environment\Environment;
 use App\Infrastructure\Environment\Settings;
+use App\Infrastructure\Logging\ActionLogProcessor;
+use App\Infrastructure\Logging\LogfmtFormatter;
+use App\Infrastructure\Logging\SlowQueryLogger;
 use App\Infrastructure\Persistence\Doctrine\Repository\UserRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Logging\Middleware as DbalLoggingMiddleware;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup;
@@ -40,11 +44,12 @@ return [
         $settings = $container->get(Settings::class);
 
         $logger = new Logger($settings->get("slim.logger.name"));
+        $logger->pushProcessor(new UidProcessor());
 
-        $processor = new UidProcessor();
-        $logger->pushProcessor($processor);
+        $logger->pushProcessor(new ActionLogProcessor());
 
         $handler = new StreamHandler($settings->get("slim.logger.path"), $settings->get("slim.logger.level"));
+        $handler->setFormatter(new LogfmtFormatter());
         $logger->pushHandler($handler);
 
         return $logger;
@@ -75,6 +80,15 @@ return [
         $config->setQueryCache   ($cachePool);
         $config->setResultCache  ($cachePool);
         $config->setAutoGenerateProxyClasses((bool)$settings->get("doctrine.dev_mode"));
+
+        $slowLogger = new SlowQueryLogger(
+            $container->get(LoggerInterface::class),
+            0.1,
+        );
+
+        $config->setMiddlewares([
+            new DbalLoggingMiddleware($slowLogger),
+        ]);
 
         $connection = DriverManager::getConnection(
             $settings->get("doctrine.connection"),

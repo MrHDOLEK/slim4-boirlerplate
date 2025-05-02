@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Serialization;
+namespace App\Infrastructure\Logging;
 
-use DateTime;
+use DateTimeInterface;
 use Monolog\Formatter\NormalizerFormatter;
+use Monolog\LogRecord;
 
+use function array_key_exists;
 use function is_bool;
 use function is_scalar;
+use function preg_match;
 use function var_export;
 
 class LogfmtFormatter extends NormalizerFormatter
@@ -27,12 +30,13 @@ class LogfmtFormatter extends NormalizerFormatter
         ?string $levelKey = "lvl",
         ?string $channelKey = "chan",
         ?string $messageKey = "msg",
-        ?string $dateFormat = DateTime::RFC3339,
+        ?string $dateFormat = DateTimeInterface::RFC3339,
     ) {
         $this->timeKey = $dateTimeKey ? trim($dateTimeKey) : null;
         $this->lvlKey = $levelKey ? trim($levelKey) : null;
         $this->chanKey = $channelKey ? trim($channelKey) : null;
         $this->msgKey = $messageKey ? trim($messageKey) : null;
+
         $this->timeKeyValid = $this->isValidIdent($this->timeKey);
         $this->lvlKeyValid = $this->isValidIdent($this->lvlKey);
         $this->chanKeyValid = $this->isValidIdent($this->chanKey);
@@ -41,7 +45,7 @@ class LogfmtFormatter extends NormalizerFormatter
         parent::__construct($dateFormat);
     }
 
-    public function format(array $record): string
+    public function format(LogRecord|array $record): string
     {
         $vars = parent::format($record);
 
@@ -64,22 +68,14 @@ class LogfmtFormatter extends NormalizerFormatter
         }
 
         foreach ($vars["context"] as $ctxKey => $ctxVal) {
-            if (array_key_exists($ctxKey, $pairs)) {
-                continue;
-            }
-
-            if (!$this->isValidIdent($ctxKey)) {
+            if (array_key_exists($ctxKey, $pairs) || !$this->isValidIdent($ctxKey)) {
                 continue;
             }
             $pairs[$ctxKey] = $ctxKey . "=" . $this->stringifyVal($ctxVal);
         }
 
         foreach ($vars["extra"] as $extraKey => $extraVal) {
-            if (array_key_exists($extraKey, $pairs)) {
-                continue;
-            }
-
-            if (!$this->isValidIdent($extraKey)) {
+            if (array_key_exists($extraKey, $pairs) || !$this->isValidIdent($extraKey)) {
                 continue;
             }
             $pairs[$extraKey] = $extraKey . "=" . $this->stringifyVal($extraVal);
@@ -88,7 +84,7 @@ class LogfmtFormatter extends NormalizerFormatter
         return implode(" ", $pairs) . "\n";
     }
 
-    public function formatBatch(array $records)
+    public function formatBatch(array $records): string
     {
         $message = "";
 
@@ -111,8 +107,8 @@ class LogfmtFormatter extends NormalizerFormatter
     protected function isValidIdent($val): bool
     {
         if (is_string($val)) {
-            // Control chars, DEL, ", =, space
-            if (preg_match('/[\x00-\x1F\x7F\"\=\s]/u', $val)) {
+            // control chars, DEL, ", =, space
+            if (preg_match('/[\x00-\x1F\x7F"=\s]/u', $val)) {
                 return false;
             }
 

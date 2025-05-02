@@ -81,6 +81,7 @@ return [
             "connection" => null,
             "em" => null,
         ],
+        "slow_query_threshold_ms" => $_ENV["SLOW_QUERY_THRESHOLD"] ?? 300,
     ],
     "redis" => [
         "host" => $_ENV["REDIS_HOST"],
