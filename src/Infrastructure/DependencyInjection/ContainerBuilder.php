@@ -24,8 +24,16 @@ class ContainerBuilder
         private readonly ClassAttributeResolver $classAttributeResolver,
     ) {}
 
+    public static function create(): self
+    {
+        return new self(
+            new \DI\ContainerBuilder(),
+            new ClassAttributeResolver(),
+        );
+    }
+
     /**
-     *  @param array<mixed>|string|DefinitionSource ...$definitions
+     * @param array<mixed>|string|DefinitionSource ...$definitions
      */
     public function addDefinitions(...$definitions): self
     {
@@ -105,13 +113,5 @@ class ContainerBuilder
         }
 
         return $this->containerBuilder->build();
-    }
-
-    public static function create(): self
-    {
-        return new self(
-            new \DI\ContainerBuilder(),
-            new ClassAttributeResolver(),
-        );
     }
 }

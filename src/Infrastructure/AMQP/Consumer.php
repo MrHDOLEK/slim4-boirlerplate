@@ -15,9 +15,11 @@ use Throwable;
 
 class Consumer
 {
-    private const int TWELVE_HOURS_IN_MS = 43200000;
+    private const TWELVE_HOURS_IN_MS = 12 * 60 * 60 * 1000;
 
+    /** @phpstan-ignore-next-line  */
     private ?AMQPChannel $channel = null;
+
     private bool $forceShutDown = false;
 
     public function __construct(
@@ -28,6 +30,51 @@ class Consumer
     public function __destruct()
     {
         $this->channel?->close();
+    }
+
+    public static function consumeCallback(
+        AMQPMessage $message,
+        Queue $queue,
+    ): void {
+        $worker = $queue->getWorker();
+        $envelope = unserialize($message->getBody());
+
+        try {
+            if ($worker->maxLifeTimeReached() || $worker->maxIterationsReached()) {
+                throw new WorkerMaxLifeTimeOrIterationsExceeded();
+            }
+
+            $worker->processMessage($envelope, $message);
+            $message->getChannel()?->basic_ack($message->getDeliveryTag());
+        } catch (WorkerMaxLifeTimeOrIterationsExceeded $exception) {
+            // Requeue message to make sure next consumer can process it.
+            $message->getChannel()?->basic_nack($message->getDeliveryTag(), false, true);
+
+            throw $exception;
+        } catch (Throwable $exception) {
+            $retry = (int)$message->get_properties()["application_headers"]["x-retry-count"];
+
+            if ($retry >= Constants::MAX_RETRY_COUNT) {
+                $worker->processFailure($envelope, $message, $exception, $queue);
+                // Ack the message to unblock queue. Worker should handle failed messages.
+                $message->getChannel()?->basic_ack($message->getDeliveryTag());
+
+                return;
+            }
+
+            $properties = [
+                "content_type" => "text/plain",
+                "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT,
+                "expiration" => self::TWELVE_HOURS_IN_MS,
+                "application_headers" => new AMQPTable([
+                    "x-retry-count" => $retry + 1,
+                ]),
+            ];
+
+            $messageRetry = new AMQPMessage($message->getBody(), $properties);
+            $message->getChannel()?->basic_publish($messageRetry, "", $message->getRoutingKey());
+            $message->getChannel()?->basic_ack($message->getDeliveryTag());
+        }
     }
 
     public function shutdown(): void
@@ -103,51 +150,6 @@ class Consumer
             $this->AMQPStreamConnectionFactory->get()->close();
 
             throw $exception;
-        }
-    }
-
-    public static function consumeCallback(
-        AMQPMessage $message,
-        Queue $queue,
-    ): void {
-        $worker = $queue->getWorker();
-        $envelope = unserialize($message->getBody());
-
-        try {
-            if ($worker->maxLifeTimeReached() || $worker->maxIterationsReached()) {
-                throw new WorkerMaxLifeTimeOrIterationsExceeded();
-            }
-
-            $worker->processMessage($envelope, $message);
-            $message->getChannel()?->basic_ack($message->getDeliveryTag());
-        } catch (WorkerMaxLifeTimeOrIterationsExceeded $exception) {
-            // Requeue message to make sure next consumer can process it.
-            $message->getChannel()?->basic_nack($message->getDeliveryTag(), false, true);
-
-            throw $exception;
-        } catch (Throwable $exception) {
-            $retry = (int)$message->get_properties()["application_headers"]["x-retry-count"];
-
-            if ($retry >= Constants::MAX_RETRY_COUNT) {
-                $worker->processFailure($envelope, $message, $exception, $queue);
-                // Ack the message to unblock queue. Worker should handle failed messages.
-                $message->getChannel()?->basic_ack($message->getDeliveryTag());
-
-                return;
-            }
-
-            $properties = [
-                "content_type" => "text/plain",
-                "delivery_mode" => AMQPMessage::DELIVERY_MODE_PERSISTENT,
-                "expiration" => self::TWELVE_HOURS_IN_MS,
-                "application_headers" => new AMQPTable([
-                    "x-retry-count" => $retry + 1,
-                ]),
-            ];
-
-            $messageRetry = new AMQPMessage($message->getBody(), $properties);
-            $message->getChannel()?->basic_publish($messageRetry, "", $message->getRoutingKey());
-            $message->getChannel()?->basic_ack($message->getDeliveryTag());
         }
     }
 }

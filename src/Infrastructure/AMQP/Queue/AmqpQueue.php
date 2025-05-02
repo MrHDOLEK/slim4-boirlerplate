@@ -15,7 +15,7 @@ use RuntimeException;
 
 abstract class AmqpQueue implements Queue
 {
-    private const int TWELVE_HOURS_IN_MS = 43200000;
+    private const TWELVE_HOURS_IN_MS = 43_200_000;
 
     private ?AsAmqpQueue $amqpQueueAttribute = null;
 

@@ -11,7 +11,7 @@ interface UserRepositoryInterface
     /**
      * @throws UserNotFoundException
      */
-    public function findAll(): UsersCollection;
+    public function getAll(): UsersCollection;
 
     /**
      * @throws UserNotFoundException

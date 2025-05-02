@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 class ContainerBuilderTest extends TestCase
 {
     private ContainerBuilder $containerBuilder;
-    private MockObject $DIContainerBuilder;
-    private MockObject $classAttributeResolver;
+    private \DI\ContainerBuilder&MockObject $DIContainerBuilder;
+    private ClassAttributeResolver&MockObject $classAttributeResolver;
 
     protected function setUp(): void
     {
@@ -35,17 +35,22 @@ class ContainerBuilderTest extends TestCase
     {
         $compilerPass = $this->createMock(CompilerPass::class);
 
-        $matcher = $this->exactly(2);
+        $count = 0;
+        $builderMock = $this->DIContainerBuilder;
         $this->DIContainerBuilder
-            ->expects($matcher)
+            ->expects($this->exactly(2))
             ->method("addDefinitions")
-            ->willReturnCallback(function (string $key) use ($matcher): void {
-                match ($matcher->getInvocationCount()) {
-                    1 => $this->assertEquals($key, "definition"),
-                    2 => $this->assertEquals($key, []),
-                };
-            })
-            ->willReturn($this->createMock(\DI\ContainerBuilder::class));
+            ->willReturnCallback(function ($key) use (&$count, $builderMock) {
+                $count++;
+
+                if ($count === 1) {
+                    TestCase::assertEquals("definition", $key);
+                } else {
+                    TestCase::assertEquals([], $key);
+                }
+
+                return $builderMock;
+            });
 
         $this->DIContainerBuilder
             ->expects($this->once())
@@ -86,7 +91,8 @@ class ContainerBuilderTest extends TestCase
         $this->DIContainerBuilder
             ->expects($this->once())
             ->method("addDefinitions")
-            ->with("definition");
+            ->with("definition")
+            ->willReturnSelf();
 
         $compilerPass
             ->expects($this->once())
@@ -116,9 +122,6 @@ class ContainerBuilderTest extends TestCase
 
         $compilerPass = $this->getMockBuilder(CompilerPass::class)
             ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->disableArgumentCloning()
-            ->disallowMockingUnknownTypes()
             ->setMockClassName("CompilerPassOne")
             ->getMock();
 

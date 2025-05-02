@@ -9,7 +9,7 @@ on:
 jobs:
   test-and-lint-php:
     name: Test&lint PHP codebase
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     services:
       pgsql:
         image: postgres:15
@@ -41,7 +41,7 @@ jobs:
           coverage: xdebug
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-suggest
+        run: composer install --optimize-autoloader --classmap-authoritative --prefer-dist --no-interaction
 
       - name: Run PHP linter
         run: composer cs:check
@@ -57,7 +57,7 @@ jobs:
         run: |
           cp .env.test .env
           composer migrate
-          vendor/bin/phpunit --testsuite unit --log-junit junit.xml --coverage-clover clover.xml
+          php -dopcache.validate_timestamps=0 vendor/bin/phpunit --testsuite "Test Suite" --log-junit junit.xml --coverage-clover clover.xml
 
       - name: Send test coverage to codecov.io
         uses: codecov/codecov-action@v3

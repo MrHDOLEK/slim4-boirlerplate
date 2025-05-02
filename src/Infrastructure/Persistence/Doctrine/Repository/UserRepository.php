@@ -37,9 +37,8 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
 
     /**
      * @throws UserNotFoundException
-     * @phpstan-ignore-next-line
      */
-    public function findAll(): UsersCollection
+    public function getAll(): UsersCollection
     {
         $users = $this->createQueryBuilder("o")
             ->select("o")
@@ -55,7 +54,7 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
 
     public function save(User $user): void
     {
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 }

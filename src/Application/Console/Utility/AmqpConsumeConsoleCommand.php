@@ -33,12 +33,11 @@ class AmqpConsumeConsoleCommand extends ConsoleCommand implements SignalableComm
         return [SIGTERM, SIGINT];
     }
 
-    /**
-     * @phpstan-ignore-next-line
-     */
-    public function handleSignal(int $signal): void
+    public function handleSignal(int $signal, int|false $previousExitCode = 0): int|false
     {
         $this->consumer->shutdown();
+
+        return false;
     }
 
     protected function configure(): void

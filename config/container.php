@@ -7,14 +7,16 @@ use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
 use App\Infrastructure\Console\ConsoleCommandContainer;
 use App\Infrastructure\Environment\Environment;
 use App\Infrastructure\Environment\Settings;
+use App\Infrastructure\Logging\ActionLogProcessor;
+use App\Infrastructure\Logging\LogfmtFormatter;
+use App\Infrastructure\Logging\SlowQueryLogger;
 use App\Infrastructure\Persistence\Doctrine\Repository\UserRepository;
-use App\Infrastructure\Persistence\Redis\RedisDoctrineCacheAdapter;
-use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Logging\Middleware as DbalLoggingMiddleware;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\Setup;
+use Doctrine\ORM\ORMSetup;
 use Dotenv\Dotenv;
 use Lcobucci\Clock\Clock;
 use Lcobucci\Clock\SystemClock;
@@ -42,11 +44,12 @@ return [
         $settings = $container->get(Settings::class);
 
         $logger = new Logger($settings->get("slim.logger.name"));
+        $logger->pushProcessor(new UidProcessor());
 
-        $processor = new UidProcessor();
-        $logger->pushProcessor($processor);
+        $logger->pushProcessor(new ActionLogProcessor());
 
         $handler = new StreamHandler($settings->get("slim.logger.path"), $settings->get("slim.logger.level"));
+        $handler->setFormatter(new LogfmtFormatter());
         $logger->pushHandler($handler);
 
         return $logger;
@@ -60,22 +63,39 @@ return [
     Connection::class => fn(Settings $settings): Connection => DriverManager::getConnection($settings->get("doctrine.connection")),
     // Doctrine EntityManager.
     EntityManager::class => function (Settings $settings, ContainerInterface $container): EntityManager {
-        $redisAdapter = $container->get(RedisDoctrineCacheAdapter::class);
-        $cachePool = new RedisAdapter($container->get(RedisClient::class));
-        $cache = DoctrineProvider::wrap($cachePool);
-
-        $config = Setup::createXMLMetadataConfiguration(
+        $redisClient = $container->get(RedisClient::class);
+        $cachePool = new RedisAdapter(
+            $redisClient,
+            "doctrine_metadata",
+            (int)$settings->get("doctrine.cache_ttl"),
+        );
+        $config = ORMSetup::createXMLMetadataConfiguration(
             $settings->get("doctrine.metadata_dirs"),
-            $settings->get("doctrine.dev_mode"),
-            cache: $cache,
+            (bool)$settings->get("doctrine.dev_mode"),
+            null,
+            $cachePool,
         );
 
-        $config->setResultCache($redisAdapter);
-        $config->setMetadataCache($redisAdapter);
-        $config->setQueryCache($redisAdapter);
-        $config->setAutoGenerateProxyClasses(true);
+        $config->setMetadataCache($cachePool);
+        $config->setQueryCache   ($cachePool);
+        $config->setResultCache  ($cachePool);
+        $config->setAutoGenerateProxyClasses((bool)$settings->get("doctrine.dev_mode"));
 
-        return EntityManager::create($settings->get("doctrine.connection"), $config);
+        $slowLogger = new SlowQueryLogger(
+            $container->get(LoggerInterface::class),
+            0.1,
+        );
+
+        $config->setMiddlewares([
+            new DbalLoggingMiddleware($slowLogger),
+        ]);
+
+        $connection = DriverManager::getConnection(
+            $settings->get("doctrine.connection"),
+            $config,
+        );
+
+        return new EntityManager($connection, $config);
     },
     EntityManagerInterface::class => DI\get(EntityManager::class),
     // Console command application.

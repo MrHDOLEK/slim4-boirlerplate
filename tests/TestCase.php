@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use App\Infrastructure\Logging\NullLogger;
 use DI\Container;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Log\LoggerInterface;
 use Slim\App;
 use Slim\Psr7\Factory\StreamFactory;
 use Slim\Psr7\Headers;
@@ -21,8 +22,6 @@ use Slim\Routing\RouteContext;
 
 class TestCase extends PHPUnit_TestCase
 {
-    use ProphecyTrait;
-
     protected array $fixtures = [];
     private App $app;
 
@@ -36,6 +35,7 @@ class TestCase extends PHPUnit_TestCase
         $this->app = require dirname(__DIR__) . "/config/bootstrap.php";
         $this->container = $this->app->getContainer();
         $this->purgeDatabase();
+        $this->replaceLoggerWithNullLogger();
 
         $this->loadDoctrineFixtures();
     }
@@ -75,7 +75,7 @@ class TestCase extends PHPUnit_TestCase
 
     public function getOpenApiPatch(): string
     {
-        return dirname(__DIR__) . "/resources/docs/openapi.json";
+        return dirname(__DIR__) . "/resources/docs/openapi.yaml";
     }
 
     protected function createRequest(
@@ -124,5 +124,10 @@ class TestCase extends PHPUnit_TestCase
     protected function addFixtures(string $fixture): void
     {
         $this->fixtures[] = $fixture;
+    }
+
+    protected function replaceLoggerWithNullLogger(): void
+    {
+        $this->container->set(LoggerInterface::class, new NullLogger());
     }
 }

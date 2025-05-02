@@ -45,7 +45,7 @@ class ErrorHandler extends SlimErrorHandler
 
     private function handleApplicationException(Exception $exception, ActionError $error, int &$statusCode): void
     {
-        $statusCode = $exception->getCode();
+        $statusCode = (int)$exception->getCode();
         $error->setDescription($exception->getMessage());
 
         if ($exception instanceof HttpNotFoundException or $exception instanceof DomainRecordNotFoundException) {

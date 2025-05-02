@@ -12,6 +12,21 @@ class Settings
         private readonly array $settings,
     ) {}
 
+    public static function load(): self
+    {
+        return new self(require self::getAppRoot() . "/config/settings.php");
+    }
+
+    public static function getAppRoot(): string
+    {
+        return dirname(__DIR__, 3);
+    }
+
+    public static function getConsoleRoot(): string
+    {
+        return sprintf("%s%s ", dirname(__DIR__, 3), Constants::CONSOLE_ROUTE);
+    }
+
     public function get(string $parents): mixed
     {
         $settings = $this->settings;
@@ -26,20 +41,5 @@ class Settings
         }
 
         return $settings;
-    }
-
-    public static function load(): self
-    {
-        return new self(require self::getAppRoot() . "/config/settings.php");
-    }
-
-    public static function getAppRoot(): string
-    {
-        return dirname(__DIR__, 3);
-    }
-
-    public static function getConsoleRoot(): string
-    {
-        return sprintf("%s%s ", dirname(__DIR__, 3), Constants::CONSOLE_ROUTE);
     }
 }

@@ -25,13 +25,11 @@ class QueueContainerTest extends ContainerTestCase
 
     public function testItRegistersAllQueuesSuccess(): void
     {
-        $this->assertMatchesJsonSnapshot(array_map(function (Queue $queue) {
-            return [
-                "queueName" => $queue->getName(),
-                "workerName" => $queue->getWorker()->getName(),
-                "numberOfConsumers" => $queue->getNumberOfConsumers(),
-            ];
-        }, $this->queueContainer->getQueues()));
+        $this->assertMatchesJsonSnapshot(array_map(fn(Queue $queue) => [
+            "queueName" => $queue->getName(),
+            "workerName" => $queue->getWorker()->getName(),
+            "numberOfConsumers" => $queue->getNumberOfConsumers(),
+        ], $this->queueContainer->getQueues()));
     }
 
     public function testGetQueueSuccess(): void

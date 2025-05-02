@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Actions;
 
 use App\Domain\DomainException\DomainRecordNotFoundException;
+use App\Infrastructure\Logging\ActionLogProcessor;
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -31,6 +32,9 @@ abstract class Action
         $this->request = $request;
         $this->response = $response;
         $this->args = $args;
+
+        ActionLogProcessor::setCurrentAction(static::class);
+        $this->logAccessAudit();
 
         try {
             return $this->action();
@@ -93,5 +97,21 @@ abstract class Action
     protected function getHeaderByKey(string $headerKey): ?string
     {
         return isset($this->request->getHeader($headerKey)[0]) ? $this->request->getHeader($headerKey)[0] : null;
+    }
+
+    protected function logAccessAudit(): void
+    {
+        $routePath = $this->request->getUri()->getPath();
+        $httpMethod = $this->request->getMethod();
+        $ipAddress = $this->request->getServerParams()["REMOTE_ADDR"] ?? null;
+
+        $this->logger->info(
+            sprintf("Access: %s accessed %s %s", $ipAddress, $httpMethod, $routePath),
+            [
+                "method" => $httpMethod,
+                "path" => $routePath,
+                "ip_address" => $ipAddress,
+            ],
+        );
     }
 }

@@ -9,6 +9,7 @@ use App\Domain\Entity\User\User;
 use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Domain\Service\User\UserEventsService;
 use DI\Container;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 class UpdateUserActionTest extends TestCase
@@ -20,20 +21,37 @@ class UpdateUserActionTest extends TestCase
         $container = $app->getContainer();
 
         $user = new User("steve.jobs", "Steve", "Jobs");
-        $userRepository = $this->prophesize(UserRepositoryInterface::class);
-        $userEventService = $this->prophesize(UserEventsService::class);
 
-        $userRepository->findUserOfId(1)->willReturn($user);
-        $userRepository->save($user)->shouldBeCalledOnce();
-        $userEventService->userWasUpdated($user)->shouldBeCalledOnce();
+        /** @var UserRepositoryInterface&MockObject $userRepoMock */
+        $userRepoMock = $this->createMock(UserRepositoryInterface::class);
+        $userRepoMock
+            ->expects($this->once())
+            ->method("findUserOfId")
+            ->with(1)
+            ->willReturn($user);
+        $userRepoMock
+            ->expects($this->once())
+            ->method("save")
+            ->with($user);
 
-        $container->set(UserRepositoryInterface::class, $userRepository->reveal());
-        $container->set(UserEventsService::class, $userEventService->reveal());
+        /** @var UserEventsService&MockObject $eventServiceMock */
+        $eventServiceMock = $this->createMock(UserEventsService::class);
+        $eventServiceMock
+            ->expects($this->once())
+            ->method("userWasUpdated")
+            ->with($user);
+
+        $container->set(UserRepositoryInterface::class, $userRepoMock);
+        $container->set(UserEventsService::class, $eventServiceMock);
 
         $request = $this->createRequest(
             method: "PATCH",
             path: "/api/v1/user/1",
-            body: json_encode(["username" => "john.doe", "firstName" => "John", "lastName" => "Doe"]),
+            body: json_encode([
+                "username" => "john.doe",
+                "firstName" => "John",
+                "lastName" => "Doe",
+            ]),
         );
         $response = $app->handle($request);
 
@@ -49,15 +67,24 @@ class UpdateUserActionTest extends TestCase
         /** @var Container $container */
         $container = $app->getContainer();
 
-        $userRepository = $this->prophesize(UserRepositoryInterface::class);
-        $userRepository->findUserOfId(1)->willThrow(UserNotFoundException::class);
+        /** @var UserRepositoryInterface&MockObject $userRepoMock */
+        $userRepoMock = $this->createMock(UserRepositoryInterface::class);
+        $userRepoMock
+            ->expects($this->once())
+            ->method("findUserOfId")
+            ->with(1)
+            ->willThrowException(new UserNotFoundException());
 
-        $container->set(UserRepositoryInterface::class, $userRepository->reveal());
+        $container->set(UserRepositoryInterface::class, $userRepoMock);
 
         $request = $this->createRequest(
             method: "PATCH",
             path: "/api/v1/user/1",
-            body: json_encode(["username" => "john.doe", "firstName" => "John", "lastName" => "Doe"]),
+            body: json_encode([
+                "username" => "john.doe",
+                "firstName" => "John",
+                "lastName" => "Doe",
+            ]),
         );
         $response = $app->handle($request);
 
@@ -84,29 +111,42 @@ class UpdateUserActionTest extends TestCase
         $container = $app->getContainer();
 
         $user = new User("steve.jobs", "Steve", "Jobs");
-        $userRepository = $this->prophesize(UserRepositoryInterface::class);
-        $userRepository->findUserOfId(1)->willReturn($user);
 
-        $container->set(UserRepositoryInterface::class, $userRepository->reveal());
+        /** @var UserRepositoryInterface&MockObject $userRepoMock */
+        $userRepoMock = $this->createMock(UserRepositoryInterface::class);
+        $userRepoMock
+            ->method("findUserOfId")
+            ->with(1)
+            ->willReturn($user);
+
+        $container->set(UserRepositoryInterface::class, $userRepoMock);
 
         $request = $this->createRequest(
             method: "PATCH",
             path: "/api/v1/user/1",
-            body: json_encode(["username" => "", "firstName" => "", "lastName" => ""]),
+            body: json_encode([
+                "username" => "",
+                "firstName" => "",
+                "lastName" => "",
+            ]),
         );
         $response = $app->handle($request);
 
         $this->assertSame(422, $response->getStatusCode());
     }
 
-    public function testActionFailureWithoutInvalidHttpMethod(): void
+    public function testActionFailureWithInvalidHttpMethod(): void
     {
         $app = $this->getApp();
 
         $request = $this->createRequest(
             method: "POST",
             path: "/api/v1/user/1",
-            body: json_encode(["username" => "john.doe", "firstName" => "John", "lastName" => "Doe"]),
+            body: json_encode([
+                "username" => "john.doe",
+                "firstName" => "John",
+                "lastName" => "Doe",
+            ]),
         );
         $response = $app->handle($request);
 
