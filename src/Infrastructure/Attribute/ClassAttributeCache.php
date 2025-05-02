@@ -16,13 +16,13 @@ class ClassAttributeCache
         private readonly string $attributeClassName,
         private readonly string $cacheDir,
     ) {
-        $this->cacheFileName = rtrim($this->cacheDir, "/") . "/" . (new ReflectionClass($attributeClassName))->getShortName() . ".php";
+        $this->cacheFileName = rtrim($this->cacheDir, "/") . "/" . new ReflectionClass($attributeClassName)->getShortName() . ".php";
     }
 
     public function get(): string
     {
         if (!$this->exists()) {
-            throw new RuntimeException(sprintf("Cache not set for %s", (new ReflectionClass($this->attributeClassName))->getShortName()));
+            throw new RuntimeException(sprintf("Cache not set for %s", new ReflectionClass($this->attributeClassName)->getShortName()));
         }
 
         return $this->cacheFileName;
