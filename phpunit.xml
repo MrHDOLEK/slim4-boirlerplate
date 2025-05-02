@@ -23,8 +23,6 @@
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-    <coverage includeUncoveredFiles="true">
-    </coverage>
     <php>
         <ini name="error_reporting" value="E_ALL &amp; ~E_DEPRECATED &amp; ~E_USER_DEPRECATED"/>
         <server name="DISPLAY_ERROR_DETAILS" value="0"/>
