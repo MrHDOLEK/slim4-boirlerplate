@@ -15,14 +15,14 @@ use PHPUnit\Framework\TestCase;
 class ContainerBuilderTest extends TestCase
 {
     private ContainerBuilder $containerBuilder;
-    private MockObject $DIContainerBuilder;
-    private MockObject $classAttributeResolver;
+    private \DI\ContainerBuilder&MockObject $DIContainerBuilder;
+    private ClassAttributeResolver&MockObject $classAttributeResolver;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->DIContainerBuilder = $this->createMock(\DI\ContainerBuilder::class);
+        $this->DIContainerBuilder     = $this->createMock(\DI\ContainerBuilder::class);
         $this->classAttributeResolver = $this->createMock(ClassAttributeResolver::class);
 
         $this->containerBuilder = new ContainerBuilder(
@@ -35,46 +35,49 @@ class ContainerBuilderTest extends TestCase
     {
         $compilerPass = $this->createMock(CompilerPass::class);
 
-        $matcher = $this->exactly(2);
+        $count = 0;
+        $builderMock = $this->DIContainerBuilder;
         $this->DIContainerBuilder
-            ->expects($matcher)
-            ->method("addDefinitions")
-            ->willReturnCallback(function (string $key) use ($matcher): void {
-                match ($matcher->getInvocationCount()) {
-                    1 => $this->assertEquals($key, "definition"),
-                    2 => $this->assertEquals($key, []),
-                };
-            })
-            ->willReturn($this->createMock(\DI\ContainerBuilder::class));
+            ->expects($this->exactly(2))
+            ->method('addDefinitions')
+            ->willReturnCallback(function ($key) use (&$count, $builderMock) {
+                $count++;
+                if ($count === 1) {
+                    TestCase::assertEquals('definition', $key);
+                } else {
+                    TestCase::assertEquals([], $key);
+                }
+                return $builderMock;
+            });
 
         $this->DIContainerBuilder
             ->expects($this->once())
-            ->method("enableCompilation")
+            ->method('enableCompilation')
             ->with(
-                "dir",
-                "CompiledContainer",
+                'dir',
+                'CompiledContainer',
                 CompiledContainer::class,
             );
 
         $compilerPass
             ->expects($this->once())
-            ->method("process")
+            ->method('process')
             ->with($this->containerBuilder);
 
         $this->DIContainerBuilder
             ->expects($this->once())
-            ->method("isCompilationEnabled")
+            ->method('isCompilationEnabled')
             ->willReturn(true);
 
         $this->DIContainerBuilder
             ->expects($this->once())
-            ->method("build")
+            ->method('build')
             ->willReturn($this->createMock(Container::class));
 
         $this->containerBuilder
-            ->enableCompilation("dir")
-            ->enableClassAttributeCache("dir")
-            ->addDefinitions("definition")
+            ->enableCompilation('dir')
+            ->enableClassAttributeCache('dir')
+            ->addDefinitions('definition')
             ->addCompilerPasses($compilerPass)
             ->build();
     }
@@ -85,26 +88,27 @@ class ContainerBuilderTest extends TestCase
 
         $this->DIContainerBuilder
             ->expects($this->once())
-            ->method("addDefinitions")
-            ->with("definition");
+            ->method('addDefinitions')
+            ->with('definition')
+            ->willReturnSelf();
 
         $compilerPass
             ->expects($this->once())
-            ->method("process")
+            ->method('process')
             ->with($this->containerBuilder);
 
         $this->DIContainerBuilder
             ->expects($this->once())
-            ->method("isCompilationEnabled")
+            ->method('isCompilationEnabled')
             ->willReturn(false);
 
         $this->DIContainerBuilder
             ->expects($this->once())
-            ->method("build")
+            ->method('build')
             ->willReturn($this->createMock(Container::class));
 
         $this->containerBuilder
-            ->addDefinitions("definition")
+            ->addDefinitions('definition')
             ->addCompilerPasses($compilerPass)
             ->build();
     }
@@ -112,14 +116,11 @@ class ContainerBuilderTest extends TestCase
     public function testItShouldThrowOnDuplicateCompilerPasses(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("CompilerPass CompilerPassOne already added. Cannot add the same pass twice");
+        $this->expectExceptionMessage('CompilerPass CompilerPassOne already added. Cannot add the same pass twice');
 
         $compilerPass = $this->getMockBuilder(CompilerPass::class)
             ->disableOriginalConstructor()
-            ->disableOriginalClone()
-            ->disableArgumentCloning()
-            ->disallowMockingUnknownTypes()
-            ->setMockClassName("CompilerPassOne")
+            ->setMockClassName('CompilerPassOne')
             ->getMock();
 
         $this->containerBuilder->addCompilerPasses(
