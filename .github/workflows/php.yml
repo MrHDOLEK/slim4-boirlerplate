@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-24.04
     services:
       pgsql:
-        image: postgres:15
+        image: postgres:17
         env:
           POSTGRES_DB: slim
           POSTGRES_USER: slim
