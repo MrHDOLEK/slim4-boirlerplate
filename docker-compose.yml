@@ -57,12 +57,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
 
   rabbitmq:
     container_name: slim-rabbitmq
