@@ -7,6 +7,7 @@ namespace App\Application\Service;
 use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Predis\Client as RedisClient;
+use Psr\Log\LoggerInterface;
 
 class HealthCheckService
 {
@@ -19,16 +20,24 @@ class HealthCheckService
         private EntityManagerInterface $entityManager,
         private RedisClient $redisClient,
         private AMQPStreamConnectionFactory $rabbitMqClient,
+        private LoggerInterface $logger,
     ) {}
 
     public function statusList(): array
     {
-        return [
+        $statuses = [
             "DB_CONNECTION" => $this->databaseStatus(),
             "API_CONNECTION" => $this->apiStatus(),
             "REDIS_CONNECTION" => $this->redisStatus(),
             "RABBITMQ_CONNECTION" => $this->rabbitMqStatus(),
         ];
+
+        $this->logger->info(
+            "Health check statuses",
+            array_change_key_case($statuses, CASE_LOWER),
+        );
+
+        return $statuses;
     }
 
     public function statusCode(): int
