@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Tests\Application\Actions\HealthCheck;
 
 use App\Application\Service\HealthCheckService;
-use DI\Container;
-use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 class HealthCheckActionTest extends TestCase
