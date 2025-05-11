@@ -13,11 +13,11 @@ use App\Infrastructure\Logging\SlowQueryLogger;
 use App\Infrastructure\Persistence\Doctrine\Repository\UserRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Logging\Middleware as DbalLoggingMiddleware;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup;
 use Dotenv\Dotenv;
+use Firehed\DbalLogger\Middleware;
 use Lcobucci\Clock\Clock;
 use Lcobucci\Clock\SystemClock;
 use Monolog\Handler\StreamHandler;
@@ -81,13 +81,8 @@ return [
         $config->setResultCache  ($cachePool);
         $config->setAutoGenerateProxyClasses((bool)$settings->get("doctrine.dev_mode"));
 
-        $slowLogger = new SlowQueryLogger(
-            $container->get(LoggerInterface::class),
-            0.1,
-        );
-
         $config->setMiddlewares([
-            new DbalLoggingMiddleware($slowLogger),
+            new Middleware($container->get("doctrine_slow_query_logger")),
         ]);
 
         $connection = DriverManager::getConnection(
@@ -97,7 +92,18 @@ return [
 
         return new EntityManager($connection, $config);
     },
+
     EntityManagerInterface::class => DI\get(EntityManager::class),
+
+    "doctrine_slow_query_logger" => function (ContainerInterface $container) {
+        $settings = $container->get(Settings::class);
+        $slowQueryThreshold = (float)$settings->get("doctrine.slow_query_threshold_ms", 100.0);
+
+        return new SlowQueryLogger(
+            $container->get(LoggerInterface::class),
+            $slowQueryThreshold,
+        );
+    },
     // Console command application.
     Application::class => function (ConsoleCommandContainer $consoleCommandContainer) {
         $application = new Application();
