@@ -37,6 +37,7 @@
         "doctrine/migrations": "^3.9",
         "doctrine/orm": "^3.3",
         "fakerphp/faker": "^1.23",
+        "firehed/dbal-logger": "^2.1",
         "laminas/laminas-diactoros": "^3.5",
         "lcobucci/clock": "^3.2",
         "monolog/monolog": "^3.9",
