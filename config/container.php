@@ -79,7 +79,7 @@ return [
         $config->setMetadataCache($cachePool);
         $config->setQueryCache   ($cachePool);
         $config->setResultCache  ($cachePool);
-        $config->setAutoGenerateProxyClasses((bool)$settings->get("doctrine.dev_mode"));
+        $config->setAutoGenerateProxyClasses(true);
 
         $config->setMiddlewares([
             new Middleware($container->get("doctrine_slow_query_logger")),
