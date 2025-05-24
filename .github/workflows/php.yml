@@ -21,13 +21,13 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Validate composer.json and composer.lock
         run: composer validate
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-composer-dependencies-${{ hashFiles('composer.lock') }}
@@ -60,7 +60,7 @@ jobs:
           php -dopcache.validate_timestamps=0 vendor/bin/phpunit --testsuite "Test Suite" --log-junit junit.xml --coverage-clover clover.xml
 
       - name: Send test coverage to codecov.io
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         continue-on-error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
