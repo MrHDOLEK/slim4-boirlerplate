@@ -1,4 +1,4 @@
-name: "Check the PR title"
+name: Check the PR title
 
 on:
   pull_request:
@@ -13,5 +13,6 @@ jobs:
   check-pr-title:
     name: Check the PR title
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: blumilksoftware/action-pr-title@e05fc76a1cc45b33644f1de51218be43ac121dd0 # v1.2.0

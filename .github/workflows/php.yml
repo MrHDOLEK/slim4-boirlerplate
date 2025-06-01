@@ -2,9 +2,11 @@ name: Test&lint PHP codebase
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   test-and-lint-php:
