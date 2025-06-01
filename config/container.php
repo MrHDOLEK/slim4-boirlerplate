@@ -29,6 +29,13 @@ use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Views\Twig;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\Console\Application;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Twig\Loader\FilesystemLoader;
 
 $appRoot = Settings::getAppRoot();
@@ -75,8 +82,8 @@ return [
         );
 
         $config->setMetadataCache($cachePool);
-        $config->setQueryCache   ($cachePool);
-        $config->setResultCache  ($cachePool);
+        $config->setQueryCache($cachePool);
+        $config->setResultCache($cachePool);
         $config->setAutoGenerateProxyClasses(true);
 
         $config->setMiddlewares([
@@ -144,4 +151,20 @@ return [
         return new RedisClient($redisConfig);
     },
     RedisAdapter::class => fn(ContainerInterface $container) => new RedisAdapter($container->get(RedisClient::class)),
+
+    // Serializer
+    DenormalizerInterface::class => function () {
+        $encoders = [new JsonEncoder()];
+        $normalizers = [
+            new ArrayDenormalizer(),
+            new ObjectNormalizer(
+                null,
+                null,
+                new PropertyAccessor(),
+                new ReflectionExtractor(),
+            ),
+        ];
+
+        return new Serializer($normalizers, $encoders);
+    },
 ];

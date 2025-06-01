@@ -5,24 +5,29 @@ declare(strict_types=1);
 namespace App\Application\Factory;
 
 use App\Domain\Entity\User\User;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-final class UserFactory
+final readonly class UserFactory
 {
-    public static function createFromRequest(array $userData): User
+    public function __construct(
+        private DenormalizerInterface $denormalizer,
+    ) {}
+
+    public function createFromRequest(array $userData): User
     {
-        return new User(
-            $userData["username"],
-            $userData["firstName"],
-            $userData["lastName"],
-        );
+        return $this->denormalizer->denormalize($userData, User::class);
     }
 
-    public static function updateFromRequest(User $user, array $userData): User
+    public function updateFromRequest(User $user, array $userData): User
     {
-        $user->setUsername($userData["username"]);
-        $user->setFirstName($userData["firstName"]);
-        $user->setLastName($userData["lastName"]);
-
-        return $user;
+        return $this->denormalizer->denormalize(
+            $userData,
+            User::class,
+            null,
+            [
+                ObjectNormalizer::OBJECT_TO_POPULATE => $user,
+            ],
+        );
     }
 }
