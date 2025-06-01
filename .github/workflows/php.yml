@@ -2,39 +2,47 @@ name: Test&lint PHP codebase
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   test-and-lint-php:
     name: Test&lint PHP codebase
+    timeout-minutes: 10
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
     services:
       pgsql:
-        image: postgres:17
+        image: postgres:17.5-alpine3.21@sha256:f325a29ec9deb7039c5f07761d77d79d537dac836ecd99f982f6ca5476724604
         env:
           POSTGRES_DB: slim
           POSTGRES_USER: slim
           POSTGRES_PASSWORD: password
-          PGPASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 3s
+          --health-timeout 3s
+          --health-retries 5
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0 # https://github.com/actions/checkout
 
       - name: Validate composer.json and composer.lock
         run: composer validate
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2 # https://github.com/actions/cache
         with:
           path: vendor
           key: ${{ runner.os }}-composer-dependencies-${{ hashFiles('composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-dependencies
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # 2.31.1 # https://github.com/shivammathur/setup-php
         with:
           php-version: 8.4
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, intl, sockets
@@ -60,7 +68,7 @@ jobs:
           php -dopcache.validate_timestamps=0 vendor/bin/phpunit --testsuite "Test Suite" --log-junit junit.xml --coverage-clover clover.xml
 
       - name: Send test coverage to codecov.io
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # 5.4.3 # https://github.com/codecov/codecov-action
         continue-on-error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

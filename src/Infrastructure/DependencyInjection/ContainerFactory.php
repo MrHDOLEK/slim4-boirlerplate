@@ -28,6 +28,8 @@ class ContainerFactory
             $containerBuilder->enableClassAttributeCache($settings->get("slim.cache_dir") . "/class-attributes");
         }
         $containerBuilder->addDefinitions($appRoot . "/config/container.php");
+        $containerBuilder->addDefinitions($appRoot . "/config/repositories.php");
+
         $containerBuilder->addCompilerPasses(...require $appRoot . "/config/compiler-passes.php");
 
         return $containerBuilder->build();

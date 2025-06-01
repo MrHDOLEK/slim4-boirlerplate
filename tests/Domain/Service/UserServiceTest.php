@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Domain\Service;
 
+use App\Domain\Entity\StoragePersisterInterface;
 use App\Domain\Entity\User\Exception\UserNotFoundException;
 use App\Domain\Entity\User\User;
 use App\Domain\Entity\User\UserRepositoryInterface;
@@ -43,13 +44,23 @@ class UserServiceTest extends TestCase
             ->method("getAll")
             ->willReturn($usersCollection);
 
+        /** @var StoragePersisterInterface&MockObject $storagePersister */
+        $storagePersister = $this->createMock(StoragePersisterInterface::class);
+        $storagePersister
+            ->expects($this->never())
+            ->method("storeChanges");
+
         /** @var UserEventsService&MockObject $eventServiceMock */
         $eventServiceMock = $this->createMock(UserEventsService::class);
         $eventServiceMock
             ->expects($this->never())
             ->method("userWasCreated");
 
-        $service = new UserService($userRepoMock, $eventServiceMock);
+        $service = new UserService(
+            $userRepoMock,
+            $eventServiceMock,
+            $storagePersister,
+        );
         $result = $service->getAllUsers();
 
         $this->assertEquals(1, $result->count());
@@ -72,7 +83,17 @@ class UserServiceTest extends TestCase
             ->expects($this->never())
             ->method("userWasCreated");
 
-        $service = new UserService($userRepoMock, $eventServiceMock);
+        /** @var StoragePersisterInterface&MockObject $storagePersister */
+        $storagePersister = $this->createMock(StoragePersisterInterface::class);
+        $storagePersister
+            ->expects($this->never())
+            ->method("storeChanges");
+
+        $service = new UserService(
+            $userRepoMock,
+            $eventServiceMock,
+            $storagePersister,
+        );
         $fetched = $service->getUserById(1);
 
         $this->assertEquals("Test", $fetched->lastName());
@@ -95,7 +116,17 @@ class UserServiceTest extends TestCase
             ->expects($this->never())
             ->method("userWasCreated");
 
-        $service = new UserService($userRepoMock, $eventServiceMock);
+        /** @var StoragePersisterInterface&MockObject $storagePersister */
+        $storagePersister = $this->createMock(StoragePersisterInterface::class);
+        $storagePersister
+            ->expects($this->never())
+            ->method("storeChanges");
+
+        $service = new UserService(
+            $userRepoMock,
+            $eventServiceMock,
+            $storagePersister,
+        );
 
         $this->expectException(UserNotFoundException::class);
         $service->getAllUsers();
@@ -111,13 +142,23 @@ class UserServiceTest extends TestCase
             ->with(1)
             ->willThrowException(new UserNotFoundException());
 
+        /** @var StoragePersisterInterface&MockObject $storagePersister */
+        $storagePersister = $this->createMock(StoragePersisterInterface::class);
+        $storagePersister
+            ->expects($this->never())
+            ->method("storeChanges");
+
         /** @var UserEventsService&MockObject $eventServiceMock */
         $eventServiceMock = $this->createMock(UserEventsService::class);
         $eventServiceMock
             ->expects($this->never())
             ->method("userWasCreated");
 
-        $service = new UserService($userRepoMock, $eventServiceMock);
+        $service = new UserService(
+            $userRepoMock,
+            $eventServiceMock,
+            $storagePersister,
+        );
 
         $this->expectException(UserNotFoundException::class);
         $service->getUserById(1);
@@ -130,8 +171,14 @@ class UserServiceTest extends TestCase
         $userRepoMock = $this->createMock(UserRepositoryInterface::class);
         $userRepoMock
             ->expects($this->once())
-            ->method("save")
+            ->method("add")
             ->with($user);
+
+        /** @var StoragePersisterInterface&MockObject $storagePersister */
+        $storagePersister = $this->createMock(StoragePersisterInterface::class);
+        $storagePersister
+            ->expects($this->once())
+            ->method("storeChanges");
 
         /** @var UserEventsService&MockObject $eventServiceMock */
         $eventServiceMock = $this->createMock(UserEventsService::class);
@@ -140,7 +187,12 @@ class UserServiceTest extends TestCase
             ->method("userWasUpdated")
             ->with($user);
 
-        $service = new UserService($userRepoMock, $eventServiceMock);
+        $service = new UserService(
+            $userRepoMock,
+            $eventServiceMock,
+            $storagePersister,
+        );
+
         $service->updateUser($user);
     }
 }
