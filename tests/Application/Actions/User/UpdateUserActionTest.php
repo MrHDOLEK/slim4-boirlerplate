@@ -31,7 +31,7 @@ class UpdateUserActionTest extends TestCase
             ->willReturn($user);
         $userRepoMock
             ->expects($this->once())
-            ->method("save")
+            ->method("add")
             ->with($user);
 
         /** @var UserEventsService&MockObject $eventServiceMock */

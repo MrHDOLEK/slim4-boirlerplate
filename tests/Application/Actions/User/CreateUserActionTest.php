@@ -27,7 +27,7 @@ class CreateUserActionTest extends TestCase
         $userRepoMock = $this->createMock(UserRepositoryInterface::class);
         $userRepoMock
             ->expects($this->once())
-            ->method("save")
+            ->method("add")
             ->with($user);
 
         /** @var UserEventsService&MockObject $eventServiceMock */

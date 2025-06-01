@@ -18,5 +18,7 @@ interface UserRepositoryInterface
      */
     public function findUserOfId(int $id): User;
 
-    public function save(User $user): void;
+    public function add(User $user): void;
+
+    public function remove(User $user): void;
 }

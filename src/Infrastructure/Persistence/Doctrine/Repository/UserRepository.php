@@ -52,9 +52,13 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
         return new UsersCollection(...$users);
     }
 
-    public function save(User $user): void
+    public function add(User $user): void
     {
         $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+    }
+
+    public function remove(User $user): void
+    {
+        $this->getEntityManager()->remove($user);
     }
 }

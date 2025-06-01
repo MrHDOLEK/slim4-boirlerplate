@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Domain\Entity\User\UserRepositoryInterface;
 use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
 use App\Infrastructure\Console\ConsoleCommandContainer;
 use App\Infrastructure\Environment\Environment;
@@ -10,7 +9,6 @@ use App\Infrastructure\Environment\Settings;
 use App\Infrastructure\Logging\ActionLogProcessor;
 use App\Infrastructure\Logging\LogfmtFormatter;
 use App\Infrastructure\Logging\SlowQueryLogger;
-use App\Infrastructure\Persistence\Doctrine\Repository\UserRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
@@ -146,6 +144,4 @@ return [
         return new RedisClient($redisConfig);
     },
     RedisAdapter::class => fn(ContainerInterface $container) => new RedisAdapter($container->get(RedisClient::class)),
-    // Repositories
-    UserRepositoryInterface::class => DI\get(UserRepository::class),
 ];
