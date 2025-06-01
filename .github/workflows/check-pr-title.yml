@@ -1,11 +1,17 @@
-name: Check PR Title
+name: "Check the PR title"
+
 on:
-  workflow_call:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - edited
+      - synchronize
 
 jobs:
   check-pr-title:
-    name: Check PR title
+    name: Check the PR title
     runs-on: ubuntu-24.04
-
     steps:
-      - uses: blumilksoftware/action-pr-title@v1.2.0
+      - uses: blumilksoftware/action-pr-title@e05fc76a1cc45b33644f1de51218be43ac121dd0 # v1.2.0
