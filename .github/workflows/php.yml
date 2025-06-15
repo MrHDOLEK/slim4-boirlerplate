@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-24.04
     services:
       pgsql:
-        image: postgres:17.5-alpine3.21@sha256:f325a29ec9deb7039c5f07761d77d79d537dac836ecd99f982f6ca5476724604
+        image: postgres:17.5-alpine3.21@sha256:667a474ccd6764e3e439d3eea7a2662f74e2b92171a96628a75a4209420c9872
         env:
           POSTGRES_DB: slim
           POSTGRES_USER: slim
@@ -29,20 +29,20 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # v4.2.0 # https://github.com/actions/checkout
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2 # https://github.com/actions/checkout
 
       - name: Validate composer.json and composer.lock
         run: composer validate
 
       - name: Cache dependencies
-        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2 # https://github.com/actions/cache
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3 # https://github.com/actions/cache
         with:
           path: vendor
           key: ${{ runner.os }}-composer-dependencies-${{ hashFiles('composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-dependencies
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # 2.31.1 # https://github.com/shivammathur/setup-php
+        uses: shivammathur/setup-php@0f7f1d08e3e32076e51cae65eb0b0c871405b16e # 2.34.1 # https://github.com/shivammathur/setup-php
         with:
           php-version: 8.4
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, intl, sockets
