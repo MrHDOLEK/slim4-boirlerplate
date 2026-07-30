@@ -6,6 +6,7 @@ namespace App\Domain\Entity\User;
 
 use JsonSerializable;
 use OpenApi\Attributes as OA;
+use ReturnTypeWillChange;
 
 #[OA\Schema(title: "User", required: ["username", "firstName", "lastName"])]
 class User implements JsonSerializable
@@ -66,7 +67,7 @@ class User implements JsonSerializable
         return $this->lastName = $lastName;
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize(): array
     {
         return [

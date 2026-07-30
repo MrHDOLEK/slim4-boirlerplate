@@ -6,6 +6,8 @@ namespace App\Infrastructure\Serialization;
 
 use Safe\Exceptions\JsonException;
 
+use function var_export;
+
 class Json
 {
     /**
@@ -16,7 +18,7 @@ class Json
         try {
             return \Safe\json_encode($value, $options, $depth);
         } catch (JsonException $exception) {
-            throw new JsonException($exception->getMessage() . ": " . \var_export($value, true), $exception->getCode(), $exception->getPrevious());
+            throw new JsonException($exception->getMessage() . ": " . var_export($value, true), $exception->getCode(), $exception->getPrevious());
         }
     }
 

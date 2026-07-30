@@ -8,6 +8,7 @@ use App\Infrastructure\AMQP\AMQPChannelFactory;
 use App\Infrastructure\AMQP\Queue\AmqpQueue;
 use App\Infrastructure\AMQP\Queue\Queue;
 use App\Infrastructure\AMQP\Worker\Worker;
+use RuntimeException;
 
 class FailedQueue extends AmqpQueue
 {
@@ -25,7 +26,7 @@ class FailedQueue extends AmqpQueue
 
     public function getWorker(): Worker
     {
-        throw new \RuntimeException("Failed queues do not have workers");
+        throw new RuntimeException("Failed queues do not have workers");
     }
 
     public function getNumberOfConsumers(): int

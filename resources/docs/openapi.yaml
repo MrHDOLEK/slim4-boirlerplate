@@ -56,7 +56,7 @@ paths:
             application/json:
               schema:
                 type: object
-              example: {  }
+              example: {}
         '422':
           description: 'User data validation error'
         '401':
@@ -128,7 +128,7 @@ paths:
           description: 'User updated'
           content:
             application/json:
-              schema: {  }
+              schema: {}
               example: []
         '422':
           description: 'User data validation error'

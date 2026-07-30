@@ -39,7 +39,7 @@ abstract class ConsoleCommandTestCase extends TestCase
 
     public function getCommandInApplication(string $name, array $helpers = []): Command
     {
-        $this->application->add($this->getConsoleCommand());
+        $this->application->addCommand($this->getConsoleCommand());
         $command = $this->application->find($name);
 
         foreach ($helpers as $alias => $helper) {

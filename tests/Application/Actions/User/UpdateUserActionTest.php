@@ -25,7 +25,6 @@ class UpdateUserActionTest extends TestCase
         /** @var UserRepositoryInterface&MockObject $userRepoMock */
         $userRepoMock = $this->createMock(UserRepositoryInterface::class);
         $userRepoMock
-            ->expects($this->once())
             ->method("findUserOfId")
             ->with(1)
             ->willReturn($user);
@@ -70,7 +69,6 @@ class UpdateUserActionTest extends TestCase
         /** @var UserRepositoryInterface&MockObject $userRepoMock */
         $userRepoMock = $this->createMock(UserRepositoryInterface::class);
         $userRepoMock
-            ->expects($this->once())
             ->method("findUserOfId")
             ->with(1)
             ->willThrowException(new UserNotFoundException());

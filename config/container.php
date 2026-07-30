@@ -41,7 +41,7 @@ use Twig\Loader\FilesystemLoader;
 $appRoot = Settings::getAppRoot();
 
 $dotenv = Dotenv::createImmutable($appRoot);
-$dotenv->load();
+$dotenv->safeLoad();
 
 return [
     // Logger
@@ -84,7 +84,7 @@ return [
         $config->setMetadataCache($cachePool);
         $config->setQueryCache($cachePool);
         $config->setResultCache($cachePool);
-        $config->setAutoGenerateProxyClasses(true);
+        $config->enableNativeLazyObjects(true);
 
         $config->setMiddlewares([
             new Middleware($container->get("doctrine_slow_query_logger")),
@@ -114,7 +114,7 @@ return [
         $application = new Application();
 
         foreach ($consoleCommandContainer->getCommands() as $command) {
-            $application->add($command);
+            $application->addCommand($command);
         }
 
         return $application;

@@ -6,6 +6,7 @@ namespace Tests\Infrastructure\Environment;
 
 use App\Infrastructure\Environment\Settings;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class SettingsTest extends TestCase
 {
@@ -20,7 +21,7 @@ class SettingsTest extends TestCase
 
     public function testGetItShouldThrowWhenInvalid(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Trying to fetch invalid setting "key.key2.key3"');
 
         $settings = new Settings([]);

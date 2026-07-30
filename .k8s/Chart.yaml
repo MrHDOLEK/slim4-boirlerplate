@@ -1,0 +1,6 @@
+apiVersion: v2
+name: slim4-app-chart
+description: Slim 4 / nginx+php-fpm slim4-app — app + AMQP worker + scheduler
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

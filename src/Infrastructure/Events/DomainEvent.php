@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Events;
 
 use App\Infrastructure\AMQP\Envelope;
+use JsonSerializable;
 use ReflectionClass;
 
-abstract class DomainEvent implements Envelope, \JsonSerializable
+abstract class DomainEvent implements Envelope, JsonSerializable
 {
     /** @var array<mixed> */
     protected array $metadata = [];

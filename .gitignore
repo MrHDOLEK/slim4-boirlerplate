@@ -23,3 +23,7 @@ clover.xml
 tests/*.txt
 /test/*/*Success__1.json
 **/__snapshots__/
+
+.phpunit.cache/
+.php-cs-fixer.cache
+/xml-coverage/

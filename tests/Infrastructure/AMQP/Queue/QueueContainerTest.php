@@ -7,6 +7,7 @@ namespace Tests\Infrastructure\AMQP\Queue;
 use App\Infrastructure\AMQP\AMQPChannelFactory;
 use App\Infrastructure\AMQP\Queue\Queue;
 use App\Infrastructure\AMQP\Queue\QueueContainer;
+use RuntimeException;
 use Spatie\Snapshots\MatchesSnapshots;
 use Tests\ContainerTestCase;
 
@@ -45,7 +46,7 @@ class QueueContainerTest extends ContainerTestCase
 
     public function testItShouldThrowWhenGettingInvalidQueueName(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Queue "random-queue" not registered in container');
         $this->queueContainer->getQueue("random-queue");
     }

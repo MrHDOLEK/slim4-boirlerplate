@@ -9,6 +9,7 @@ use App\Infrastructure\AMQP\Queue\Queue;
 use App\Infrastructure\AMQP\Worker\BaseWorker;
 use Lcobucci\Clock\Clock;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
 
 class TestWorker extends BaseWorker
 {
@@ -28,7 +29,7 @@ class TestWorker extends BaseWorker
         // TODO: Implement processMessage() method.
     }
 
-    public function processFailure(Envelope $envelope, AMQPMessage $message, \Throwable $exception, Queue $queue): void
+    public function processFailure(Envelope $envelope, AMQPMessage $message, Throwable $exception, Queue $queue): void
     {
         // TODO: Implement processFailure() method.
     }

@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Logging;
 
-use Firehed\DbalLogger\QueryLogger;
+use Firehed\DbalLogger\DbalLogger;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
-class SlowQueryLogger implements QueryLogger
+class SlowQueryLogger implements DbalLogger
 {
     private const DEFAULT_SLOW_THRESHOLD_MS = 100.0;
     private const MS_TO_SECONDS = 0.001;
@@ -24,13 +25,13 @@ class SlowQueryLogger implements QueryLogger
         $this->slowThreshold = $slowThresholdMs * self::MS_TO_SECONDS;
     }
 
-    public function startQuery($sql, ?array $params = null, ?array $types = null): void
+    public function startQuery(string $sql, ?array $params = null, ?array $types = null): void
     {
         $this->startTime = microtime(true);
         $this->types = $types;
     }
 
-    public function stopQuery(): void
+    public function stopQuery(?Throwable $exception = null): void
     {
         if ($this->startTime === null) {
             return;
@@ -48,6 +49,14 @@ class SlowQueryLogger implements QueryLogger
         }
 
         $this->resetQueryData();
+    }
+
+    public function connect(): void
+    {
+    }
+
+    public function disconnect(): void
+    {
     }
 
     private function resetQueryData(): void

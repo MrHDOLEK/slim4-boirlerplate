@@ -17,7 +17,16 @@ class ConsoleCommandCompilerPassTest extends TestCase
     public function testProcessSuccess(): void
     {
         $containerBuilder = $this->createMock(ContainerBuilder::class);
-        $definition = $this->createMock(AutowireDefinitionHelper::class);
+        $definition = new class() extends AutowireDefinitionHelper {
+            public array $methodCalls = [];
+
+            public function method(string $method, mixed ...$parameters): self
+            {
+                $this->methodCalls[] = [$method, $parameters];
+
+                return $this;
+            }
+        };
 
         $containerBuilder
             ->expects($this->once())
@@ -31,11 +40,6 @@ class ConsoleCommandCompilerPassTest extends TestCase
             ->with(AsCommand::class)
             ->willReturn([Command::class]);
 
-        $definition
-            ->expects($this->once())
-            ->method("method")
-            ->with("registerCommand", \DI\autowire(Command::class));
-
         $containerBuilder
             ->expects($this->once())
             ->method("addDefinitions")
@@ -43,5 +47,10 @@ class ConsoleCommandCompilerPassTest extends TestCase
 
         $compilerPass = new ConsoleCommandCompilerPass();
         $compilerPass->process($containerBuilder);
+
+        $this->assertEquals(
+            [["registerCommand", [\DI\autowire(Command::class)]]],
+            $definition->methodCalls,
+        );
     }
 }

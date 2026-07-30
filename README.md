@@ -43,6 +43,34 @@ Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/p
 
 -  `make help`
 
+## Dev tooling
+
+Static analysis and code style live in their own isolated composer projects under `tools/`, so their
+dependencies never enter the application's dependency graph:
+
+| Tool | Location | Command |
+| --- | --- | --- |
+| PHPStan (+ custom architecture rules) | `tools/phpstan` | `make phpstan` |
+| PHP CS Fixer (blumilksoftware/codestyle) | `tools/cs-fixer` | `make cs-check` / `make cs-fix` |
+| Deptrac (layer guard) | `tools/deptrac` | `make deptrac` |
+
+`make install` installs them. To (re)install or bump them on their own:
+
+- `make tools-install`
+- `make tools-update`
+
+The layer guard enforces `Infrastructure -> Application -> Domain`. Pre-existing violations are
+grandfathered in `deptrac.baseline.yaml`, so only new ones fail the build.
+
+## Deployment
+
+The product is packaged as a Helm chart in `.k8s` — an `app` Deployment (nginx + php-fpm), a
+`worker` Deployment consuming one AMQP queue, a `scheduler` CronJob, and a pre-sync migration Job.
+Every runtime value comes from a Kubernetes Secret; the image ships no `.env`.
+
+- `make helm-lint`
+- `make helm-template`
+
 ## Some examples
 
 ### Registering a new route

@@ -9,6 +9,7 @@ use App\Infrastructure\AMQP\Queue\Queue;
 use DateInterval;
 use DateTimeImmutable;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
 
 interface Worker
 {
@@ -16,7 +17,7 @@ interface Worker
 
     public function processMessage(Envelope $envelope, AMQPMessage $message): void;
 
-    public function processFailure(Envelope $envelope, AMQPMessage $message, \Throwable $exception, Queue $queue): void;
+    public function processFailure(Envelope $envelope, AMQPMessage $message, Throwable $exception, Queue $queue): void;
 
     public function maxIterationsReached(): bool;
 

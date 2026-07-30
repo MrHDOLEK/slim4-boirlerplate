@@ -14,6 +14,13 @@ install: ## Init project
 	cp -n .env.dist .env
 	$(DOCKER_COMPOSE) build
 	$(DOCKER_COMPOSE) run app composer install
+	$(DOCKER_COMPOSE) run app composer tools:install
+
+tools-install: ## Install isolated dev tools (tools/*: phpstan, cs-fixer, deptrac)
+	$(DOCKER_COMPOSE) run app composer tools:install
+
+tools-update: ## Update isolated dev tools to their latest allowed versions (bumps each tools/*/composer.lock)
+	$(DOCKER_COMPOSE) run app composer tools:update
 
 start: ## Run docker for a project
 	$(DOCKER_COMPOSE) up -d
@@ -24,21 +31,32 @@ stop: ## Stop all containers for a project
 bash: ## Exec bash for app container
 	$(DOCKER_COMPOSE) exec app bash
 
-phpstan: ## Run static analysis a code for a app container
+phpstan: ## Static analysis via isolated tools/phpstan (src + config + fixtures)
 	$(DOCKER_COMPOSE) exec app composer phpstan
 
 phpunit: ## Run tests for a app container
 	$(DOCKER_COMPOSE) exec app composer test
 
-cs-check: ## Run check for a linter
+cs-check: ## Check code style via isolated tools/cs-fixer
 	$(DOCKER_COMPOSE) exec app composer cs:check
 
-cs-fix: ## Run linter
+cs-fix: ## Fix code style via isolated tools/cs-fixer
 	$(DOCKER_COMPOSE) exec app composer cs:fix
+
+deptrac: ## Architecture guard via isolated tools/deptrac
+	$(DOCKER_COMPOSE) exec app composer test:architecture
 
 run-tests: ## Run stage for test
 	$(MAKE) cs-check
+	$(MAKE) phpstan
+	$(MAKE) deptrac
 	$(MAKE) phpunit
+
+helm-lint: ## Lint the Helm chart in .k8s
+	helm lint .k8s
+
+helm-template: ## Render the Helm chart in .k8s with the default values
+	helm template slim4-app .k8s
 
 fix-permissions: ## Change permision for volumen a app container
 	$(DOCKER_COMPOSE) exec app	usermod -u 1000 www-data

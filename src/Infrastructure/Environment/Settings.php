@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Environment;
 
 use App\Infrastructure\Utils\Constants;
+use RuntimeException;
 
 class Settings
 {
@@ -36,7 +37,7 @@ class Settings
             if (is_array($settings) && (isset($settings[$parent]) || array_key_exists($parent, $settings))) {
                 $settings = $settings[$parent];
             } else {
-                throw new \RuntimeException(sprintf('Trying to fetch invalid setting "%s"', implode(".", $parents)));
+                throw new RuntimeException(sprintf('Trying to fetch invalid setting "%s"', implode(".", $parents)));
             }
         }
 

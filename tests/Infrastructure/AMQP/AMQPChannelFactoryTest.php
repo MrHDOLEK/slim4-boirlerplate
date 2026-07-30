@@ -33,7 +33,6 @@ class AMQPChannelFactoryTest extends TestCase
     {
         $queue = $this->createMock(Queue::class);
         $queue
-            ->expects($this->any())
             ->method("getName")
             ->willReturn("test-queue");
 
@@ -68,7 +67,6 @@ class AMQPChannelFactoryTest extends TestCase
     {
         $queue = $this->createMock(Queue::class);
         $queue
-            ->expects($this->any())
             ->method("getName")
             ->willReturn("test-queue");
 
