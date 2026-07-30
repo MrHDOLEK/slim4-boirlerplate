@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Infrastructure\Events;
 
 use App\Infrastructure\AMQP\AMQPChannelFactory;
-use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\Events\EventQueueWorker;
+use App\Infrastructure\Messaging\Envelope;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;

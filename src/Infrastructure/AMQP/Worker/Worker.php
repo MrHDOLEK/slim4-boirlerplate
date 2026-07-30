@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\AMQP\Worker;
 
-use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\AMQP\Queue\Queue;
+use App\Infrastructure\Messaging\Envelope;
 use DateInterval;
 use DateTimeImmutable;
 use PhpAmqpLib\Message\AMQPMessage;

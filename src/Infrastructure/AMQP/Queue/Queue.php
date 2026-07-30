@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\AMQP\Queue;
 
-use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\AMQP\Worker\Worker;
+use App\Infrastructure\Messaging\Envelope;
 
 interface Queue
 {

@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libbz2-dev \
         zlib1g-dev \
         libzip-dev \
+        librdkafka-dev \
         gnumeric \
     && curl -sS https://getcomposer.org/installer | php -- --version="${COMPOSER_VERSION}" --install-dir=/usr/local/bin --filename=composer \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -39,6 +40,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         pcntl \
         sockets \
     && docker-php-ext-enable intl pcntl \
+    && pecl install rdkafka-6.0.5 \
+    && docker-php-ext-enable rdkafka \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

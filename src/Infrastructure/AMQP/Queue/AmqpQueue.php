@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\AMQP\Queue;
 
 use App\Infrastructure\AMQP\AMQPChannelFactory;
-use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\Attribute\AsAmqpQueue;
+use App\Infrastructure\Messaging\Envelope;
 use App\Infrastructure\Serialization\Json;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;

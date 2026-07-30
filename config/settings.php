@@ -83,6 +83,12 @@ return [
         ],
         "slow_query_threshold_ms" => $_ENV["SLOW_QUERY_THRESHOLD"] ?? 300,
     ],
+    "kafka" => [
+        "brokers" => $_ENV["KAFKA_BROKERS"],
+        "consumer_group" => $_ENV["KAFKA_CONSUMER_GROUP"],
+        "schema_registry_url" => $_ENV["KAFKA_SCHEMA_REGISTRY_URL"],
+        "auto_offset_reset" => $_ENV["KAFKA_AUTO_OFFSET_RESET"] ?? "earliest",
+    ],
     "redis" => [
         "host" => $_ENV["REDIS_HOST"],
         "password" => $_ENV["REDIS_PASSWORD"],

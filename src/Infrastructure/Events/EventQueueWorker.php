@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Events;
 
-use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\AMQP\Queue\FailedQueue\FailedQueueFactory;
 use App\Infrastructure\AMQP\Queue\Queue;
 use App\Infrastructure\AMQP\Worker\BaseWorker;
+use App\Infrastructure\Messaging\Envelope;
 use Lcobucci\Clock\Clock;
 use PhpAmqpLib\Message\AMQPMessage;
 use Throwable;

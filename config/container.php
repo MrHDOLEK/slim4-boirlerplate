@@ -6,6 +6,8 @@ use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
 use App\Infrastructure\Console\ConsoleCommandContainer;
 use App\Infrastructure\Environment\Environment;
 use App\Infrastructure\Environment\Settings;
+use App\Infrastructure\Kafka\Serializer\AvroSerializer;
+use App\Infrastructure\Kafka\Serializer\ConfluentAvroSerializer;
 use App\Infrastructure\Logging\ActionLogProcessor;
 use App\Infrastructure\Logging\LogfmtFormatter;
 use App\Infrastructure\Logging\SlowQueryLogger;
@@ -16,6 +18,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMSetup;
 use Dotenv\Dotenv;
 use Firehed\DbalLogger\Middleware;
+use FlixTech\AvroSerializer\Objects\RecordSerializer;
+use FlixTech\SchemaRegistryApi\Registry;
+use FlixTech\SchemaRegistryApi\Registry\BlockingRegistry;
+use FlixTech\SchemaRegistryApi\Registry\PromisingRegistry;
+use GuzzleHttp\Client as GuzzleClient;
 use Lcobucci\Clock\Clock;
 use Lcobucci\Clock\SystemClock;
 use Monolog\Handler\StreamHandler;
@@ -25,6 +32,9 @@ use Predis\Client as RedisClient;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Log\LoggerInterface;
+use RdKafka\Conf as KafkaConf;
+use RdKafka\KafkaConsumer;
+use RdKafka\Producer as KafkaProducer;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Views\Twig;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
@@ -135,6 +145,41 @@ return [
             $rabbitMqConfig["vhost"],
         );
     },
+    // Kafka
+    KafkaProducer::class => function (Settings $settings): KafkaProducer {
+        $kafka = $settings->get("kafka");
+
+        $conf = new KafkaConf();
+        $conf->set("bootstrap.servers", $kafka["brokers"]);
+        $conf->set("enable.idempotence", "true");
+        $conf->set("compression.type", "snappy");
+        $conf->set("linger.ms", "20");
+
+        return new KafkaProducer($conf);
+    },
+    KafkaConsumer::class => function (Settings $settings): KafkaConsumer {
+        $kafka = $settings->get("kafka");
+
+        $conf = new KafkaConf();
+        $conf->set("bootstrap.servers", $kafka["brokers"]);
+        $conf->set("group.id", $kafka["consumer_group"]);
+        $conf->set("auto.offset.reset", $kafka["auto_offset_reset"]);
+        $conf->set("enable.auto.commit", "false");
+        $conf->set("enable.partition.eof", "true");
+
+        return new KafkaConsumer($conf);
+    },
+    Registry::class => fn(Settings $settings): Registry => new BlockingRegistry(
+        new PromisingRegistry(
+            new GuzzleClient(["base_uri" => $settings->get("kafka")["schema_registry_url"]]),
+        ),
+    ),
+    RecordSerializer::class => fn(Registry $registry): RecordSerializer => new RecordSerializer($registry, [
+        RecordSerializer::OPTION_REGISTER_MISSING_SCHEMAS => false,
+        RecordSerializer::OPTION_REGISTER_MISSING_SUBJECTS => false,
+    ]),
+    AvroSerializer::class => DI\get(ConfluentAvroSerializer::class),
+
     ServerRequestFactoryInterface::class => \DI\get(ServerRequestFactory::class),
     // Redis
     RedisClient::class => function (Settings $settings) {

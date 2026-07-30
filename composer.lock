@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fedd3c63c7e06627be7270aefc228431",
+    "content-hash": "95d046d2c983d8f29d080a4ed451c612",
     "packages": [
         {
             "name": "awurth/slim-validation",
@@ -64,6 +64,73 @@
                 "source": "https://github.com/awurth/SlimValidation/tree/v5.0.1"
             },
             "time": "2023-12-02T17:31:54+00:00"
+        },
+        {
+            "name": "beberlei/assert",
+            "version": "v3.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/assert.git",
+                "reference": "f193f4613c7d7fbcee2c05e4daff4061d49c040e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/f193f4613c7d7fbcee2c05e4daff4061d49c040e",
+                "reference": "f193f4613c7d7fbcee2c05e4daff4061d49c040e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-simplexml": "*",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "*",
+                "phpstan/phpstan": "*",
+                "phpunit/phpunit": ">=6.0.0",
+                "yoast/phpunit-polyfills": "^0.1.0"
+            },
+            "suggest": {
+                "ext-intl": "Needed to allow Assertion::count(), Assertion::isCountable(), Assertion::minCount(), and Assertion::maxCount() to operate on ResourceBundles"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/Assert/functions.php"
+                ],
+                "psr-4": {
+                    "Assert\\": "lib/Assert"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Richard Quadling",
+                    "email": "rquadling@gmail.com",
+                    "role": "Collaborator"
+                }
+            ],
+            "description": "Thin assertion library for input validation in business models.",
+            "keywords": [
+                "assert",
+                "assertion",
+                "validation"
+            ],
+            "support": {
+                "issues": "https://github.com/beberlei/assert/issues",
+                "source": "https://github.com/beberlei/assert/tree/v3.3.4"
+            },
+            "time": "2026-06-10T19:47:05+00:00"
         },
         {
             "name": "brick/math",
@@ -1301,6 +1368,242 @@
             "time": "2026-03-13T19:32:40+00:00"
         },
         {
+            "name": "flix-tech/avro-php",
+            "version": "5.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flix-tech/avro-php.git",
+                "reference": "8c040b4dc4bd9163176cf3d10ac898215d4063ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flix-tech/avro-php/zipball/8c040b4dc4bd9163176cf3d10ac898215d4063ca",
+                "reference": "8c040b4dc4bd9163176cf3d10ac898215d4063ca",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "suggest": {
+                "ext-gmp": "Large integer support for 32-bit platforms.",
+                "ext-snappy": "Snappy support for Snappy codec (mainly Google).",
+                "ext-zlib": "Zlib support for Deflate codec."
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Avro schema encoder/decoder. Fork of rg/avro-php",
+            "support": {
+                "source": "https://github.com/flix-tech/avro-php/tree/5.2.0"
+            },
+            "time": "2026-01-27T15:09:55+00:00"
+        },
+        {
+            "name": "flix-tech/avro-serde-php",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flix-tech/avro-serde-php.git",
+                "reference": "cfb32ff639358143d79d4e46e31144637a9b4d00"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flix-tech/avro-serde-php/zipball/cfb32ff639358143d79d4e46e31144637a9b4d00",
+                "reference": "cfb32ff639358143d79d4e46e31144637a9b4d00",
+                "shasum": ""
+            },
+            "require": {
+                "beberlei/assert": "^2.9.9|~3.0",
+                "flix-tech/avro-php": "^5.1",
+                "flix-tech/confluent-schema-registry-api": "^8.0",
+                "guzzlehttp/promises": "^1.4.0|^2.0.0",
+                "php": "^8.1",
+                "widmogrod/php-functional": "^6.0|^7.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^2.0",
+                "phpbench/phpbench": "1.3.1",
+                "phpoption/phpoption": "^1.8.0",
+                "phpunit/phpunit": "^10.5",
+                "roave/security-advisories": "dev-latest",
+                "symfony/serializer": "^5.4|^6.4|^7.1",
+                "vlucas/phpdotenv": "^5.0"
+            },
+            "suggest": {
+                "doctrine/annotations": "To enable the generation of avro schemas from annotations",
+                "symfony/serializer": "To integrate avro-serde-php into symfony ecosystem"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev",
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Protocol.php",
+                    "src/Serialize.php",
+                    "src/Common.php"
+                ],
+                "psr-4": {
+                    "FlixTech\\AvroSerializer\\Objects\\": "src/Objects",
+                    "FlixTech\\AvroSerializer\\Integrations\\": "integrations/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Ploch",
+                    "email": "thomas.ploch@flixbus.com"
+                }
+            ],
+            "description": "A library to serialize and deserialize Avro records making use of the confluent schema registry",
+            "keywords": [
+                "Confluent",
+                "avro",
+                "confluent-platform",
+                "deserialization",
+                "kafka",
+                "schema-evolution",
+                "schema-registry",
+                "serialization",
+                "serializer",
+                "symfony",
+                "symfony-serializer"
+            ],
+            "support": {
+                "issues": "https://github.com/flix-tech/avro-serde-php/issues",
+                "source": "https://github.com/flix-tech/avro-serde-php/tree/3.0.0"
+            },
+            "time": "2024-12-25T04:39:10+00:00"
+        },
+        {
+            "name": "flix-tech/confluent-schema-registry-api",
+            "version": "8.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flix-tech/schema-registry-php-client.git",
+                "reference": "87023aebb0393da62d932b9be49d0d891a52ae37"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flix-tech/schema-registry-php-client/zipball/87023aebb0393da62d932b9be49d0d891a52ae37",
+                "reference": "87023aebb0393da62d932b9be49d0d891a52ae37",
+                "shasum": ""
+            },
+            "require": {
+                "beberlei/assert": "~2.7|~3.0",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "flix-tech/avro-php": "^5.0",
+                "guzzlehttp/guzzle": "^7.0",
+                "guzzlehttp/promises": "^1.4.0|^2.0.0",
+                "guzzlehttp/psr7": "^1.7|^2.1",
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "doctrine/cache": "~1.3",
+                "phpunit/phpunit": "^9.4.2",
+                "psr/cache": "^1.0",
+                "psr/simple-cache": "^1.0",
+                "raphhh/trex-reflection": "~1.0",
+                "symfony/cache": "^5.1"
+            },
+            "suggest": {
+                "doctrine/cache": "If you want to use the DoctrineCacheAdapter",
+                "psr/cache": "If you want to use the CacheItemPoolAdapter",
+                "psr/simple-cache": "If you want to use the SimpleCacheAdapter"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Requests/Functions.php",
+                    "src/Constants/Constants.php"
+                ],
+                "psr-4": {
+                    "FlixTech\\SchemaRegistryApi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Ploch",
+                    "email": "thomas.ploch@flixbus.com"
+                }
+            ],
+            "description": "A PHP 7.4+ library to consume the Confluent Schema Registry REST API.",
+            "support": {
+                "issues": "https://github.com/flix-tech/schema-registry-php-client/issues",
+                "source": "https://github.com/flix-tech/schema-registry-php-client/tree/8.1.0"
+            },
+            "time": "2024-01-26T13:22:35+00:00"
+        },
+        {
+            "name": "functional-php/fantasy-land",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/functional-php/fantasy-land.git",
+                "reference": "9a43201d827ced038ffd374f2d018d7a54ad33e2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/functional-php/fantasy-land/zipball/9a43201d827ced038ffd374f2d018d7a54ad33e2",
+                "reference": "9a43201d827ced038ffd374f2d018d7a54ad33e2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2",
+                "giorgiosironi/eris": "^0.9",
+                "phpunit/phpunit": "^5"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/FantasyLand/functions.php"
+                ],
+                "psr-4": {
+                    "FunctionalPHP\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Gabriel Habryn",
+                    "email": "widmogrod+github@gmail.com"
+                }
+            ],
+            "description": "Specification for interoperability of common algebraic structures in PHP",
+            "support": {
+                "issues": "https://github.com/functional-php/fantasy-land/issues",
+                "source": "https://github.com/functional-php/fantasy-land/tree/1.0.2"
+            },
+            "time": "2024-12-18T16:28:32+00:00"
+        },
+        {
             "name": "graham-campbell/result-type",
             "version": "v1.1.4",
             "source": {
@@ -1361,6 +1664,337 @@
                 }
             ],
             "time": "2025-12-27T19:43:20+00:00"
+        },
+        {
+            "name": "guzzlehttp/guzzle",
+            "version": "7.15.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/guzzle.git",
+                "reference": "744101956d78b7c1384d0cbf379db13e859167bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/744101956d78b7c1384d0cbf379db13e859167bf",
+                "reference": "744101956d78b7c1384d0cbf379db13e859167bf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/promises": "^2.5.1",
+                "guzzlehttp/psr7": "^2.13",
+                "php": "^7.2.5 || ^8.0",
+                "psr/http-client": "^1.0",
+                "symfony/deprecation-contracts": "^2.5 || ^3.0",
+                "symfony/polyfill-php80": "^1.25"
+            },
+            "provide": {
+                "psr/http-client-implementation": "1.0"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.8.2",
+                "ext-curl": "*",
+                "guzzle/client-integration-tests": "3.0.3",
+                "guzzlehttp/test-server": "^0.7",
+                "php-http/message-factory": "^1.1",
+                "phpunit/phpunit": "^8.5.52 || ^9.6.34",
+                "psr/log": "^1.1 || ^2.0 || ^3.0"
+            },
+            "suggest": {
+                "ext-curl": "Required for CURL handler support",
+                "ext-intl": "Required for Internationalized Domain Name (IDN) support",
+                "psr/log": "Required for using the Log middleware"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": false
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions_include.php"
+                ],
+                "psr-4": {
+                    "GuzzleHttp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Graham Campbell",
+                    "email": "hello@gjcampbell.co.uk",
+                    "homepage": "https://github.com/GrahamCampbell"
+                },
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                },
+                {
+                    "name": "Jeremy Lindblom",
+                    "email": "jeremeamia@gmail.com",
+                    "homepage": "https://github.com/jeremeamia"
+                },
+                {
+                    "name": "George Mponos",
+                    "email": "gmponos@gmail.com",
+                    "homepage": "https://github.com/gmponos"
+                },
+                {
+                    "name": "Tobias Nyholm",
+                    "email": "tobias.nyholm@gmail.com",
+                    "homepage": "https://github.com/Nyholm"
+                },
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com",
+                    "homepage": "https://github.com/sagikazarmark"
+                },
+                {
+                    "name": "Tobias Schultze",
+                    "email": "webmaster@tubo-world.de",
+                    "homepage": "https://github.com/Tobion"
+                }
+            ],
+            "description": "Guzzle is a PHP HTTP client library",
+            "keywords": [
+                "client",
+                "curl",
+                "framework",
+                "http",
+                "http client",
+                "psr-18",
+                "psr-7",
+                "rest",
+                "web service"
+            ],
+            "support": {
+                "issues": "https://github.com/guzzle/guzzle/issues",
+                "source": "https://github.com/guzzle/guzzle/tree/7.15.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/GrahamCampbell",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/Nyholm",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/guzzlehttp/guzzle",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-07-26T23:23:20+00:00"
+        },
+        {
+            "name": "guzzlehttp/promises",
+            "version": "2.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/promises.git",
+                "reference": "9ad1e4fc607446a055b95870c7f668e93b5cff29"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/9ad1e4fc607446a055b95870c7f668e93b5cff29",
+                "reference": "9ad1e4fc607446a055b95870c7f668e93b5cff29",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2.5 || ^8.0",
+                "symfony/deprecation-contracts": "^2.5 || ^3.0"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.8.2",
+                "phpunit/phpunit": "^8.5.52 || ^9.6.34"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": false
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Promise\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Graham Campbell",
+                    "email": "hello@gjcampbell.co.uk",
+                    "homepage": "https://github.com/GrahamCampbell"
+                },
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                },
+                {
+                    "name": "Tobias Nyholm",
+                    "email": "tobias.nyholm@gmail.com",
+                    "homepage": "https://github.com/Nyholm"
+                },
+                {
+                    "name": "Tobias Schultze",
+                    "email": "webmaster@tubo-world.de",
+                    "homepage": "https://github.com/Tobion"
+                }
+            ],
+            "description": "Guzzle promises library",
+            "keywords": [
+                "promise"
+            ],
+            "support": {
+                "issues": "https://github.com/guzzle/promises/issues",
+                "source": "https://github.com/guzzle/promises/tree/2.5.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/GrahamCampbell",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/Nyholm",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/guzzlehttp/promises",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-07-08T15:48:39+00:00"
+        },
+        {
+            "name": "guzzlehttp/psr7",
+            "version": "2.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/psr7.git",
+                "reference": "dad89620b7a6edb60c15858442eb2e408b45d8f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/dad89620b7a6edb60c15858442eb2e408b45d8f4",
+                "reference": "dad89620b7a6edb60c15858442eb2e408b45d8f4",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2.5 || ^8.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.1 || ^2.0",
+                "ralouphie/getallheaders": "^3.0",
+                "symfony/deprecation-contracts": "^2.5 || ^3.0",
+                "symfony/polyfill-php80": "^1.25"
+            },
+            "provide": {
+                "psr/http-factory-implementation": "1.0",
+                "psr/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.8.2",
+                "http-interop/http-factory-tests": "1.1.0",
+                "jshttp/mime-db": "1.54.0.1",
+                "phpunit/phpunit": "^8.5.52 || ^9.6.34"
+            },
+            "suggest": {
+                "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": false
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Psr7\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Graham Campbell",
+                    "email": "hello@gjcampbell.co.uk",
+                    "homepage": "https://github.com/GrahamCampbell"
+                },
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                },
+                {
+                    "name": "George Mponos",
+                    "email": "gmponos@gmail.com",
+                    "homepage": "https://github.com/gmponos"
+                },
+                {
+                    "name": "Tobias Nyholm",
+                    "email": "tobias.nyholm@gmail.com",
+                    "homepage": "https://github.com/Nyholm"
+                },
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com",
+                    "homepage": "https://github.com/sagikazarmark"
+                },
+                {
+                    "name": "Tobias Schultze",
+                    "email": "webmaster@tubo-world.de",
+                    "homepage": "https://github.com/Tobion"
+                },
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com",
+                    "homepage": "https://sagikazarmark.hu"
+                }
+            ],
+            "description": "PSR-7 message implementation that also provides common utility methods",
+            "keywords": [
+                "http",
+                "message",
+                "psr-7",
+                "request",
+                "response",
+                "stream",
+                "uri",
+                "url"
+            ],
+            "support": {
+                "issues": "https://github.com/guzzle/psr7/issues",
+                "source": "https://github.com/guzzle/psr7/tree/2.13.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/GrahamCampbell",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/Nyholm",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/guzzlehttp/psr7",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-07-16T22:23:49+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",
@@ -2834,6 +3468,58 @@
                 "source": "https://github.com/php-fig/container/tree/2.0.2"
             },
             "time": "2021-11-05T16:47:00+00:00"
+        },
+        {
+            "name": "psr/http-client",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-client.git",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-client/zipball/bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "reference": "bb5906edc1c324c9a05aa0873d40117941e5fa90",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^8.0",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP clients",
+            "homepage": "https://github.com/php-fig/http-client",
+            "keywords": [
+                "http",
+                "http-client",
+                "psr",
+                "psr-18"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/http-client"
+            },
+            "time": "2023-09-23T14:17:50+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -6271,6 +6957,76 @@
             "time": "2026-06-15T15:31:57+00:00"
         },
         {
+            "name": "widmogrod/php-functional",
+            "version": "7.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/widmogrod/php-functional.git",
+                "reference": "2dbb27152e44050b673f65c89901f300c7f48e0a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/widmogrod/php-functional/zipball/2dbb27152e44050b673f65c89901f300c7f48e0a",
+                "reference": "2dbb27152e44050b673f65c89901f300c7f48e0a",
+                "shasum": ""
+            },
+            "require": {
+                "functional-php/fantasy-land": "^1",
+                "php": ">=8.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^v3.65.0",
+                "giorgiosironi/eris": "^1.0.0",
+                "phpunit/phpunit": "^11.5.1"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Functional/array.php",
+                    "src/Functional/functions.php",
+                    "src/Functional/miscellaneous.php",
+                    "src/Functional/listt.php",
+                    "src/Functional/zipping.php",
+                    "src/Functional/sublist.php",
+                    "src/Functional/infinit.php",
+                    "src/Functional/predicates.php",
+                    "src/Functional/strings.php",
+                    "src/Functional/monoid.php",
+                    "src/Functional/setoid.php",
+                    "src/Monad/Either/functions.php",
+                    "src/Monad/Maybe/functions.php",
+                    "src/Monad/Free/functions.php",
+                    "src/Monad/IO/functions.php",
+                    "src/Monad/IO/errors.php",
+                    "src/Monad/Reader/functions.php",
+                    "src/Monad/State/functions.php",
+                    "src/Monad/Writer/functions.php",
+                    "src/Monad/Control/Doo/actions.php",
+                    "src/Monad/Control/Doo/interpretation.php",
+                    "src/Useful/match.php"
+                ],
+                "psr-4": {
+                    "Widmogrod\\": "./src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gabriel Habryn",
+                    "email": "widmogrod@gmail.com"
+                }
+            ],
+            "description": "Functors, Applicative and Monads are fascinating concept. Purpose of this library is to explore them in OOP PHP world.",
+            "support": {
+                "issues": "https://github.com/widmogrod/php-functional/issues",
+                "source": "https://github.com/widmogrod/php-functional/tree/7.0.1"
+            },
+            "time": "2025-09-12T11:43:54+00:00"
+        },
+        {
             "name": "zircote/swagger-php",
             "version": "6.5.1",
             "source": {
@@ -6510,6 +7266,44 @@
                 "source": "https://github.com/jsonrainbow/json-schema/tree/6.10.0"
             },
             "time": "2026-06-16T20:50:26+00:00"
+        },
+        {
+            "name": "kwn/php-rdkafka-stubs",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kwn/php-rdkafka-stubs.git",
+                "reference": "bdd5cdc35c53e6f624e33c5ddc6bdf3cc51041ef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kwn/php-rdkafka-stubs/zipball/bdd5cdc35c53e6f624e33c5ddc6bdf3cc51041ef",
+                "reference": "bdd5cdc35c53e6f624e33c5ddc6bdf3cc51041ef",
+                "shasum": ""
+            },
+            "require": {
+                "ext-rdkafka": ">=6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.2.4"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karol Wnuk",
+                    "email": "k.wnuk@ascetic.pl"
+                }
+            ],
+            "description": "Rdkafka extension stubs for your IDE",
+            "support": {
+                "issues": "https://github.com/kwn/php-rdkafka-stubs/issues",
+                "source": "https://github.com/kwn/php-rdkafka-stubs/tree/v3.0.1"
+            },
+            "time": "2026-04-01T18:48:06+00:00"
         },
         {
             "name": "league/openapi-psr7-validator",
@@ -8834,8 +9628,10 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^8.4.1",
+        "ext-curl": "*",
         "ext-json": "*",
         "ext-pcntl": "*",
+        "ext-rdkafka": "^6.0",
         "ext-sockets": "*"
     },
     "platform-dev": {},

@@ -125,7 +125,7 @@ class QueueTest extends TestCase
             ->method("publish_batch");
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('All envelopes need to implement App\Infrastructure\AMQP\Envelope');
+        $this->expectExceptionMessage('All envelopes need to implement App\Infrastructure\Messaging\Envelope');
 
         /** @phpstan-ignore-next-line */
         $this->testQueue->queueBatch(["test"]);

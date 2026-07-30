@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Events;
 
 use App\Infrastructure\AMQP\AMQPChannelFactory;
-use App\Infrastructure\AMQP\Envelope;
 use App\Infrastructure\AMQP\Queue\AmqpQueue;
 use App\Infrastructure\AMQP\Worker\Worker;
+use App\Infrastructure\Messaging\Envelope;
 use RuntimeException;
 
 abstract class EventQueue extends AmqpQueue
