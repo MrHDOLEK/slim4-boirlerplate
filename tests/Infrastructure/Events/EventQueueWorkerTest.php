@@ -9,10 +9,12 @@ use App\Infrastructure\AMQP\Queue\FailedQueue\FailedQueueFactory;
 use App\Infrastructure\AMQP\Queue\Queue;
 use App\Infrastructure\Events\EventBus;
 use App\Infrastructure\Events\EventQueueWorker;
+use DateTimeImmutable;
 use Lcobucci\Clock\Clock;
 use PhpAmqpLib\Message\AMQPMessage;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Tests\PausedClock;
 
 class EventQueueWorkerTest extends TestCase
@@ -28,7 +30,7 @@ class EventQueueWorkerTest extends TestCase
 
         $this->commandBus = $this->createMock(EventBus::class);
         $this->failedQueueFactory = $this->createMock(FailedQueueFactory::class);
-        $this->clock = PausedClock::on(new \DateTimeImmutable("2022-07-01"));
+        $this->clock = PausedClock::on(new DateTimeImmutable("2022-07-01"));
 
         $this->commandQueueWorker = new EventQueueWorker(
             $this->commandBus,
@@ -75,7 +77,7 @@ class EventQueueWorkerTest extends TestCase
         $this->commandQueueWorker->processFailure(
             $command,
             $message,
-            new \RuntimeException("A grave error"),
+            new RuntimeException("A grave error"),
             $queue,
         );
     }

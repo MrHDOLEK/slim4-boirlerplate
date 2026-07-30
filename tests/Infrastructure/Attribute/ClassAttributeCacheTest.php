@@ -9,6 +9,7 @@ use App\Infrastructure\Attribute\ClassAttributeCache;
 use App\Infrastructure\Environment\Settings;
 use App\Infrastructure\Serialization\Json;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class ClassAttributeCacheTest extends TestCase
@@ -42,7 +43,7 @@ class ClassAttributeCacheTest extends TestCase
 
     public function testGetItShouldThrowIfNotExists(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Cache not set for AsAmqpQueue");
 
         $this->classAttributeCache->get();

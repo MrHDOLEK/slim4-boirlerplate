@@ -17,7 +17,16 @@ class CommandHandlerCompilerPassTest extends TestCase
     public function testProcessSuccess(): void
     {
         $containerBuilder = $this->createMock(ContainerBuilder::class);
-        $definition = $this->createMock(AutowireDefinitionHelper::class);
+        $definition = new class() extends AutowireDefinitionHelper {
+            public array $methodCalls = [];
+
+            public function method(string $method, mixed ...$parameters): self
+            {
+                $this->methodCalls[] = [$method, $parameters];
+
+                return $this;
+            }
+        };
 
         $containerBuilder
             ->expects($this->once())
@@ -31,11 +40,6 @@ class CommandHandlerCompilerPassTest extends TestCase
             ->with(AsEventHandler::class)
             ->willReturn([EventHandler::class]);
 
-        $definition
-            ->expects($this->once())
-            ->method("method")
-            ->with("subscribeEventHandler", \DI\autowire(EventHandler::class));
-
         $containerBuilder
             ->expects($this->once())
             ->method("addDefinitions")
@@ -43,5 +47,10 @@ class CommandHandlerCompilerPassTest extends TestCase
 
         $compilerPass = new EventHandlerCompilerPass();
         $compilerPass->process($containerBuilder);
+
+        $this->assertEquals(
+            [["subscribeEventHandler", [\DI\autowire(EventHandler::class)]]],
+            $definition->methodCalls,
+        );
     }
 }

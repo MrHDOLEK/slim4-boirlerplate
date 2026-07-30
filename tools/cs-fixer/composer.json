@@ -1,0 +1,11 @@
+{
+    "name": "slim4/tools-cs-fixer",
+    "description": "Slim 4 boilerplate dev tooling (isolated) — PHP CS Fixer (blumilksoftware/codestyle)",
+    "require-dev": {
+        "php": "^8.4.1",
+        "blumilksoftware/codestyle": "^5.1"
+    },
+    "config": {
+        "allow-plugins": false
+    }
+}

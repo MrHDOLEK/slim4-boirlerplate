@@ -6,6 +6,7 @@ namespace App\Application\Service;
 
 use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Fig\Http\Message\StatusCodeInterface;
 use Predis\Client as RedisClient;
 use Psr\Log\LoggerInterface;
@@ -67,7 +68,7 @@ class HealthCheckService
             }
 
             return self::STATUS_OK;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logger->error(
                 "Database connection check failed with exception",
                 [
@@ -90,7 +91,7 @@ class HealthCheckService
             }
 
             return self::STATUS_OK;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logger->error(
                 "Redis connection check failed with exception",
                 [
@@ -113,7 +114,7 @@ class HealthCheckService
             }
 
             return self::STATUS_OK;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->logger->error(
                 "RabbitMQ connection check failed with exception",
                 [

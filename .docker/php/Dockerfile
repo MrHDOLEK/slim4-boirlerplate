@@ -1,7 +1,7 @@
-ARG PHP_VERSION=8.4.3
-FROM php:${PHP_VERSION}-fpm-bullseye AS fpm
+ARG PHP_VERSION=8.5.8
+FROM php:${PHP_VERSION}-fpm-trixie AS fpm
 
-ARG COMPOSER_VERSION=2.8.8
+ARG COMPOSER_VERSION=2.10.2
 ARG INSTALL_COMPOSER_DEV=false
 ARG INSTALL_XDEBUG=false
 ENV COMPOSER_MEMORY_LIMIT=-1
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev \
         libicu-dev \
         libjpeg62-turbo-dev \
-        libfreetype6-dev \
+        libfreetype-dev \
         libonig-dev \
         libpq-dev \
         libxpm-dev \
@@ -36,7 +36,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         zip \
         pgsql \
         pdo_pgsql \
-        opcache \
         pcntl \
         sockets \
     && docker-php-ext-enable intl pcntl \

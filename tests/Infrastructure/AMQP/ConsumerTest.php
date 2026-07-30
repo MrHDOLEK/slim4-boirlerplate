@@ -15,6 +15,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Spatie\Snapshots\MatchesSnapshots;
 use Tests\Infrastructure\AMQP\RunUnitTester\RunUnitTester;
 
@@ -67,7 +68,6 @@ class ConsumerTest extends TestCase
             });
 
         $channel
-            ->expects($this->any())
             ->method("is_open")
             ->willReturnCallback(function () use (&$callCount) {
                 $callCount++;
@@ -239,7 +239,7 @@ class ConsumerTest extends TestCase
             ->method("getWorker")
             ->willReturn($worker);
 
-        $exception = new \RuntimeException();
+        $exception = new RuntimeException();
         $worker
             ->expects($this->once())
             ->method("processMessage")

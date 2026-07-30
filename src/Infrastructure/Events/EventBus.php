@@ -6,6 +6,7 @@ namespace App\Infrastructure\Events;
 
 use App\Infrastructure\Events\EventHandler\CanNotRegisterEventHandler;
 use App\Infrastructure\Events\EventHandler\EventHandler;
+use RuntimeException;
 
 class EventBus
 {
@@ -39,7 +40,7 @@ class EventBus
     private function getHandlerForEvent(DomainEvent $event): EventHandler
     {
         return $this->eventHandlers[$event::class] ??
-            throw new \RuntimeException(sprintf('EventHandler for event "%s" not subscribed to this bus', $event::class));
+            throw new RuntimeException(sprintf('EventHandler for event "%s" not subscribed to this bus', $event::class));
     }
 
     private function guardThatFqcnEndsInEventHandler(string $fqcn): void

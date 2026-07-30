@@ -1,0 +1,16 @@
+{
+    "name": "slim4/tools-phpstan",
+    "description": "Slim 4 boilerplate dev tooling (isolated) — PHPStan + custom rules",
+    "require-dev": {
+        "php": "^8.4.1",
+        "phpstan/phpstan": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Slim4\\PhpStan\\": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": false
+    }
+}

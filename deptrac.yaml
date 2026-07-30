@@ -1,27 +1,34 @@
+imports:
+  - deptrac.baseline.yaml
+
 deptrac:
   paths:
     - ./src
+
   exclude_files:
     - '#.*test.*#'
+
   layers:
     - name: Application
       collectors:
-        - type: directory
-          regex: .*src/Application/.*
+        - type: classLike
+          value: '^App\\Application\\'
     - name: Domain
       collectors:
-        - type: directory
-          regex: .*src/Domain/.*
+        - type: classLike
+          value: '^App\\Domain\\'
     - name: Infrastructure
       collectors:
-        - type: directory
-          regex: .*src/Infrastructure/.*
+        - type: classLike
+          value: '^App\\Infrastructure\\'
+
   ruleset:
+    Domain: ~
+
     Application:
       - Domain
       - Infrastructure
-    Domain:
-      - Infrastructure
+
     Infrastructure:
-      - Entity
+      - Application
       - Domain

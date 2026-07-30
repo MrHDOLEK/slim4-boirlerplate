@@ -1,0 +1,11 @@
+{
+    "name": "slim4/tools-deptrac",
+    "description": "Slim 4 boilerplate dev tooling (isolated) — deptrac",
+    "require-dev": {
+        "php": "^8.4.1",
+        "deptrac/deptrac": "^4.7"
+    },
+    "config": {
+        "allow-plugins": false
+    }
+}

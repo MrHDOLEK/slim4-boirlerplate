@@ -11,6 +11,7 @@ use DI\CompiledContainer;
 use DI\Container;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class ContainerBuilderTest extends TestCase
 {
@@ -117,7 +118,7 @@ class ContainerBuilderTest extends TestCase
 
     public function testItShouldThrowOnDuplicateCompilerPasses(): void
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("CompilerPass CompilerPassOne already added. Cannot add the same pass twice");
 
         $compilerPass = $this->getMockBuilder(CompilerPass::class)

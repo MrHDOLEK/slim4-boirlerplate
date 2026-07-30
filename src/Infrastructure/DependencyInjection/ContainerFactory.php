@@ -16,7 +16,7 @@ class ContainerFactory
         $appRoot = Settings::getAppRoot();
 
         $dotenv = Dotenv::createImmutable($appRoot, $dotEnv);
-        $dotenv->load();
+        $dotenv->safeLoad();
 
         // At this point the container has not been built. We need to load the settings manually.
         $settings = Settings::load();

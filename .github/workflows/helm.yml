@@ -1,0 +1,51 @@
+name: Lint Helm chart
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.k8s/**'
+      - '.github/workflows/helm.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.k8s/**'
+      - '.github/workflows/helm.yml'
+
+jobs:
+  lint-helm-chart:
+    name: Lint Helm chart
+    timeout-minutes: 5
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 # https://github.com/actions/checkout
+
+      - name: Setup Helm
+        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1 # https://github.com/azure/setup-helm
+        with:
+          version: v4.2.3
+
+      - name: Lint chart
+        run: helm lint .k8s
+
+      - name: Render chart with default values
+        run: helm template slim4-app .k8s > /tmp/rendered-defaults.yaml
+
+      - name: Render chart with every optional resource enabled
+        run: |
+          helm template slim4-app .k8s \
+            --set persistence.enabled=true \
+            --set persistence.storageClass=standard \
+            --set autoscaling.app.enabled=true \
+            --set autoscaling.worker.enabled=true \
+            --set jobs.seed.enabled=true \
+            > /tmp/rendered-all.yaml
+
+      - name: Validate rendered manifests against the Kubernetes schemas
+        run: |
+          curl -sSLo kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.7.0/kubeconform-linux-amd64.tar.gz
+          tar -xzf kubeconform.tar.gz kubeconform
+          ./kubeconform -summary -strict -kubernetes-version 1.31.0 /tmp/rendered-defaults.yaml /tmp/rendered-all.yaml

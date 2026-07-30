@@ -11,6 +11,7 @@ use App\Infrastructure\Serialization\Json;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
+use ReflectionClass;
 use RuntimeException;
 
 abstract class AmqpQueue implements Queue
@@ -22,7 +23,7 @@ abstract class AmqpQueue implements Queue
     public function __construct(
         private readonly AMQPChannelFactory $AMQPChannelFactory,
     ) {
-        if ($attribute = (new \ReflectionClass($this))->getAttributes(AsAmqpQueue::class)) {
+        if ($attribute = (new ReflectionClass($this))->getAttributes(AsAmqpQueue::class)) {
             $this->amqpQueueAttribute = $attribute[0]->newInstance();
         }
     }

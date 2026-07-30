@@ -9,7 +9,9 @@ use App\Infrastructure\AMQP\AMQPChannelOptions;
 use App\Infrastructure\AMQP\Queue\AmqpQueue;
 use App\Infrastructure\AMQP\Queue\Queue;
 use App\Infrastructure\AMQP\Worker\Worker;
+use InvalidArgumentException;
 use PhpAmqpLib\Channel\AMQPChannel;
+use RuntimeException;
 
 class DelayedQueue extends AmqpQueue
 {
@@ -21,7 +23,7 @@ class DelayedQueue extends AmqpQueue
         private readonly AMQPChannelFactory $AMQPChannelFactory,
     ) {
         if ($this->delayInSeconds < 1) {
-            throw new \InvalidArgumentException("Delay cannot be less than 1 second");
+            throw new InvalidArgumentException("Delay cannot be less than 1 second");
         }
         parent::__construct($AMQPChannelFactory);
     }
@@ -33,7 +35,7 @@ class DelayedQueue extends AmqpQueue
 
     public function getWorker(): Worker
     {
-        throw new \RuntimeException("Delayed queues do not have workers");
+        throw new RuntimeException("Delayed queues do not have workers");
     }
 
     public function getNumberOfConsumers(): int

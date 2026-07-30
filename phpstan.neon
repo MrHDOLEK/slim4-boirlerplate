@@ -6,3 +6,23 @@ parameters:
         - fixtures
     ignoreErrors:
         - '#Property .*::\$id is never written, only read#'
+        -
+            identifier: slim4.rawRequestBody
+            path: src/Application/Actions/Action.php
+        -
+            identifier: slim4.rawRequestQuery
+            path: src/Application/Actions/Action.php
+
+rules:
+    - Slim4\PhpStan\NoMutableDateTimeRule
+    - Slim4\PhpStan\NoAmbientClockRule
+    - Slim4\PhpStan\NoDoctrineAttributeInDomainRule
+    - Slim4\PhpStan\DomainTypedCollectionRule
+    - Slim4\PhpStan\NoTraitUseRule
+    - Slim4\PhpStan\NoRawSqlStringRule
+    - Slim4\PhpStan\NoRawRequestAccessInActionRule
+    - Slim4\PhpStan\NoDateTimeFromRawRequestInActionRule
+    - Slim4\PhpStan\ApiActionDocumentedRule
+    - Slim4\PhpStan\ResponseContractRule
+    - Slim4\PhpStan\DomainEventContractRule
+    - Slim4\PhpStan\EventHandlerContractRule
