@@ -38,6 +38,27 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end -}}
 
+{{- define "slim4-app.consumerFullname" -}}
+{{- printf "%s-consumer-%s" (include "slim4-app.fullname" .root) .name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "slim4-app.consumerSelectorLabels" -}}
+{{ include "slim4-app.selectorLabels" .root }}
+app.kubernetes.io/component: consumer
+messaging.slim4-app/consumer: {{ .name }}
+{{- end -}}
+
+{{- define "slim4-app.consumerLabels" -}}
+helm.sh/chart: {{ include "slim4-app.chart" .root }}
+{{ include "slim4-app.consumerSelectorLabels" . }}
+messaging.slim4-app/broker: {{ .consumer.broker | required (printf "consumers.%s.broker is required" .name) }}
+app.kubernetes.io/managed-by: {{ .root.Release.Service }}
+{{- end -}}
+
+{{- define "slim4-app.consumerSource" -}}
+{{- .consumer.source | required (printf "consumers.%s.source is required" .name) -}}
+{{- end -}}
+
 {{- define "slim4-app.secretName" -}}
 {{- if .Values.env.existingSecret -}}
 {{- .Values.env.existingSecret -}}

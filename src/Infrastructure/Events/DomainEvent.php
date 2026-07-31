@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Events;
 
-use App\Infrastructure\AMQP\Envelope;
+use App\Infrastructure\Messaging\Envelope;
 use JsonSerializable;
 use ReflectionClass;
 

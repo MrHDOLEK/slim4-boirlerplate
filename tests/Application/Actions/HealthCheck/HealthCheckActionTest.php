@@ -23,7 +23,7 @@ class HealthCheckActionTest extends TestCase
                 "DB_CONNECTION" => "OK",
                 "API_CONNECTION" => "OK",
                 "REDIS_CONNECTION" => "OK",
-                "RABBITMQ_CONNECTION" => "OK",
+                "BROKER_CONNECTION" => "OK",
             ]);
 
         $healthCheckServiceMock
@@ -40,7 +40,7 @@ class HealthCheckActionTest extends TestCase
             "DB_CONNECTION" => "OK",
             "API_CONNECTION" => "OK",
             "REDIS_CONNECTION" => "OK",
-            "RABBITMQ_CONNECTION" => "OK",
+            "BROKER_CONNECTION" => "OK",
         ];
 
         $this->assertJsonStringEqualsJsonString(
@@ -64,7 +64,7 @@ class HealthCheckActionTest extends TestCase
                 "DB_CONNECTION" => "ERROR",
                 "API_CONNECTION" => "OK",
                 "REDIS_CONNECTION" => "ERROR",
-                "RABBITMQ_CONNECTION" => "OK",
+                "BROKER_CONNECTION" => "OK",
             ]);
 
         $healthCheckServiceMock
@@ -81,7 +81,7 @@ class HealthCheckActionTest extends TestCase
             "DB_CONNECTION" => "ERROR",
             "API_CONNECTION" => "OK",
             "REDIS_CONNECTION" => "ERROR",
-            "RABBITMQ_CONNECTION" => "OK",
+            "BROKER_CONNECTION" => "OK",
         ];
 
         $this->assertJsonStringEqualsJsonString(
@@ -105,7 +105,7 @@ class HealthCheckActionTest extends TestCase
                 "DB_CONNECTION" => "OK",
                 "API_CONNECTION" => "OK",
                 "REDIS_CONNECTION" => "OK",
-                "RABBITMQ_CONNECTION" => "ERROR",
+                "BROKER_CONNECTION" => "ERROR",
             ]);
 
         $healthCheckServiceMock
@@ -122,7 +122,7 @@ class HealthCheckActionTest extends TestCase
             "DB_CONNECTION" => "OK",
             "API_CONNECTION" => "OK",
             "REDIS_CONNECTION" => "OK",
-            "RABBITMQ_CONNECTION" => "ERROR",
+            "BROKER_CONNECTION" => "ERROR",
         ];
 
         $this->assertJsonStringEqualsJsonString(

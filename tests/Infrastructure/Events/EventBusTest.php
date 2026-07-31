@@ -8,8 +8,8 @@ use App\Infrastructure\Events\EventBus;
 use App\Infrastructure\Serialization\Json;
 use RuntimeException;
 use Spatie\Snapshots\MatchesSnapshots;
-use Tests\Infrastructure\AMQP\RunUnitTester\RunUnitTesterEventHandler;
 use Tests\Infrastructure\Events\InvalidTestEvent\InvalidTestEventEventHandler;
+use Tests\Support\RunUnitTesterEventHandler;
 use Tests\TestCase;
 
 class EventBusTest extends TestCase

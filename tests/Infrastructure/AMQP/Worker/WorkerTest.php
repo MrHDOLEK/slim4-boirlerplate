@@ -33,10 +33,23 @@ class WorkerTest extends TestCase
     {
         $this->assertFalse($this->testWorker->maxIterationsReached());
 
-        for ($i = 0; $i < 998; ++$i) {
-            $this->testWorker->maxIterationsReached();
+        for ($i = 0; $i < 999; ++$i) {
+            $this->testWorker->countProcessedMessage();
         }
         $this->assertFalse($this->testWorker->maxIterationsReached());
+
+        $this->testWorker->countProcessedMessage();
         $this->assertTrue($this->testWorker->maxIterationsReached());
+    }
+
+    public function testCheckingTheLimitDoesNotAdvanceTheCounter(): void
+    {
+        for ($i = 0; $i < 999; ++$i) {
+            $this->testWorker->countProcessedMessage();
+        }
+
+        $this->assertFalse($this->testWorker->maxIterationsReached());
+        $this->assertFalse($this->testWorker->maxIterationsReached());
+        $this->assertFalse($this->testWorker->maxIterationsReached());
     }
 }

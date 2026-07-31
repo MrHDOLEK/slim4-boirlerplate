@@ -1,0 +1,29 @@
+{
+  "type": "record",
+  "name": "UserEvent",
+  "namespace": "app.user",
+  "fields": [
+    { "name": "eventName", "type": "string" },
+    {
+      "name": "payload",
+      "type": {
+        "type": "record",
+        "name": "UserEventPayload",
+        "fields": [
+          {
+            "name": "user",
+            "type": {
+              "type": "record",
+              "name": "User",
+              "fields": [
+                { "name": "username", "type": "string" },
+                { "name": "firstName", "type": "string" },
+                { "name": "lastName", "type": "string" }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

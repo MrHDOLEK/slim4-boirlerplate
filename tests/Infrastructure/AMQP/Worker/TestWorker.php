@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Infrastructure\AMQP\Worker;
 
-use App\Infrastructure\AMQP\Envelope;
-use App\Infrastructure\AMQP\Queue\Queue;
-use App\Infrastructure\AMQP\Worker\BaseWorker;
+use App\Infrastructure\Messaging\BaseWorker;
+use App\Infrastructure\Messaging\Transport;
+use App\Infrastructure\Messaging\TransportMessage;
 use Lcobucci\Clock\Clock;
-use PhpAmqpLib\Message\AMQPMessage;
 use Throwable;
 
 class TestWorker extends BaseWorker
@@ -24,13 +23,11 @@ class TestWorker extends BaseWorker
         return "test-worker";
     }
 
-    public function processMessage(Envelope $envelope, AMQPMessage $message): void
+    public function processMessage(TransportMessage $message): void
     {
-        // TODO: Implement processMessage() method.
     }
 
-    public function processFailure(Envelope $envelope, AMQPMessage $message, Throwable $exception, Queue $queue): void
+    public function processFailure(TransportMessage $message, Throwable $exception, Transport $transport): void
     {
-        // TODO: Implement processFailure() method.
     }
 }

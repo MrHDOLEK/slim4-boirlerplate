@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libbz2-dev \
         zlib1g-dev \
         libzip-dev \
+        librdkafka-dev \
         gnumeric \
     && curl -sS https://getcomposer.org/installer | php -- --version="${COMPOSER_VERSION}" --install-dir=/usr/local/bin --filename=composer \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -39,6 +40,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         pcntl \
         sockets \
     && docker-php-ext-enable intl pcntl \
+    && pecl install rdkafka-6.0.5 \
+    && docker-php-ext-enable rdkafka \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -62,4 +65,4 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     fi
 
 EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
+ENTRYPOINT ["sh", "-c", "mkdir -p /var/www/var/cache && chown -R www-data:www-data /var/www/var && su www-data -s /bin/sh -c 'php bin/console.php app:cache:warmup' || true; php-fpm -D && nginx -g 'daemon off;'"]

@@ -1,14 +1,14 @@
 deptrac:
   skip_violations:
     App\Domain\Service\User\DomainEvents\UserWasCreated:
-      - App\Infrastructure\AMQP\Envelope
+      - App\Infrastructure\Messaging\Envelope
       - App\Infrastructure\Events\DomainEvent
     App\Domain\Service\User\DomainEvents\UserWasCreatedEventHandler:
       - App\Infrastructure\Attribute\AsEventHandler
       - App\Infrastructure\Events\DomainEvent
       - App\Infrastructure\Events\EventHandler\EventHandler
     App\Domain\Service\User\DomainEvents\UserWasUpdated:
-      - App\Infrastructure\AMQP\Envelope
+      - App\Infrastructure\Messaging\Envelope
       - App\Infrastructure\Events\DomainEvent
     App\Domain\Service\User\UserEventsService:
-      - App\Infrastructure\Queues\UserEventQueue
+      - App\Infrastructure\Events\EventPublisher

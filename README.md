@@ -39,6 +39,8 @@ Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/p
 - `http://localhost/docs/v1`
 ## RabbitMq dashboard
 - `http://localhost:15672`
+## Kafka dashboard
+- `http://localhost:8080`
 ## All commands
 
 -  `make help`
@@ -64,12 +66,68 @@ grandfathered in `deptrac.baseline.yaml`, so only new ones fail the build.
 
 ## Deployment
 
-The product is packaged as a Helm chart in `.k8s` — an `app` Deployment (nginx + php-fpm), a
-`worker` Deployment consuming one AMQP queue, a `scheduler` CronJob, and a pre-sync migration Job.
-Every runtime value comes from a Kubernetes Secret; the image ships no `.env`.
+The product is packaged as a Helm chart in `.k8s` — an `app` Deployment (nginx + php-fpm), one
+Deployment per declared messaging consumer, a `scheduler` CronJob, and pre-sync Jobs. Every runtime
+value comes from a Kubernetes Secret; the image ships no `.env`.
 
 - `make helm-lint`
 - `make helm-template`
+- `make helm-template-kafka`
+
+### Consumers
+
+Consumers are values-driven: every entry under `consumers` becomes its own Deployment running
+`php bin/console.php app:messaging:consume <source>`, so a chart install can run AMQP only, Kafka
+only, or both at once.
+
+```yaml
+consumers:
+  user-events:
+    enabled: true
+    broker: kafka
+    source: user-events
+    replicaCount: 2
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 75
+```
+
+`broker` and `source` are required; `source` is the transport name registered by `AsAmqpQueue` or
+`AsKafkaTopic`, and the broker only shows up as the `messaging.slim4-app/broker` label. Every
+consumer gets its own optional HPA.
+
+`.k8s/values-amqp.yaml` and `.k8s/values-kafka.yaml` are ready-made overlays that pick one broker,
+enable its consumer and set its env keys.
+
+### Jobs
+
+| Job | Values key | Hook | Command |
+| --- | --- | --- | --- |
+| Doctrine migrations | `jobs.migrate` | PreSync | `vendor/bin/doctrine-migrations migrate` |
+| Avro schema registration | `jobs.kafkaSchemaRegister` | PreSync | `app:kafka:schema:register` |
+| Fixtures | `jobs.seed` | PostSync | `db:seed` |
+
+`jobs.kafkaSchemaRegister` is off by default and pushes every `resources/avro/*.avsc` to the schema
+registry before the new pods roll, so Kafka producers never write against an unregistered subject.
+
+### Secret keys
+
+All of these go into `env.secret` (or the Secret named by `env.existingSecret`).
+
+| Scope | Keys |
+| --- | --- |
+| App | `APP_NAME`, `ENVIRONMENT`, `DISPLAY_ERROR_DETAILS`, `LOG_ERRORS`, `LOG_ERROR_DETAILS` |
+| Database | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DOCTRINE_CACHE_TTL`, `SLOW_QUERY_THRESHOLD` |
+| Redis | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`, `REDIS_CACHE_DB`, `REDIS_DEFAULT_DB` |
+| Messaging | `EVENT_BROKER` (`amqp` or `kafka`, picks the broker domain events are published to) |
+| AMQP | `RABBITMQ_HOST`, `RABBITMQ_PORT`, `RABBITMQ_USER`, `RABBITMQ_PASS`, `RABBITMQ_VHOST` |
+| Kafka | `KAFKA_BROKERS`, `KAFKA_CONSUMER_GROUP`, `KAFKA_SCHEMA_REGISTRY_URL`, `KAFKA_AUTO_OFFSET_RESET` |
 
 ## Some examples
 
@@ -199,39 +257,91 @@ class UserWasCreated extends DomainEvent
 }
 ```
 
-### Async processing of commands with RabbitMQ
+### Async processing of events
 
-The chosen AMQP implementation for this project is RabbitMQ, but it can be easily switched to for example Amazon's AMQP solution.
+Both brokers are wired behind the same `App\Infrastructure\Messaging\Transport` contract, so a domain event can be
+routed to either one. `UserEventQueue` (RabbitMQ) and `UserEventTopic` (Kafka) are the two interchangeable bindings of
+the same domain concept, and both hand their messages to the same `EventQueueWorker`.
 
-#### Registering new queues
+#### Registering a transport for your events
 
 ```php
 #[AsAmqpQueue(name: "user-command-queue", numberOfWorkers: 1)]
-class UserEventQueue extends EventQueue
+class UserEventQueue extends AmqpQueue
 {
+    public function __construct(
+        AMQPChannelFactory $AMQPChannelFactory,
+        MessageSerializer $serializer,
+        FailedQueueFactory $failedQueueFactory,
+        private readonly EventQueueWorker $worker,
+    ) {
+        parent::__construct($AMQPChannelFactory, $serializer, $failedQueueFactory);
+    }
+
+    public function getWorker(): Worker
+    {
+        return $this->worker;
+    }
 }
 ```
 
-#### Queueing events
+#### Publishing events
+
+The domain never names a broker, it is handed an `EventPublisher` that wraps whichever transport is configured.
 
 ```php
 final readonly class UserEventsService
 {
     public function __construct(
-        private UserEventQueue $userEventQueue,
+        private EventPublisher $eventPublisher,
     ) {}
 
     public function userWasCreated(User $user): void
     {
-        $this->userEventQueue->queue(new UserWasCreated($user));
+        $this->eventPublisher->publish(new UserWasCreated($user));
     }
 }
 ```
 
-#### Consuming your queue
+#### Choosing the broker
+
+`EVENT_BROKER` decides which transport the `EventPublisher` is built on, `amqp` (default) or `kafka`. The map lives in
+`config/container.php`.
+
+#### Removing a broker
+
+Each broker is a self-contained unit. Everything a broker owns lives under its own directory, and the only shared
+files that name it are the two wiring files plus the settings and chart values.
+
+To drop RabbitMQ, delete:
+
+```
+src/Infrastructure/AMQP/
+tests/Infrastructure/AMQP/
+```
+
+To drop Kafka, delete:
+
+```
+src/Infrastructure/Kafka/
+src/Application/Console/Utility/KafkaSchemaRegisterConsoleCommand.php
+tests/Infrastructure/Kafka/
+resources/avro/
+```
+
+`KafkaSchemaRegisterConsoleCommand` cannot live under `src/Infrastructure/Kafka/` because
+`ConsoleCommandCompilerPass` only scans `src/Application/Console`.
+
+Then drop the broker's entry from `config/compiler-passes.php` (the transport attribute), `config/container.php`
+(the service definitions, the `EventPublisher` map and the `BrokerHealthCheck` map), `config/settings.php`, the
+matching `.env` keys and `.k8s/values-*.yaml`. Nothing under `src/Domain`, `src/Infrastructure/Events`,
+`src/Infrastructure/Messaging` or the other broker's tests refers to it.
+
+#### Consuming your transport
 
 ```bash
-> docker-compose run --rm php bin/console.php app:amqp:consume user-command-queue
+> docker-compose run --rm php bin/console.php app:messaging:consume user-command-queue
+> docker-compose run --rm php bin/console.php app:messaging:consume user-events
 ```
 
 ### Create new entity

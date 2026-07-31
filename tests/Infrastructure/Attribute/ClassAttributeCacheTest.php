@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Infrastructure\Attribute;
 
-use App\Infrastructure\Attribute\AsAmqpQueue;
 use App\Infrastructure\Attribute\ClassAttributeCache;
 use App\Infrastructure\Environment\Settings;
 use App\Infrastructure\Serialization\Json;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Spatie\Snapshots\MatchesSnapshots;
+use Tests\Support\Attribute\AsFixture;
 
 class ClassAttributeCacheTest extends TestCase
 {
@@ -24,11 +24,11 @@ class ClassAttributeCacheTest extends TestCase
         parent::setUp();
 
         $this->dir = Settings::getAppRoot() . "/tests/Infrastructure/Attribute/cache";
-        @unlink($this->dir . "/AsAmqpQueue.php");
+        @unlink($this->dir . "/AsFixture.php");
         @rmdir($this->dir);
 
         $this->classAttributeCache = new ClassAttributeCache(
-            AsAmqpQueue::class,
+            AsFixture::class,
             $this->dir,
         );
     }
@@ -37,14 +37,14 @@ class ClassAttributeCacheTest extends TestCase
     {
         parent::tearDown();
 
-        @unlink($this->dir . "/AsAmqpQueue.php");
+        @unlink($this->dir . "/AsFixture.php");
         @rmdir($this->dir);
     }
 
     public function testGetItShouldThrowIfNotExists(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("Cache not set for AsAmqpQueue");
+        $this->expectExceptionMessage("Cache not set for AsFixture");
 
         $this->classAttributeCache->get();
     }
@@ -56,7 +56,7 @@ class ClassAttributeCacheTest extends TestCase
         $this->classAttributeCache->compile(["classOne", "classTwo"]);
         $this->assertTrue($this->classAttributeCache->exists());
 
-        $this->assertStringContainsString("tests/Infrastructure/Attribute/cache/AsAmqpQueue.php", $this->classAttributeCache->get());
+        $this->assertStringContainsString("tests/Infrastructure/Attribute/cache/AsFixture.php", $this->classAttributeCache->get());
         $this->assertMatchesJsonSnapshot(Json::encode(require $this->classAttributeCache->get()));
     }
 }

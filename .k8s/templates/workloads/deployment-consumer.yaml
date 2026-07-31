@@ -1,0 +1,72 @@
+{{- $root := . }}
+{{- range $name, $consumer := .Values.consumers }}
+{{- if $consumer.enabled }}
+{{- $ctx := dict "root" $root "name" $name "consumer" $consumer }}
+{{- $autoscaling := $consumer.autoscaling | default dict }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "slim4-app.consumerFullname" $ctx }}
+  labels:
+    {{- include "slim4-app.consumerLabels" $ctx | nindent 4 }}
+spec:
+  {{- if not $autoscaling.enabled }}
+  replicas: {{ $consumer.replicaCount | default 1 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "slim4-app.consumerSelectorLabels" $ctx | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "slim4-app.consumerSelectorLabels" $ctx | nindent 8 }}
+        messaging.slim4-app/broker: {{ $consumer.broker }}
+    spec:
+      serviceAccountName: {{ include "slim4-app.serviceAccountName" $root }}
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: consumer
+          image: "{{ $root.Values.image.repository }}:{{ $root.Values.image.tag }}"
+          imagePullPolicy: {{ $root.Values.image.pullPolicy }}
+          command: ["php", "bin/console.php", "app:messaging:consume"]
+          args: [{{ include "slim4-app.consumerSource" $ctx | quote }}]
+          envFrom:
+            - secretRef:
+                name: {{ include "slim4-app.secretName" $root }}
+          {{- with $consumer.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml $root.Values.securityContext | nindent 12 }}
+          {{- if $root.Values.persistence.enabled }}
+          volumeMounts:
+            - name: storage
+              mountPath: {{ $root.Values.persistence.mountPath }}
+          {{- end }}
+      {{- if $root.Values.persistence.enabled }}
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: {{ include "slim4-app.fullname" $root }}-storage
+      {{- end }}
+      {{- with $root.Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $root.Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $root.Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
+{{- end }}

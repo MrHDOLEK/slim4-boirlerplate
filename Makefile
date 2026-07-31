@@ -52,11 +52,16 @@ run-tests: ## Run stage for test
 	$(MAKE) deptrac
 	$(MAKE) phpunit
 
-helm-lint: ## Lint the Helm chart in .k8s
+helm-lint: ## Lint the Helm chart in .k8s with the default values and both broker overlays
 	helm lint .k8s
+	helm lint .k8s -f .k8s/values-amqp.yaml
+	helm lint .k8s -f .k8s/values-kafka.yaml
 
 helm-template: ## Render the Helm chart in .k8s with the default values
 	helm template slim4-app .k8s
+
+helm-template-kafka: ## Render the Helm chart in .k8s with the Kafka overlay
+	helm template slim4-app .k8s -f .k8s/values-kafka.yaml
 
 fix-permissions: ## Change permision for volumen a app container
 	$(DOCKER_COMPOSE) exec app	usermod -u 1000 www-data
