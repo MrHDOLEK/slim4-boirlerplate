@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\AMQP;
 
-use App\Infrastructure\AMQP\Queue\Queue;
+use App\Infrastructure\Messaging\Transport;
 use PhpAmqpLib\Channel\AMQPChannel;
 
 class AMQPChannelFactory
@@ -16,7 +16,7 @@ class AMQPChannelFactory
         private readonly AMQPStreamConnectionFactory $AMQPStreamConnectionFactory,
     ) {}
 
-    public function getForQueue(Queue $queue, ?AMQPChannelOptions $options = null): AMQPChannel
+    public function getForQueue(Transport $queue, ?AMQPChannelOptions $options = null): AMQPChannel
     {
         if (!array_key_exists($queue->getName(), $this->channels)) {
             $this->channels[$queue->getName()] = $this->AMQPStreamConnectionFactory->get()->channel();

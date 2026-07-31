@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Infrastructure\AMQP\Queue;
 
 use App\Infrastructure\AMQP\Queue\AmqpQueue;
-use App\Infrastructure\AMQP\Worker\Worker;
+use App\Infrastructure\Messaging\Worker;
 use DateTimeImmutable;
 use Tests\Infrastructure\AMQP\Worker\TestWorker;
 use Tests\PausedClock;

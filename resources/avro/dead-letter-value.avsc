@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "DeadLetterRecord",
+  "namespace": "app.kafka",
+  "fields": [
+    { "name": "originalTopic", "type": "string" },
+    { "name": "originalPartition", "type": "int" },
+    { "name": "originalOffset", "type": "long" },
+    { "name": "originalKey", "type": ["null", "string"], "default": null },
+    { "name": "originalTimestamp", "type": ["null", "long"], "default": null },
+    { "name": "originalHeaders", "type": { "type": "map", "values": "string" } },
+    { "name": "payload", "type": "string" },
+    { "name": "failureClass", "type": "string" },
+    { "name": "failureReason", "type": "string" },
+    { "name": "failedAt", "type": "string" }
+  ]
+}

@@ -11,4 +11,4 @@ deptrac:
       - App\Infrastructure\Messaging\Envelope
       - App\Infrastructure\Events\DomainEvent
     App\Domain\Service\User\UserEventsService:
-      - App\Infrastructure\Queues\UserEventQueue
+      - App\Infrastructure\Events\EventPublisher

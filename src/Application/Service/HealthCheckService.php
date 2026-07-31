@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service;
 
-use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
+use App\Infrastructure\Messaging\BrokerHealthCheck;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Fig\Http\Message\StatusCodeInterface;
@@ -21,7 +21,7 @@ class HealthCheckService
     public function __construct(
         private EntityManagerInterface $entityManager,
         private RedisClient $redisClient,
-        private AMQPStreamConnectionFactory $rabbitMqClient,
+        private BrokerHealthCheck $brokerHealthCheck,
         private LoggerInterface $logger,
     ) {}
 
@@ -32,7 +32,7 @@ class HealthCheckService
                 "DB_CONNECTION" => $this->databaseStatus(),
                 "API_CONNECTION" => $this->apiStatus(),
                 "REDIS_CONNECTION" => $this->redisStatus(),
-                "RABBITMQ_CONNECTION" => $this->rabbitMqStatus(),
+                $this->brokerHealthCheck->getName() => $this->brokerStatus(),
             ];
 
             $this->logger->info(
@@ -106,21 +106,21 @@ class HealthCheckService
         }
     }
 
-    private function rabbitMqStatus(): string
+    private function brokerStatus(): string
     {
         try {
-            if (!$this->rabbitMqClient->get()->isConnected()) {
+            if (!$this->brokerHealthCheck->isHealthy()) {
                 return self::STATUS_ERROR;
             }
 
             return self::STATUS_OK;
         } catch (Exception $exception) {
             $this->logger->error(
-                "RabbitMQ connection check failed with exception",
+                "Message broker connection check failed with exception",
                 [
                     "exception" => $exception->getMessage(),
                     "status" => self::STATUS_ERROR,
-                    "component" => "rabbitmq",
+                    "component" => strtolower($this->brokerHealthCheck->getName()),
                     "trace" => $exception->getTraceAsString(),
                 ],
             );

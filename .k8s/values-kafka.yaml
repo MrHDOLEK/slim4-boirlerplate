@@ -1,0 +1,19 @@
+env:
+  secret:
+    EVENT_BROKER: kafka
+    KAFKA_BROKERS: kafka:9092
+    KAFKA_CONSUMER_GROUP: slim4-app
+    KAFKA_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+    KAFKA_AUTO_OFFSET_RESET: earliest
+
+consumers:
+  user-commands:
+    enabled: false
+  user-events:
+    enabled: true
+    broker: kafka
+    source: user-events
+
+jobs:
+  kafkaSchemaRegister:
+    enabled: true

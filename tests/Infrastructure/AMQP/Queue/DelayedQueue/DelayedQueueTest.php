@@ -7,12 +7,14 @@ namespace Tests\Infrastructure\AMQP\Queue\DelayedQueue;
 use App\Infrastructure\AMQP\AMQPChannelFactory;
 use App\Infrastructure\AMQP\AMQPChannelOptions;
 use App\Infrastructure\AMQP\Queue\DelayedQueue\DelayedQueue;
+use App\Infrastructure\AMQP\Queue\FailedQueue\FailedQueueFactory;
+use App\Infrastructure\Messaging\Serializer\NativePhpMessageSerializer;
 use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tests\Infrastructure\AMQP\Queue\TestQueue;
-use Tests\Infrastructure\AMQP\RunUnitTester\RunUnitTester;
+use Tests\Support\RunUnitTester;
 
 class DelayedQueueTest extends TestCase
 {
@@ -31,18 +33,22 @@ class DelayedQueueTest extends TestCase
             new TestQueue($this->AMQPChannelFactory),
             10,
             $this->AMQPChannelFactory,
+            new NativePhpMessageSerializer(),
+            $this->failedQueueFactory(),
         );
 
         $this->assertEquals("delayed-10s-test-queue", $delayedQueue->getName());
         $this->assertEquals(0, $delayedQueue->getNumberOfConsumers());
     }
 
-    public function testQueueSuccess(): void
+    public function testSendSuccess(): void
     {
         $delayedQueue = new DelayedQueue(
             new TestQueue($this->AMQPChannelFactory),
             10,
             $this->AMQPChannelFactory,
+            new NativePhpMessageSerializer(),
+            $this->failedQueueFactory(),
         );
 
         $options = new AMQPChannelOptions(false, true, false, false, false, [
@@ -57,7 +63,7 @@ class DelayedQueueTest extends TestCase
             ->method("getForQueue")
             ->with($delayedQueue, $options);
 
-        $delayedQueue->queue(new RunUnitTester());
+        $delayedQueue->send(new RunUnitTester());
     }
 
     public function testGetWorkerSuccess(): void
@@ -66,6 +72,8 @@ class DelayedQueueTest extends TestCase
             new TestQueue($this->AMQPChannelFactory),
             10,
             $this->AMQPChannelFactory,
+            new NativePhpMessageSerializer(),
+            $this->failedQueueFactory(),
         );
 
         $this->expectException(RuntimeException::class);
@@ -83,6 +91,13 @@ class DelayedQueueTest extends TestCase
             new TestQueue($this->AMQPChannelFactory),
             0,
             $this->AMQPChannelFactory,
+            new NativePhpMessageSerializer(),
+            $this->failedQueueFactory(),
         );
+    }
+
+    private function failedQueueFactory(): FailedQueueFactory
+    {
+        return new FailedQueueFactory($this->AMQPChannelFactory, new NativePhpMessageSerializer());
     }
 }

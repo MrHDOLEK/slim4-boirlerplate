@@ -65,4 +65,4 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     fi
 
 EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
+ENTRYPOINT ["sh", "-c", "mkdir -p /var/www/var/cache && chown -R www-data:www-data /var/www/var && su www-data -s /bin/sh -c 'php bin/console.php app:cache:warmup' || true; php-fpm -D && nginx -g 'daemon off;'"]

@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Kafka\Topics;
 
-use App\Infrastructure\Attribute\AsKafkaTopic;
-use App\Infrastructure\Kafka\Serializer\AvroSerializer;
+use App\Infrastructure\Events\EventQueueWorker;
+use App\Infrastructure\Kafka\Attribute\AsKafkaTopic;
+use App\Infrastructure\Kafka\Consumer;
+use App\Infrastructure\Kafka\Serializer\AvroMessageSerializer;
+use App\Infrastructure\Kafka\Topic\DeadLetter\DeadLetterTopicFactory;
 use App\Infrastructure\Kafka\Topic\KafkaTopic;
-use App\Infrastructure\Kafka\Worker\KafkaWorker;
 use App\Infrastructure\Messaging\Envelope;
+use App\Infrastructure\Messaging\Worker;
+use Lcobucci\Clock\Clock;
 use RdKafka\Producer;
 
 #[AsKafkaTopic(name: "user-events", schemaSubject: "user-events-value", numberOfWorkers: 1)]
@@ -16,13 +20,16 @@ class UserEventTopic extends KafkaTopic
 {
     public function __construct(
         Producer $producer,
-        AvroSerializer $serializer,
-        private readonly UserEventTopicWorker $worker,
+        AvroMessageSerializer $serializer,
+        Consumer $consumer,
+        DeadLetterTopicFactory $deadLetterTopicFactory,
+        Clock $clock,
+        private readonly EventQueueWorker $worker,
     ) {
-        parent::__construct($producer, $serializer);
+        parent::__construct($producer, $serializer, $consumer, $deadLetterTopicFactory, $clock);
     }
 
-    public function getWorker(): KafkaWorker
+    public function getWorker(): Worker
     {
         return $this->worker;
     }

@@ -27,6 +27,11 @@ final class SchemaRegistryFailure extends RuntimeException
         );
     }
 
+    public static function subjectNotBound(string $envelope): self
+    {
+        return new self(sprintf('No Avro schema subject is bound to this serializer, cannot encode "%s"', $envelope));
+    }
+
     public static function subjectNotResolvable(string $subject): self
     {
         return new self(sprintf('Schema registry returned no usable schema for subject "%s"', $subject));

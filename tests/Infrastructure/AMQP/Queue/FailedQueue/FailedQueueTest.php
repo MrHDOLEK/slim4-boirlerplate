@@ -6,6 +6,8 @@ namespace Tests\Infrastructure\AMQP\Queue\FailedQueue;
 
 use App\Infrastructure\AMQP\AMQPChannelFactory;
 use App\Infrastructure\AMQP\Queue\FailedQueue\FailedQueue;
+use App\Infrastructure\AMQP\Queue\FailedQueue\FailedQueueFactory;
+use App\Infrastructure\Messaging\Serializer\NativePhpMessageSerializer;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tests\Infrastructure\AMQP\Queue\TestQueue;
@@ -22,9 +24,13 @@ class FailedQueueTest extends TestCase
         $AMQPChannelFactory = $this->createMock(AMQPChannelFactory::class);
         $this->testQueue = new TestQueue($AMQPChannelFactory);
 
+        $serializer = new NativePhpMessageSerializer();
+
         $this->failedQueue = new FailedQueue(
             $this->testQueue,
             $AMQPChannelFactory,
+            $serializer,
+            new FailedQueueFactory($AMQPChannelFactory, $serializer),
         );
     }
 

@@ -31,6 +31,9 @@ return [
         "server_addr" => $_ENV["SERVER_ADDR"] ?? "localhost",
         "server_port" => $_ENV["SERVER_PORT"] ?? 80,
     ],
+    "messaging" => [
+        "event_broker" => $_ENV["EVENT_BROKER"] ?? "amqp",
+    ],
     "rabbitmq" => [
         "host" => $_ENV["RABBITMQ_HOST"],
         "port" => $_ENV["RABBITMQ_PORT"],

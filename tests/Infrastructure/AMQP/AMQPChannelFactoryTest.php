@@ -7,7 +7,7 @@ namespace Tests\Infrastructure\AMQP;
 use App\Infrastructure\AMQP\AMQPChannelFactory;
 use App\Infrastructure\AMQP\AMQPChannelOptions;
 use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
-use App\Infrastructure\AMQP\Queue\Queue;
+use App\Infrastructure\Messaging\Transport;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -31,7 +31,7 @@ class AMQPChannelFactoryTest extends TestCase
 
     public function testGetForQueueAndDefaultOptionsSuccess(): void
     {
-        $queue = $this->createMock(Queue::class);
+        $queue = $this->createMock(Transport::class);
         $queue
             ->method("getName")
             ->willReturn("test-queue");
@@ -65,7 +65,7 @@ class AMQPChannelFactoryTest extends TestCase
 
     public function testGetForQueueWithNonDefaultOptionsSuccess(): void
     {
-        $queue = $this->createMock(Queue::class);
+        $queue = $this->createMock(Transport::class);
         $queue
             ->method("getName")
             ->willReturn("test-queue");

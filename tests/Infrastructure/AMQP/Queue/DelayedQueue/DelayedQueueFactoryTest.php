@@ -7,6 +7,8 @@ namespace Tests\Infrastructure\AMQP\Queue\DelayedQueue;
 use App\Infrastructure\AMQP\AMQPChannelFactory;
 use App\Infrastructure\AMQP\Queue\DelayedQueue\DelayedQueue;
 use App\Infrastructure\AMQP\Queue\DelayedQueue\DelayedQueueFactory;
+use App\Infrastructure\AMQP\Queue\FailedQueue\FailedQueueFactory;
+use App\Infrastructure\Messaging\Serializer\NativePhpMessageSerializer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Tests\Infrastructure\AMQP\Queue\TestQueue;
@@ -15,6 +17,7 @@ class DelayedQueueFactoryTest extends TestCase
 {
     private DelayedQueueFactory $delayedQueueFactory;
     private MockObject $AMQPChannelFactory;
+    private FailedQueueFactory $failedQueueFactory;
 
     protected function setUp(): void
     {
@@ -22,8 +25,12 @@ class DelayedQueueFactoryTest extends TestCase
 
         $this->AMQPChannelFactory = $this->createMock(AMQPChannelFactory::class);
 
+        $this->failedQueueFactory = new FailedQueueFactory($this->AMQPChannelFactory, new NativePhpMessageSerializer());
+
         $this->delayedQueueFactory = new DelayedQueueFactory(
             $this->AMQPChannelFactory,
+            new NativePhpMessageSerializer(),
+            $this->failedQueueFactory,
         );
     }
 
@@ -38,6 +45,8 @@ class DelayedQueueFactoryTest extends TestCase
             new TestQueue($this->AMQPChannelFactory),
             60,
             $this->AMQPChannelFactory,
+            new NativePhpMessageSerializer(),
+            $this->failedQueueFactory,
         ), $this->delayedQueueFactory->buildWithDelayForQueue(60, new TestQueue($this->AMQPChannelFactory)));
     }
 }

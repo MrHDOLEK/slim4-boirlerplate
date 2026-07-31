@@ -1,0 +1,20 @@
+env:
+  secret:
+    EVENT_BROKER: amqp
+    RABBITMQ_HOST: rabbitmq
+    RABBITMQ_PORT: "5672"
+    RABBITMQ_USER: placeholder
+    RABBITMQ_PASS: placeholder
+    RABBITMQ_VHOST: app
+
+consumers:
+  user-commands:
+    enabled: true
+    broker: amqp
+    source: user-command-queue
+  user-events:
+    enabled: false
+
+jobs:
+  kafkaSchemaRegister:
+    enabled: false

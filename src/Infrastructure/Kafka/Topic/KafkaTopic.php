@@ -4,36 +4,45 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Kafka\Topic;
 
-use App\Infrastructure\Attribute\AsKafkaTopic;
+use App\Infrastructure\Kafka\Attribute\AsKafkaTopic;
+use App\Infrastructure\Kafka\Consumer;
 use App\Infrastructure\Kafka\Exception\ProducerFailure;
-use App\Infrastructure\Kafka\Flushable;
-use App\Infrastructure\Kafka\Serializer\AvroSerializer;
+use App\Infrastructure\Kafka\KafkaMessage;
+use App\Infrastructure\Kafka\Serializer\AvroMessageSerializer;
 use App\Infrastructure\Kafka\Serializer\EncodedRecord;
-use App\Infrastructure\Kafka\Worker\KafkaWorker;
+use App\Infrastructure\Kafka\Topic\DeadLetter\DeadLetterRecord;
+use App\Infrastructure\Kafka\Topic\DeadLetter\DeadLetterTopicFactory;
 use App\Infrastructure\Messaging\Envelope;
+use App\Infrastructure\Messaging\Transport;
+use App\Infrastructure\Messaging\TransportMessage;
+use Generator;
+use Lcobucci\Clock\Clock;
 use RdKafka\Producer;
 use RdKafka\ProducerTopic;
 use ReflectionClass;
 use RuntimeException;
+use Throwable;
 
-abstract class KafkaTopic implements Flushable
+abstract class KafkaTopic implements Transport
 {
     private const FLUSH_TIMEOUT_MS = 10_000;
     private const PRODUCE_CHUNK_SIZE = 500;
 
     private ?AsKafkaTopic $topicAttribute = null;
     private ?ProducerTopic $producerTopic = null;
+    private ?AvroMessageSerializer $boundSerializer = null;
 
     public function __construct(
         private readonly Producer $producer,
-        private readonly AvroSerializer $serializer,
+        private readonly AvroMessageSerializer $serializer,
+        private readonly Consumer $consumer,
+        private readonly DeadLetterTopicFactory $deadLetterTopicFactory,
+        private readonly Clock $clock,
     ) {
         if ($attribute = (new ReflectionClass($this))->getAttributes(AsKafkaTopic::class)) {
             $this->topicAttribute = $attribute[0]->newInstance();
         }
     }
-
-    abstract public function getWorker(): KafkaWorker;
 
     public function getName(): string
     {
@@ -50,15 +59,12 @@ abstract class KafkaTopic implements Flushable
         return $this->attribute()->getNumberOfWorkers();
     }
 
-    public function produce(Envelope $envelope): void
+    public function send(Envelope $envelope): void
     {
-        $this->produceBatch([$envelope]);
+        $this->sendBatch([$envelope]);
     }
 
-    /**
-     * @param array<Envelope> $envelopes
-     */
-    public function produceBatch(array $envelopes): void
+    public function sendBatch(array $envelopes): void
     {
         if ($envelopes === []) {
             return;
@@ -76,9 +82,36 @@ abstract class KafkaTopic implements Flushable
 
             $this->producer->poll(0);
         }
+
+        $this->flush();
     }
 
-    public function flush(): void
+    public function receive(): Generator
+    {
+        yield from $this->consumer->poll($this->getName());
+    }
+
+    public function ack(TransportMessage $message): void
+    {
+        $this->consumer->markOffsetProcessed($this->deliveryOf($message));
+    }
+
+    public function reject(TransportMessage $message, Throwable $exception): void
+    {
+        $this->deadLetterTopicFactory
+            ->buildFor($this)
+            ->send(DeadLetterRecord::from($this->deliveryOf($message), $exception, $this->clock->now()));
+
+        $this->getWorker()->processFailure($message, $exception, $this);
+        $this->ack($message);
+    }
+
+    protected function partitionKeyFor(Envelope $envelope): ?string
+    {
+        return null;
+    }
+
+    private function flush(): void
     {
         $result = $this->producer->flush(self::FLUSH_TIMEOUT_MS);
 
@@ -87,14 +120,23 @@ abstract class KafkaTopic implements Flushable
         }
     }
 
-    protected function partitionKeyFor(Envelope $envelope): ?string
+    private function deliveryOf(TransportMessage $message): KafkaMessage
     {
-        return null;
+        if (!$message->handle instanceof KafkaMessage) {
+            throw new RuntimeException(sprintf('Message from transport "%s" was not delivered by %s', $message->transport, self::class));
+        }
+
+        return $message->handle;
+    }
+
+    private function serializer(): AvroMessageSerializer
+    {
+        return $this->boundSerializer ??= $this->serializer->forSubject($this->getSchemaSubject());
     }
 
     private function publish(Envelope $envelope): void
     {
-        $record = $this->serializer->encode($this->getSchemaSubject(), $envelope->jsonSerialize());
+        $record = $this->serializer()->encodeRecord($envelope);
 
         $this->topic()->producev(
             partition: RD_KAFKA_PARTITION_UA,

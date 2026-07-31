@@ -6,17 +6,23 @@ namespace App\Infrastructure\Kafka;
 
 use App\Infrastructure\Kafka\Exception\ConsumerFailure;
 use App\Infrastructure\Kafka\Serializer\AvroSerializer;
-use App\Infrastructure\Kafka\Topic\KafkaTopic;
+use App\Infrastructure\Messaging\Signal;
+use App\Infrastructure\Messaging\TransportMessage;
 use Generator;
 use Psr\Log\LoggerInterface;
 use RdKafka\Exception;
 use RdKafka\KafkaConsumer;
 use RdKafka\Message as RdKafkaMessage;
+use RdKafka\TopicPartition;
 
 final class Consumer
 {
+    public const TRANSPORT = "kafka";
     private const POLL_TIMEOUT_MS = 1_000;
     private const BATCH_SIZE = 100;
+
+    /** @var array<string, KafkaMessage> */
+    private array $pendingOffsets = [];
 
     public function __construct(
         private readonly KafkaConsumer $consumer,
@@ -25,67 +31,75 @@ final class Consumer
     ) {}
 
     /**
-     * Yields batches of decoded messages until the caller sends Signal::STOP back into the
-     * generator. Subscription happens once, before the loop, not per message.
-     *
-     * @return Generator<int, array<KafkaMessage>, Signal|null, void>
+     * @return Generator<int, array<TransportMessage>, Signal|null, void>
      */
-    public function poll(KafkaTopic $topic): Generator
+    public function poll(string $topic): Generator
     {
-        $this->consumer->subscribe([$topic->getName()]);
+        $this->consumer->subscribe([$topic]);
 
         $batch = [];
 
-        while (true) {
-            $message = $this->consumer->consume(self::POLL_TIMEOUT_MS);
+        try {
+            while (true) {
+                $message = $this->consumer->consume(self::POLL_TIMEOUT_MS);
 
-            if ($this->isEndOfStream($message)) {
-                if ($batch !== []) {
-                    $signal = yield $batch;
-                    $batch = [];
+                if ($this->isEndOfStream($message)) {
+                    if ($batch === []) {
+                        continue;
+                    }
+                } else {
+                    $this->guardAgainstFatalError($message);
 
-                    if ($signal === Signal::STOP) {
-                        return;
+                    $batch[] = $this->decode($message);
+
+                    if (count($batch) < self::BATCH_SIZE) {
+                        continue;
                     }
                 }
 
-                continue;
+                $delivered = $batch;
+                $batch = [];
+
+                $signal = yield $delivered;
+                $this->commitPendingOffsets();
+
+                if ($signal === Signal::STOP) {
+                    return;
+                }
             }
-
-            $this->guardAgainstFatalError($message);
-
-            $batch[] = $this->decode($message);
-
-            if (count($batch) < self::BATCH_SIZE) {
-                continue;
-            }
-
-            $signal = yield $batch;
-            $batch = [];
-
-            if ($signal === Signal::STOP) {
-                return;
-            }
+        } finally {
+            $this->commitPendingOffsets();
+            $this->consumer->close();
         }
     }
 
-    public function commit(KafkaMessage $message): void
+    public function markOffsetProcessed(KafkaMessage $message): void
     {
+        $this->pendingOffsets[$message->topic . ":" . $message->partition] = $message;
+    }
+
+    private function commitPendingOffsets(): void
+    {
+        if ($this->pendingOffsets === []) {
+            return;
+        }
+
+        $offsets = array_map(
+            fn(KafkaMessage $message): TopicPartition => new TopicPartition($message->topic, $message->partition, $message->offset + 1),
+            array_values($this->pendingOffsets),
+        );
+        $this->pendingOffsets = [];
+
         try {
-            $this->consumer->commit();
+            $this->consumer->commit($offsets);
         } catch (Exception $exception) {
             throw ConsumerFailure::commitFailed($exception->getCode(), $exception->getMessage());
         }
     }
 
-    public function close(): void
+    private function decode(RdKafkaMessage $message): TransportMessage
     {
-        $this->consumer->close();
-    }
-
-    private function decode(RdKafkaMessage $message): KafkaMessage
-    {
-        return new KafkaMessage(
+        $delivery = new KafkaMessage(
             topic: (string)$message->topic_name,
             partition: $message->partition,
             offset: $message->offset,
@@ -93,6 +107,14 @@ final class Consumer
             headers: array_map(strval(...), $message->headers),
             key: $message->key,
             timestamp: $message->timestamp,
+        );
+
+        return new TransportMessage(
+            body: $delivery->payload,
+            headers: $delivery->headers,
+            transport: self::TRANSPORT,
+            source: $delivery->topic,
+            handle: $delivery,
         );
     }
 

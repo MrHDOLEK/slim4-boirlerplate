@@ -2,15 +2,24 @@
 
 declare(strict_types=1);
 
+use App\Infrastructure\AMQP\AmqpHealthCheck;
 use App\Infrastructure\AMQP\AMQPStreamConnectionFactory;
+use App\Infrastructure\AMQP\Queues\UserEventQueue;
 use App\Infrastructure\Console\ConsoleCommandContainer;
 use App\Infrastructure\Environment\Environment;
 use App\Infrastructure\Environment\Settings;
+use App\Infrastructure\Events\EventPublisher;
+use App\Infrastructure\Kafka\KafkaHealthCheck;
+use App\Infrastructure\Kafka\Serializer\AvroMessageSerializer;
 use App\Infrastructure\Kafka\Serializer\AvroSerializer;
 use App\Infrastructure\Kafka\Serializer\ConfluentAvroSerializer;
+use App\Infrastructure\Kafka\Topics\UserEventTopic;
 use App\Infrastructure\Logging\ActionLogProcessor;
 use App\Infrastructure\Logging\LogfmtFormatter;
 use App\Infrastructure\Logging\SlowQueryLogger;
+use App\Infrastructure\Messaging\BrokerHealthCheck;
+use App\Infrastructure\Messaging\Serializer\MessageSerializer;
+use App\Infrastructure\Messaging\Serializer\NativePhpMessageSerializer;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
@@ -179,6 +188,34 @@ return [
         RecordSerializer::OPTION_REGISTER_MISSING_SUBJECTS => false,
     ]),
     AvroSerializer::class => DI\get(ConfluentAvroSerializer::class),
+    AvroMessageSerializer::class => fn(
+        AvroSerializer $serializer,
+        DenormalizerInterface $denormalizer,
+    ): AvroMessageSerializer => new AvroMessageSerializer($serializer, $denormalizer),
+    NativePhpMessageSerializer::class => fn(): NativePhpMessageSerializer => new NativePhpMessageSerializer(),
+    MessageSerializer::class => DI\get(NativePhpMessageSerializer::class),
+    EventPublisher::class => function (ContainerInterface $container, Settings $settings): EventPublisher {
+        $transports = [
+            "amqp" => UserEventQueue::class,
+            "kafka" => UserEventTopic::class,
+        ];
+        $broker = (string)$settings->get("messaging.event_broker");
+
+        return new EventPublisher($container->get(
+            $transports[$broker] ?? throw new RuntimeException(sprintf('Unknown event broker "%s", expected one of: %s', $broker, implode(", ", array_keys($transports)))),
+        ));
+    },
+    BrokerHealthCheck::class => function (ContainerInterface $container, Settings $settings): BrokerHealthCheck {
+        $healthChecks = [
+            "amqp" => AmqpHealthCheck::class,
+            "kafka" => KafkaHealthCheck::class,
+        ];
+        $broker = (string)$settings->get("messaging.event_broker");
+
+        return $container->get(
+            $healthChecks[$broker] ?? throw new RuntimeException(sprintf('Unknown event broker "%s", expected one of: %s', $broker, implode(", ", array_keys($healthChecks)))),
+        );
+    },
 
     ServerRequestFactoryInterface::class => \DI\get(ServerRequestFactory::class),
     // Redis

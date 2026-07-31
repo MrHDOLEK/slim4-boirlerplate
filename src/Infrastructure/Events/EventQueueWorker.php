@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Events;
 
-use App\Infrastructure\AMQP\Queue\FailedQueue\FailedQueueFactory;
-use App\Infrastructure\AMQP\Queue\Queue;
-use App\Infrastructure\AMQP\Worker\BaseWorker;
-use App\Infrastructure\Messaging\Envelope;
+use App\Infrastructure\Messaging\BaseWorker;
+use App\Infrastructure\Messaging\Transport;
+use App\Infrastructure\Messaging\TransportMessage;
 use Lcobucci\Clock\Clock;
-use PhpAmqpLib\Message\AMQPMessage;
+use RuntimeException;
 use Throwable;
 
 class EventQueueWorker extends BaseWorker
 {
     public function __construct(
         private readonly EventBus $eventBus,
-        private readonly FailedQueueFactory $failedQueueFactory,
         Clock $clock,
     ) {
         parent::__construct($clock);
@@ -27,22 +25,25 @@ class EventQueueWorker extends BaseWorker
         return "event-queue-worker";
     }
 
-    public function processMessage(Envelope $envelope, AMQPMessage $message): void
+    public function processMessage(TransportMessage $message): void
     {
-        /** @var DomainEvent $event */
-        $event = $envelope;
-        $this->eventBus->dispatch($event);
+        $this->eventBus->dispatch($this->eventOf($message));
     }
 
-    public function processFailure(Envelope $envelope, AMQPMessage $message, Throwable $exception, Queue $queue): void
+    public function processFailure(TransportMessage $message, Throwable $exception, Transport $transport): void
     {
-        /** @var DomainEvent $event */
-        $event = $envelope;
-        $event->setMetaData([
+        $this->eventOf($message)->setMetaData([
             "exceptionMessage" => $exception->getMessage(),
             "traceAsString" => $exception->getTraceAsString(),
         ]);
+    }
 
-        $this->failedQueueFactory->buildFor($queue)->queue($event);
+    private function eventOf(TransportMessage $message): DomainEvent
+    {
+        if (!$message->body instanceof DomainEvent) {
+            throw new RuntimeException(sprintf("%s can only handle events, %s given", self::class, get_debug_type($message->body)));
+        }
+
+        return $message->body;
     }
 }

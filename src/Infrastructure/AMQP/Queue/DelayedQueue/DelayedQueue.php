@@ -7,8 +7,10 @@ namespace App\Infrastructure\AMQP\Queue\DelayedQueue;
 use App\Infrastructure\AMQP\AMQPChannelFactory;
 use App\Infrastructure\AMQP\AMQPChannelOptions;
 use App\Infrastructure\AMQP\Queue\AmqpQueue;
-use App\Infrastructure\AMQP\Queue\Queue;
-use App\Infrastructure\AMQP\Worker\Worker;
+use App\Infrastructure\AMQP\Queue\FailedQueue\FailedQueueFactory;
+use App\Infrastructure\Messaging\Serializer\MessageSerializer;
+use App\Infrastructure\Messaging\Transport;
+use App\Infrastructure\Messaging\Worker;
 use InvalidArgumentException;
 use PhpAmqpLib\Channel\AMQPChannel;
 use RuntimeException;
@@ -18,14 +20,16 @@ class DelayedQueue extends AmqpQueue
     private const X_DEAD_LETTER_EXCHANGE = "dlx";
 
     public function __construct(
-        private readonly Queue $queue,
+        private readonly Transport $queue,
         private readonly int $delayInSeconds,
         private readonly AMQPChannelFactory $AMQPChannelFactory,
+        MessageSerializer $serializer,
+        FailedQueueFactory $failedQueueFactory,
     ) {
         if ($this->delayInSeconds < 1) {
             throw new InvalidArgumentException("Delay cannot be less than 1 second");
         }
-        parent::__construct($AMQPChannelFactory);
+        parent::__construct($AMQPChannelFactory, $serializer, $failedQueueFactory);
     }
 
     public function getName(): string
@@ -49,7 +53,7 @@ class DelayedQueue extends AmqpQueue
             "x-dead-letter-exchange" => ["S", self::X_DEAD_LETTER_EXCHANGE],
             "x-dead-letter-routing-key" => ["S", $this->queue->getName()],
             "x-message-ttl" => ["I", $this->delayInSeconds * 1000],
-            "x-expires" => ["I", $this->delayInSeconds * 1000 + 100000], // Keep the Q for 100s after the last message,
+            "x-expires" => ["I", $this->delayInSeconds * 1000 + 100000],
         ]);
 
         return $this->AMQPChannelFactory->getForQueue($this, $options);

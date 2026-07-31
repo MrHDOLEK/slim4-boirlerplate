@@ -36,16 +36,41 @@ app:
       memory: 512Mi
       cpu: "1"
 
-worker:
-  replicaCount: 1
-  queue: user-command-queue
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      memory: 256Mi
-      cpu: 500m
+consumers:
+  user-commands:
+    enabled: true
+    broker: amqp
+    source: user-command-queue
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+        cpu: 500m
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 75
+  user-events:
+    enabled: false
+    broker: kafka
+    source: user-events
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+        cpu: 500m
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 75
 
 scheduler:
   enabled: true
@@ -75,15 +100,20 @@ autoscaling:
     minReplicas: 2
     maxReplicas: 6
     targetCPUUtilizationPercentage: 75
-  worker:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 4
-    targetCPUUtilizationPercentage: 75
 
 jobs:
   migrate:
     enabled: true
+    ttlSecondsAfterFinished: 3600
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+        cpu: "1"
+  kafkaSchemaRegister:
+    enabled: false
     ttlSecondsAfterFinished: 3600
     resources:
       requests:
