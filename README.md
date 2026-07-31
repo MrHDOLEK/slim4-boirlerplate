@@ -39,6 +39,8 @@ Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/p
 - `http://localhost/docs/v1`
 ## RabbitMq dashboard
 - `http://localhost:15672`
+## Kafka dashboard
+- `http://localhost:8080`
 ## All commands
 
 -  `make help`

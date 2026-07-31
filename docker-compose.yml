@@ -133,6 +133,31 @@ services:
       retries: 10
       start_period: 20s
 
+  kafka-ui:
+    container_name: slim-kafka-ui
+    image: kafbat/kafka-ui:v1.5.0
+    ports:
+      - "${FORWARD_KAFKA_UI_PORT:-8080}:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: slim
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+      KAFKA_CLUSTERS_0_DEFAULTVALUESERDE: SchemaRegistry
+    depends_on:
+      kafka:
+        condition: service_healthy
+      schema-registry:
+        condition: service_healthy
+    networks:
+      - slim
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8080/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
   redis:
     container_name: slim-redis
     image: redis:7.4.10-alpine3.21
