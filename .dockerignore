@@ -33,7 +33,7 @@ xml-coverage
 coverage
 
 docker-compose.yml
-Makefile
+justfile
 .dockerignore
 .k8s
 
