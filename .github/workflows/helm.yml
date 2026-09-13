@@ -26,7 +26,7 @@ jobs:
       - name: Setup Helm
         uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1 # https://github.com/azure/setup-helm
         with:
-          version: v4.2.3
+          version: v4.3.0
 
       - name: Lint chart
         run: helm lint .k8s
@@ -46,6 +46,6 @@ jobs:
 
       - name: Validate rendered manifests against the Kubernetes schemas
         run: |
-          curl -sSLo kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.7.0/kubeconform-linux-amd64.tar.gz
+          curl -sSLo kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.8.0/kubeconform-linux-amd64.tar.gz
           tar -xzf kubeconform.tar.gz kubeconform
           ./kubeconform -summary -strict -kubernetes-version 1.31.0 /tmp/rendered-defaults.yaml /tmp/rendered-all.yaml
