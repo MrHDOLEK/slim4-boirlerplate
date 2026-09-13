@@ -18,20 +18,21 @@ I was inspired to create this skeleton from: [robiningelbrecht](https://github.c
 ## Project setup
 
 ### Development
-If you have problems with permissions please add sudo before make example:
-- `sudo make install`
-- `sudo make start`
-### Run env for Mac/Linux
+Project commands live in the `justfile` and are run with [just](https://just.systems):
 
-- `make install`
-- `make start`
-- `make db-create`
+- macOS: `brew install just`
+- Debian/Ubuntu: `apt install just`
+- Windows: `winget install --id Casey.Just`
+- Any platform: `curl -sSf https://just.systems/install.sh | bash -s -- --to ~/.local/bin`
 
-### Run env for Windows
-Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/packages/make.htm)
-- `make install`
-- `make start`
-- `make db-create`
+If you have problems with permissions please add sudo before just example:
+- `sudo just install`
+- `sudo just start`
+### Run env for Mac/Linux/Windows
+
+- `just install`
+- `just start`
+- `just db-create`
 
 ### Address where the environment is available
 - `http://localhost`
@@ -43,7 +44,7 @@ Please install packages makefile for [Windows](http://gnuwin32.sourceforge.net/p
 - `http://localhost:8080`
 ## All commands
 
--  `make help`
+-  `just`
 
 ## Dev tooling
 
@@ -52,14 +53,14 @@ dependencies never enter the application's dependency graph:
 
 | Tool | Location | Command |
 | --- | --- | --- |
-| PHPStan (+ custom architecture rules) | `tools/phpstan` | `make phpstan` |
-| PHP CS Fixer (blumilksoftware/codestyle) | `tools/cs-fixer` | `make cs-check` / `make cs-fix` |
-| Deptrac (layer guard) | `tools/deptrac` | `make deptrac` |
+| PHPStan (+ custom architecture rules) | `tools/phpstan` | `just phpstan` |
+| PHP CS Fixer (blumilksoftware/codestyle) | `tools/cs-fixer` | `just cs-check` / `just cs-fix` |
+| Deptrac (layer guard) | `tools/deptrac` | `just deptrac` |
 
-`make install` installs them. To (re)install or bump them on their own:
+`just install` installs them. To (re)install or bump them on their own:
 
-- `make tools-install`
-- `make tools-update`
+- `just tools-install`
+- `just tools-update`
 
 The layer guard enforces `Infrastructure -> Application -> Domain`. Pre-existing violations are
 grandfathered in `deptrac.baseline.yaml`, so only new ones fail the build.
@@ -70,9 +71,9 @@ The product is packaged as a Helm chart in `.k8s` — an `app` Deployment (nginx
 Deployment per declared messaging consumer, a `scheduler` CronJob, and pre-sync Jobs. Every runtime
 value comes from a Kubernetes Secret; the image ships no `.env`.
 
-- `make helm-lint`
-- `make helm-template`
-- `make helm-template-kafka`
+- `just helm-lint`
+- `just helm-template`
+- `just helm-template-kafka`
 
 ### Consumers
 
