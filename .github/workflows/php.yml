@@ -13,10 +13,10 @@ jobs:
     name: Test&lint PHP codebase
     timeout-minutes: 10
     if: github.event.pull_request.draft == false
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     services:
       pgsql:
-        image: postgres:17.11-alpine3.24@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+        image: postgres:18.6-alpine3.24@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
         env:
           POSTGRES_DB: slim
           POSTGRES_USER: slim
@@ -49,7 +49,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-tools
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2 # https://github.com/shivammathur/setup-php
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0 # https://github.com/shivammathur/setup-php
         with:
           php-version: 8.5
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, intl, sockets, rdkafka-6.0.5
@@ -78,7 +78,7 @@ jobs:
           php -dopcache.validate_timestamps=0 vendor/bin/phpunit --testsuite "Test Suite" --log-junit junit.xml --coverage-clover clover.xml
 
       - name: Send test coverage to codecov.io
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0 # https://github.com/codecov/codecov-action
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1 # https://github.com/codecov/codecov-action
         continue-on-error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
