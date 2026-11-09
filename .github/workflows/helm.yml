@@ -19,14 +19,14 @@ jobs:
     name: Lint Helm chart
     timeout-minutes: 5
     if: github.event.pull_request.draft == false
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 # https://github.com/actions/checkout
 
       - name: Setup Helm
         uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1 # https://github.com/azure/setup-helm
         with:
-          version: v4.3.0
+          version: v4.3.1
 
       - name: Lint chart
         run: helm lint .k8s
