@@ -61,7 +61,7 @@
         "symfony/yaml": "^8.1",
         "thecodingmachine/safe": "^3.4",
         "vlucas/phpdotenv": "^5.7",
-        "zircote/swagger-php": "^6.8"
+        "zircote/swagger-php": "^7.0"
     },
     "require-dev": {
         "kwn/php-rdkafka-stubs": "^3.0",
